@@ -3,6 +3,6 @@ import App from './App';
 
 
 
-export default connect(() => {
-  
-})(App);
+export default connect(() => ({
+  testFetch: 'http://localhost:8000/api/test',
+}))(App);

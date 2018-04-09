@@ -6,7 +6,8 @@ const ReportDetailRoute = (
   <Route
     path={`/report/:reportId`}
     component={ReportDetail}
-    exact/>
+    exact
+    key="ReportDetailRoute" />
 );
 
 export default ReportDetailRoute;

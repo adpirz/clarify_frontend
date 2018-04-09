@@ -6,7 +6,8 @@ const DashboardRoute = (
   <Route
     path={`/dashboard`}
     component={Dashboard}
-    exact/>
+    exact
+    key="DashboardRoute" />
 );
 
 export default DashboardRoute;
