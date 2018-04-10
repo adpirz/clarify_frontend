@@ -1,3 +1,7 @@
+.dashboard-container {
+	padding: 0 50px;
+}
+
 .search-bar {
 	width: 100%;
 }
@@ -15,12 +19,18 @@
 	width: 85%;
 }
 
+.active-color {
+	background-color: #00b5ad;
+}
+
+.disabled-color {
+	background-color: #d3d3d3;
+}
+
 .search-btn {
 	color: #fff;
-	background-color: #00b5ad;
 	border: 0;
   border-radius: 4px;
-  cursor: default;
   border-spacing: 0;
   border-collapse: separate;
   height: 36px;
@@ -28,8 +38,14 @@
   overflow: hidden;
   position: relative;
   width: 100%;
+  top: -14px;
+  line-height: 17px;
+}
 
-  &:hover {
-  	cursor: pointer;
-  }
+.active-color:hover {
+	cursor: pointer;
+}
+
+.user-dashboard-name {
+	padding: 10px 0;
 }
