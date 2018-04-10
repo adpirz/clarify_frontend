@@ -1,8 +1,7 @@
 import React from 'react';
-import Select, { Async } from 'react-select';
+import { Async } from 'react-select';
 import 'react-select/dist/react-select.css';
 import './Dashboard.css';
-import data from './../../../../data/data.json';
 
 // TODO: refactor once basic struture exists
 class Dashboard extends React.Component {
@@ -24,11 +23,9 @@ class Dashboard extends React.Component {
 			return Promise.resolve({ options: [] });
 		}
 
-		const { value } = this.state;
+		// const { value } = this.state;
 
-		console.log('data: ', data)
-		return fetch()
-		// return fetch(`https://api.github.com/search/users?q=${input}`)
+		return fetch(`https://api.github.com/search/users?q=${input}`)
 		.then((response) => response.json())
 		.then((json) => {
 			return { options: json.items };
@@ -42,7 +39,6 @@ class Dashboard extends React.Component {
 
 	render() {
 		const { value, isDisabled } = this.state;
-		console.log('data: ', data);
 		return (
 			<div className="section">
 				<h3>Clarify NAVBAR</h3>
@@ -55,7 +51,7 @@ class Dashboard extends React.Component {
 							className="search-container"
 						>
 							<div className="inline-block dashboard-search">
-								<Select
+								<Async
 									backspaceRemoves
 									labelKey="login"
 									loadOptions={this.loadOptions}
