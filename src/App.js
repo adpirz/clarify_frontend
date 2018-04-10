@@ -6,6 +6,7 @@ import Routes from './routes/Routes';
 class App extends React.Component {
   render() {
     console.log(this.props.testFetch.value);
+    // console.log(this.props.studentFetch);
     return (
       <div>
         <BrowserRouter>

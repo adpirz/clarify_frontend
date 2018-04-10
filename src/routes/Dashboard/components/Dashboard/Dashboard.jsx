@@ -1,44 +1,54 @@
 import React from 'react';
-import { Async } from 'react-select';
+import Select, { Async } from 'react-select';
 import 'react-select/dist/react-select.css';
 import './Dashboard.css';
+
+const mockData = [{
+    value: "students",
+    label: "Tristan",
+  },
+  {
+    value: "section",
+    label: "Science",
+}]
 
 // TODO: refactor once basic struture exists
 class Dashboard extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			value: [],
+			selectedOption: '', //[],
 			isDisabled: true,
 		};
 	}
 	
-	onChange = (value) => {
-		this.setState({ value });
+	handleChange = (selectedOption) => {
+		this.setState({ selectedOption });
 	}
 
-	loadOptions = (input) => {
-		// TODO: build out section name functionality
-		if (!input) {
-			return Promise.resolve({ options: [] });
-		}
+	// loadOptions = (input) => {
+	// 	// TODO: build out section name functionality
+	// 	if (!input) {
+	// 		return Promise.resolve({ options: [] });
+	// 	}
 
-		// const { value } = this.state;
+	// 	// const { value } = this.state;
 
-		return fetch(`https://api.github.com/search/users?q=${input}`)
-		.then((response) => response.json())
-		.then((json) => {
-			return { options: json.items };
-		});
-	}
+	// 	return fetch(`https://api.github.com/search/users?q=${input}`)
+	// 	.then((response) => response.json())
+	// 	.then((json) => {
+	// 		return { options: json.items };
+	// 	});
+	// }
 
-	submitQuery = (e) => {
-		e.preventDefault();
-		console.log('this is being clicked');
-	}
+	// submitQuery = (e) => {
+	// 	e.preventDefault();
+	// 	console.log('this is being clicked');
+	// }
 
 	render() {
-		const { value, isDisabled } = this.state;
+		const { selectedOption, isDisabled } = this.state;
+		const value = selectedOption && selectedOption.value;
 		return (
 			<div className="section">
 				<h3>Clarify NAVBAR</h3>
@@ -51,15 +61,19 @@ class Dashboard extends React.Component {
 							className="search-container"
 						>
 							<div className="inline-block dashboard-search">
-								<Async
-									backspaceRemoves
-									labelKey="login"
-									loadOptions={this.loadOptions}
-									multi
-									noResultsText="Sorry, your request is invalid"
-									onChange={this.onChange}
+								<Select
+									//backspaceRemoves
+									//labelKey="login"
+									// loadOptions={this.loadOptions}
+									//multi
+									//noResultsText="Sorry, your request is invalid"
+									onChange={this.handleChange}
+									options={[
+					          { value: 'one', label: 'One' },
+					          { value: 'two', label: 'Two' },
+					        ]}
 									value={value}
-									valueKey="id"
+									//valueKey="id"
 								/>
 							</div>
 							<div className="inline-block">
