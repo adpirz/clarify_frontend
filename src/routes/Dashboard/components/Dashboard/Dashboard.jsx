@@ -124,6 +124,8 @@ var ops = [
 	},
 ];
 
+let options = [];
+
 // TODO: refactor once basic struture exists
 class Dashboard extends React.Component {
 	constructor(props) {
@@ -135,6 +137,18 @@ class Dashboard extends React.Component {
 	
 	handleChange = (value) => {
 		this.setState({ value });
+	}
+
+
+	gradeOptionsGenerator = (gradeArray) => {
+		options.push({
+			label: 'Grade Level',
+		})
+		// gradeArray.forEach((grade) => {
+		// 	options
+		// })
+	
+		console.log('gradeArray: ', options);
 	}
 
 	// loadOptions = (input) => {
@@ -178,6 +192,10 @@ class Dashboard extends React.Component {
 	render() {
 		const { value } = this.state;
 		const isDisabled = this.validQuery();
+
+		let gradeLevel = this.props.gradeLevelFetch && this.props.gradeLevelFetch.value ?
+			this.gradeOptionsGenerator(this.props.gradeLevelFetch.value.data) : {};
+
 		return (
 			<div className="section">
 				<h3>Clarify NAVBAR</h3>

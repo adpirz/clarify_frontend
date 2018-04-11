@@ -1,17 +1,31 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import Routes from './routes/Routes';
+import { Route } from 'react-router-dom';
+import Dashboard from './routes/Dashboard/components/Dashboard/Dashboard';
+import ReportDetail from './routes/ReportDetail/components/ReportDetail/ReportDetail';
 
 
 class App extends React.Component {
   render() {
-    // console.log(this.props.testFetch.value);
-    // console.log(this.props.studentFetch);
     return (
       <div>
         <BrowserRouter>
           <div>
-           {Routes}
+            <Route
+              path={`/dashboard`}
+              render={() => (
+                <Dashboard {...this.props} />
+              )}
+              exact
+              key="DashboardRoute"
+              props={this.props}
+            />
+            <Route
+              path={`/report/:reportId`}
+              component={ReportDetail}
+              exact
+              key="ReportDetailRoute"
+            />
           </div>
         </BrowserRouter>
       </div>

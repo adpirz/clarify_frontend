@@ -7,6 +7,7 @@ const DashboardRoute = (
     path={`/dashboard`}
     component={Dashboard}
     exact
+    props={this.props}
     key="DashboardRoute" />
 );
 
