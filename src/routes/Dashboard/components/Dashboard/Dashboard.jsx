@@ -79,63 +79,48 @@ var ops = [
 	},
 	{
 		label: 'Category',
-		options: [{
-			label: 'Attendance',
-			options: [
-				{
-					label: 'Over X%',
-					value: 'attendance_over',
-					id: 789,
-				},
-				{
-					label: 'Under X%',
-					value: 'attendance_under',
-					id: 987,
-				},
-				{
-					label: 'Dates',
-					value: 'attendance_date',
-					id: 888,
-				},
-			]
-		},
-		{
-			label: 'Grades',
-			options: [
-				{
-					label: 'Over X%',
-					value: 'grades_over',
-					id: 789,
-				},
-				{
-					label: 'Under X%',
-					value: 'grades_under',
-					id: 987,
-				},
-				{
-					label: 'Dates',
-					value: 'grades_date',
-					id: 888,
-				},
-			]
-		}]
-	},
-	{
-		options: [{
-			label: 'Hale Middle School',
-			value: 'school_name',
-			id: 123,
-		},
-		{
-			label: 'SaMo High School',
-			value: 'school_name',
-			id: 231,
-		},
-		{
-			label: 'El Camino Real High School',
-			value: 'school_name',
-			id: 312,
-		}],
+		options: [
+			{
+				label: 'Attendance',
+				options: [
+					{
+						label: 'Over X%',
+						value: 'attendance_over',
+						id: 789,
+					},
+					{
+						label: 'Under X%',
+						value: 'attendance_under',
+						id: 987,
+					},
+					{
+						label: 'Dates',
+						value: 'attendance_date',
+						id: 888,
+					},
+				]
+			},
+			{
+				label: 'Grades',
+				options: [
+					{
+						label: 'Over X%',
+						value: 'grades_over',
+						id: 789,
+					},
+					{
+						label: 'Under X%',
+						value: 'grades_under',
+						id: 987,
+					},
+					{
+						label: 'Dates',
+						value: 'grades_date',
+						id: 888,
+					},
+				]
+			}
+		],
 	},
 ];
 
@@ -176,9 +161,16 @@ class Dashboard extends React.Component {
 		let disabled = true;
 		console.log('valid: ', value);
 		// case statements:
-		while(disabled) {
-
-		}
+		// while(disabled) {
+			// if anything but section
+			let allButSection = value.filter(obj => obj.value !== "section_name");
+			// next logic flow
+			let section = value.filter(obj => obj.value === "section_name");
+			if (section.length > 0) {
+				// check category
+					// check subcategory 
+			}
+		// }
 		
 		return disabled;
 	}
