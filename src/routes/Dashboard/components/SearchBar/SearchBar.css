@@ -1,11 +1,3 @@
-.dashboard-container {
-	padding: 0 50px;
-}
-
-.search-bar {
-	width: 100%;
-}
-
 .search-container {
 	margin: 0 auto;
 	width: 50%;
@@ -44,10 +36,6 @@
 
 .active-color:hover {
 	cursor: pointer;
-}
-
-.user-dashboard-name {
-	padding: 10px 0;
 }
 
 .loading {

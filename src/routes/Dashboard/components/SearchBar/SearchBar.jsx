@@ -6,7 +6,7 @@ import 'react-select-plus/dist/react-select-plus.css';
 
 import './SearchBar.css';
 
-const options = [
+let options = [
 	{
 		label: 'Students',
 		options: [],
@@ -54,6 +54,7 @@ class SearchBar extends React.Component {
 			selectedOption: [],
       minDate: minDate,
       maxDate: maxDate,
+      options: [],
 		};
 	}
 
@@ -66,6 +67,44 @@ class SearchBar extends React.Component {
 	};
 
 	handleChange = (selectedOption) => {
+		// give disabled property to non-selected;
+		// let group = false;
+		// let category = false;
+		// for(let i = 0; i < selectedOption.length; i++) {
+		// 	const { value } = selectedOption[i];
+		// 	if (value === 'student_name' || value === 'school_name' ||
+		// 		value === 'section_name' || value === 'grade_level') {
+		// 		group = true;
+		// 	}
+		// 	if (value === 'attendance' || value === 'student_grades') {
+		// 		category = true;
+		// 	}
+		// }
+
+		// if (group) {
+		// 	options.forEach((o) => {
+		// 		const { label } = o;
+		// 		if (label === 'Schools' || label === 'Sections' ||
+		// 			label === 'Students' || label === 'Grade Level')  {
+		// 			console.log('O: ', o)
+		// 			o.options[0].disabled = true;
+		// 		}
+		// 	});
+		// 	console.log('filtered: ', options);
+		// 	// options = filtered;
+		// 	// debugger;
+		// }
+
+		// console.log('filtered: ', filtered);
+
+		// if (category) {
+			// disable
+							// if (label === 'Schools' || label === 'Sections' ||
+					// label === 'Students' || label === 'Grade Level') {
+					// return groupObj
+				// }
+		// }
+		// console.log('selectedOption: ', selectedOption);
 		this.setState({ selectedOption });
 	}
 
@@ -83,7 +122,9 @@ class SearchBar extends React.Component {
 				value: optionValue,
 				id: dataObj.id,
 			}
-			options[index].options.push(optionsArray);
+			if (index !== undefined) {
+				options[index].options.push(optionsArray);
+			}
 		});
 	}
 
@@ -166,7 +207,7 @@ class SearchBar extends React.Component {
 		}
 
 		return (
-			<div className="section">
+			<div>
 				{!loaded && pending &&
 					<div className="loading">
 						<CircularProgress

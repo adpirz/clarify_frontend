@@ -11,7 +11,7 @@ class Dashboard extends React.Component {
 
 	render() {
 		return (
-			<div className="section">
+			<div>
 				<h3>Clarify NAVBAR</h3>
 				<hr />
 				<br />
