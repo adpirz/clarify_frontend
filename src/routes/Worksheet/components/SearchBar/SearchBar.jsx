@@ -1,6 +1,5 @@
 import React from 'react';
 import Select from 'react-select-plus';
-import { PromiseState } from 'react-refetch';
 import { CircularProgress, DatePicker } from 'material-ui';
 import 'react-select-plus/dist/react-select-plus.css';
 
@@ -189,83 +188,62 @@ class SearchBar extends React.Component {
 	render() {
 		const { selectedOption, minDate, maxDate } = this.state;
 		const isDisabled = this.validateQuery();
-		const { schoolFetch, gradeLevelFetch, sectionFetch, studentFetch } = this.props;
-
-		const allFetches = PromiseState.all([ schoolFetch, gradeLevelFetch, sectionFetch, studentFetch ]);
-
-		let loaded = false;
-		let pending = false;
-
-		if (allFetches.pending) {
-			pending = true;
-		} else if (allFetches.fulfilled) {
-			this.optionsGenerator('Grade Level', gradeLevelFetch.value.data, 'grade_level');
-			this.optionsGenerator('Schools', schoolFetch.value.data, 'school_name');
-			this.optionsGenerator('Sections', sectionFetch.value.data, 'section_name');
-			this.optionsGenerator('Students', studentFetch.value.data, 'student_name');
-			loaded = true;
-		}
 
 		return (
 			<div>
-				{!loaded && pending &&
-					<div className="loading">
-						<CircularProgress
-							size={100}
-							thickness={7}
+				<div className="loading">
+					<CircularProgress
+						size={100}
+						thickness={7}
+					/>
+				</div>
+				<form
+					onSubmit={this.submitQuery}
+					className="search-container"
+				>
+					<div className="inline-block dashboard-search">
+						<Select
+							loadOptions={this.loadOptions}
+							multi
+							noResultsText="Sorry, your request is invalid"
+							onChange={this.handleChange}
+							onValueClick={() => this.onValueClick()}
+						  options={options}
+						  required
+							value={selectedOption}
 						/>
 					</div>
-				}
-				{
-					loaded &&
-					<form
-						onSubmit={this.submitQuery}
-						className="search-container"
-					>
-						<div className="inline-block dashboard-search">
-							<Select
-								loadOptions={this.loadOptions}
-								multi
-								noResultsText="Sorry, your request is invalid"
-								onChange={this.handleChange}
-								onValueClick={() => this.onValueClick()}
-							  options={options}
-							  required
-								value={selectedOption}
-							/>
-						</div>
-						<div className="inline-block">
-							<button
-								className={`
-									${isDisabled ? 'disabled-color' : 'active-color'}
-									search-btn
-								`}
-								disabled={isDisabled}
-							>
-								Search
-							</button>
-						</div>
-						<h4>Please Select a Date Range</h4>
-						<div>
-			         <DatePicker
-			           onChange={this.handleChangeMinDate}
-			           autoOk
-			           floatingLabelText="Min Date"
-			           defaultDate={minDate}
-			           locale="en-US"
-			           floatingLabelStyle={{ zIndex: 0 }}
-			         />
-			         <DatePicker
-			           onChange={this.handleChangeMaxDate}
-			           autoOk
-			           floatingLabelText="Max Date"
-			           defaultDate={maxDate}
-			           locale="en-US"
-			           floatingLabelStyle={{ zIndex: 0 }}
-			         />
-						</div>
-					</form>
-				}
+					<div className="inline-block">
+						<button
+							className={`
+								${isDisabled ? 'disabled-color' : 'active-color'}
+								search-btn
+							`}
+							disabled={isDisabled}
+						>
+							Search
+						</button>
+					</div>
+					<h4>Please Select a Date Range</h4>
+					<div>
+		         <DatePicker
+		           onChange={this.handleChangeMinDate}
+		           autoOk
+		           floatingLabelText="Min Date"
+		           defaultDate={minDate}
+		           locale="en-US"
+		           floatingLabelStyle={{ zIndex: 0 }}
+		         />
+		         <DatePicker
+		           onChange={this.handleChangeMaxDate}
+		           autoOk
+		           floatingLabelText="Max Date"
+		           defaultDate={maxDate}
+		           locale="en-US"
+		           floatingLabelStyle={{ zIndex: 0 }}
+		         />
+					</div>
+				</form>
 			</div>
 		);
 	}

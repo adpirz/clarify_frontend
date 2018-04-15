@@ -2,10 +2,28 @@ import { connect } from 'react-refetch';
 import App from './App';
 
 
-export default connect(() => ({
-  testFetch: 'http://localhost:8000/api/test',
-  studentFetch: 'http://localhost:8000/api/student/',
-  sectionFetch: 'http://localhost:8000/api/section/',
-  gradeLevelFetch: 'http://localhost:8000/api/grade-level/',
-  schoolFetch: 'http://localhost:8000/api/school/',
-}))(App);
+export default connect(() => {
+  //TODO: Import baseurl from an environment variable
+  const BASE_API_URL = 'http://localhost:8000'
+
+  return {
+    lazyStudentGet: () => ({
+      studentGet: `${BASE_API_URL}/api/student/`,
+    }),
+    lazySectionGet: () => ({
+      sectionGet: `${BASE_API_URL}/api/section/`,
+    }),
+    lazyGradeLevelGet: () => ({
+      gradeLevelGet: `${BASE_API_URL}/api/grade-level/`,
+    }),
+    lazySchoolGet: () => ({
+      schoolGet: `${BASE_API_URL}/api/school/`,
+    }),
+    lazySessionPost: (username, password) => ({
+      sessionPost: `${BASE_API_URL}/api/session/`,
+    }),
+    lazySessionGet: () => ({
+      sessionGet: `${BASE_API_URL}/api/session/`,
+    }),
+  };
+})(App);
