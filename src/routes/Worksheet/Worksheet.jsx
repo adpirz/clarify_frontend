@@ -1,7 +1,7 @@
 import React from 'react';
 
-import SearchBar from '../SearchBar/SearchBar';
-import './Dashboard.css';
+import SearchBar from './components/SearchBar/SearchBar';
+import './styles.css';
 
 class Dashboard extends React.Component {
 	constructor(props) {

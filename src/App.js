@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { Route } from 'react-router-dom';
-import Dashboard from './routes/Dashboard/components/Dashboard/Dashboard';
+import Worksheet from './routes/Worksheet/Worksheet';
 import ReportDetail from './routes/ReportDetail/components/ReportDetail/ReportDetail';
 
 
@@ -12,13 +12,11 @@ class App extends React.Component {
         <BrowserRouter>
           <div>
             <Route
-              path={`/dashboard`}
+              path={`/`}
               render={() => (
-                <Dashboard {...this.props} />
+                <Worksheet {...this.props} />
               )}
-              exact
-              key="DashboardRoute"
-              props={this.props}
+              key="WorksheetRoute"
             />
             <Route
               path={`/report/:reportId`}

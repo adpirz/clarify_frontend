@@ -4,7 +4,7 @@ import { PromiseState } from 'react-refetch';
 import { CircularProgress, DatePicker } from 'material-ui';
 import 'react-select-plus/dist/react-select-plus.css';
 
-import './SearchBar.css';
+import './styles.css';
 
 let options = [
 	{
@@ -46,10 +46,10 @@ class SearchBar extends React.Component {
 		super(props);
 		const minDate = new Date();
 		const maxDate = new Date();
-		
+
 		minDate.setFullYear(minDate.getFullYear()); // will get start of school year date from DB
 		maxDate.setFullYear(maxDate.getFullYear());
-		
+
 		this.state = {
 			selectedOption: [],
       minDate: minDate,
@@ -115,7 +115,7 @@ class SearchBar extends React.Component {
 				index = i;
 			}
 		}
-		
+
 		dataArray.forEach((dataObj) => {
 			let optionsArray = {
 				label: dataObj.name,
@@ -131,7 +131,7 @@ class SearchBar extends React.Component {
 	submitQuery = (e) => {
 		e.preventDefault();
 		const { selectedOption, minDate, maxDate } = this.state;
-		
+
 		let group;
 		let category;
 
@@ -153,7 +153,7 @@ class SearchBar extends React.Component {
 			${groupId}&category=${category}&
 			from_date=${minDate}&to_date=${maxDate}`,
 			{
-	      headers : { 
+	      headers : {
 	        'Content-Type': 'application/json',
 	        'Accept': 'application/json'
       	},
@@ -165,10 +165,10 @@ class SearchBar extends React.Component {
 				console.error('Looks like there was an error on our end, please try again later');
 			});
 	}
-	
+
 	validateQuery = () => {
 		const { selectedOption } = this.state;
-		
+
 		let partOne = false;
 		let partTwo = false;
 
