@@ -24,19 +24,16 @@ let options = [
 		options: [],
 	},
 	{
-		label: 'Attendance',
+		label: 'Categories',
 		options: [{
 			label: 'Attendance',
 			value: 'attendance',
 			id: 999,
-		}],
-	},
-	{
-		label: 'Academic Grades',
-		options: [{
+		},
+		{
 			label: 'Academic Grades',
 			value: 'student_grades',
-			id: 999,
+			id: 1000,
 		}],
 	},
 ];
@@ -60,52 +57,45 @@ class SearchBar extends React.Component {
 
 	handleChangeMinDate = (event, date) => {
 	  this.setState({ minDate: date });
-	};
+	}
 
 	handleChangeMaxDate = (event, date) => {
 	  this.setState({ maxDate: date });
-	};
+	}
 
 	handleChange = (selectedOption) => {
-		// give disabled property to non-selected;
-		// let group = false;
-		// let category = false;
-		// for(let i = 0; i < selectedOption.length; i++) {
-		// 	const { value } = selectedOption[i];
-		// 	if (value === 'student_name' || value === 'school_name' ||
-		// 		value === 'section_name' || value === 'grade_level') {
-		// 		group = true;
-		// 	}
-		// 	if (value === 'attendance' || value === 'student_grades') {
-		// 		category = true;
-		// 	}
-		// }
-
-		// if (group) {
-		// 	options.forEach((o) => {
-		// 		const { label } = o;
-		// 		if (label === 'Schools' || label === 'Sections' ||
-		// 			label === 'Students' || label === 'Grade Level')  {
-		// 			console.log('O: ', o)
-		// 			o.options[0].disabled = true;
-		// 		}
-		// 	});
-		// 	console.log('filtered: ', options);
-		// 	// options = filtered;
-		// 	// debugger;
-		// }
-
-		// console.log('filtered: ', filtered);
-
-		// if (category) {
-			// disable
-							// if (label === 'Schools' || label === 'Sections' ||
-					// label === 'Students' || label === 'Grade Level') {
-					// return groupObj
-				// }
-		// }
-		// console.log('selectedOption: ', selectedOption);
 		this.setState({ selectedOption });
+	}
+
+	handleGroupFilter = (filterGroup) => {
+		return options.filter((o) => {
+			let { label } = o;
+			if (label === 'Schools' || label === 'Sections' ||
+				label === 'Students' || label === 'Grade Level')  {
+				label = label.toLowerCase();
+				if (label.includes(filterGroup)) {
+					return o;
+				}
+			}
+			if (label === 'Categories') {
+				return o;
+			}
+		});
+	}
+
+	handleGroupCategoryFilter = (filterGroup) => {
+		return options.filter((o) => {
+			let { label } = o;
+			label = label.toLowerCase();
+			if (label.includes(filterGroup)) {
+				return o;
+			}
+		});
+	}
+
+	formatValue = (value) => {
+		let splitValue = value.split('_');
+		return (value !== 'attendance') ? `${splitValue[0]}_${splitValue[1]}` : 'attendance';
 	}
 
 	optionsGenerator = (labelString, dataArray, optionValue) => {
@@ -116,10 +106,10 @@ class SearchBar extends React.Component {
 			}
 		}
 
-		dataArray.forEach((dataObj) => {
+		dataArray.forEach((dataObj, i) => {
 			let optionsArray = {
 				label: dataObj.name,
-				value: optionValue,
+				value: `${optionValue}_${i}`,
 				id: dataObj.id,
 			}
 			if (index !== undefined) {
@@ -138,7 +128,9 @@ class SearchBar extends React.Component {
 		let groupId = [];
 
 		for (let i = 0; i < selectedOption.length; i++) {
-			let { value, id } = selectedOption[i]
+			let { value, id } = selectedOption[i];
+			value = this.formatValue(value);
+
 			if (value === 'student_name' || value === 'school_name' ||
 				value === 'section_name' || value === 'grade_level') {
 				group = value;
@@ -174,6 +166,8 @@ class SearchBar extends React.Component {
 
 		for (let i = 0; i < selectedOption.length; i++) {
 			let { value } = selectedOption[i];
+			value = this.formatValue(value);
+
 			if (value === 'student_name' || value === 'school_name' ||
 					value === 'section_name' || value === 'grade_level') {
 				partOne = true;
@@ -206,6 +200,40 @@ class SearchBar extends React.Component {
 			loaded = true;
 		}
 
+		let groupOptions = options;
+
+		let filterGroup = '';
+
+		if (selectedOption.length) {
+			let group = false;
+			let category = false;
+			for (let i = 0; i < selectedOption.length; i++) {
+				let { value } = selectedOption[i];
+				value = this.formatValue(value);
+				
+				if (value === 'student_name' || value === 'school_name' ||
+					value === 'section_name' || value === 'grade_level') {
+					group = true;
+					filterGroup = value.split('_')[0];
+				}
+				
+				if (value === 'attendance' || value === 'student_grades') {
+					category = true;
+				}
+			}
+
+			if (category && group) {
+				let filtered = this.handleGroupCategoryFilter(filterGroup);
+				groupOptions = filtered;
+			} else if (group) {
+				let filtered = this.handleGroupFilter(filterGroup);
+				groupOptions = filtered;
+			} else {
+				let filtered = options.filter((o) => o.label !== 'Categories');
+				groupOptions = filtered;
+			}
+		}
+
 		return (
 			<div>
 				{!loaded && pending &&
@@ -224,13 +252,10 @@ class SearchBar extends React.Component {
 					>
 						<div className="inline-block dashboard-search">
 							<Select
-								loadOptions={this.loadOptions}
 								multi
 								noResultsText="Sorry, your request is invalid"
 								onChange={this.handleChange}
-								onValueClick={() => this.onValueClick()}
-							  options={options}
-							  required
+							  options={groupOptions}
 								value={selectedOption}
 							/>
 						</div>
