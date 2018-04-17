@@ -31,5 +31,21 @@ export default connect(() => {
         url: `${BASE_API_URL}/api/session/`,
       },
     }),
+    submitReportQuery: (group, groupId, category, minDate, maxDate) => {
+      const queryString = `${group}&${group}_id=${groupId}&category=${category}&from_date=${minDate}&to_date=${maxDate}`;
+      return {
+        postReportQuery: {
+          url: `${BASE_API_URL}/report/group=${queryString}`,
+          method: 'POST',
+          body: JSON.stringify({
+            group: group,
+            group_id: groupId,
+            category: category,
+            minDate: minDate,
+            maxDate: maxDate,
+          }),
+        }
+      }
+    }
   };
 })(App);
