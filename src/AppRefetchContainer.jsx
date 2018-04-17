@@ -8,43 +8,48 @@ export default connect(() => {
 
   return {
     lazyStudentGet: () => ({
-      studentGet: `${BASE_API_URL}/api/student/`,
+      studentGet: {
+        url: `${BASE_API_URL}/api/student/`,
+        credentials: 'include',
+      },
     }),
     lazySectionGet: () => ({
-      sectionGet: `${BASE_API_URL}/api/section/`,
+      sectionGet: {
+        url: `${BASE_API_URL}/api/section/`,
+        credentials: 'include',
+      },
     }),
     lazyGradeLevelGet: () => ({
-      gradeLevelGet: `${BASE_API_URL}/api/grade-level/`,
+      gradeLevelGet: {
+        url: `${BASE_API_URL}/api/grade-level/`,
+        credentials: 'include',
+      },
     }),
     lazySchoolGet: () => ({
-      schoolGet: `${BASE_API_URL}/api/school/`,
+      schoolGet: {
+        url: `${BASE_API_URL}/api/school/`,
+        credentials: 'include',
+      },
     }),
     lazySessionPost: (username, password) => ({
       sessionPost: {
         method: 'POST',
         body: JSON.stringify({username, password}),
         url: `${BASE_API_URL}/api/session/`,
+        credentials: 'include',
       },
     }),
     lazySessionGet: () => ({
       sessionGet: {
         url: `${BASE_API_URL}/api/session/`,
+        credentials: 'include',
+        force: 'true',
       },
     }),
     submitReportQuery: (group, groupId, category, minDate, maxDate) => {
       const queryString = `${group}&${group}_id=${groupId}&category=${category}&from_date=${minDate}&to_date=${maxDate}`;
       return {
-        postReportQuery: {
-          url: `${BASE_API_URL}/report/group=${queryString}`,
-          method: 'POST',
-          body: JSON.stringify({
-            group: group,
-            group_id: groupId,
-            category: category,
-            minDate: minDate,
-            maxDate: maxDate,
-          }),
-        }
+        postReportQuery: `${BASE_API_URL}/report/group=${queryString}`,
       }
     }
   };

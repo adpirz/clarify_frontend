@@ -10,18 +10,16 @@ class Login extends React.Component {
       password: '',
     };
 
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.logUserIn = this.logUserIn.bind(this);
   }
 
-  handleInputChange(e) {
+  handleInputChange = (e) => {
     const {name, value} = e.target;
     this.setState({
       [name]: value,
     });
   }
 
-  logUserIn(e) {
+  logUserIn = (e) => {
     e.preventDefault();
     const { username, password } = this.state;
     if (!username || !password) {

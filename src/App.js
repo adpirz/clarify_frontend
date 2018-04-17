@@ -14,6 +14,20 @@ class App extends React.Component {
     this.props.lazySessionGet();
   }
 
+  componentWillReceiveProps = (nextProps) => {
+
+    if (this.userIsAuthenticated(nextProps) && !this.queryRequestsMade(nextProps)) {
+      // User is signed in, so let's make our object api calls.
+      this.requestQueryObjects();
+    }
+  }
+
+  userIsAuthenticated = (props) => {
+    const sessionGetStatus = _.get(props, 'sessionGet.meta.response.status');
+    const sessionCreateStatus = _.get(props, 'sessionPost.meta.response.status');
+    return sessionGetStatus === 200 || sessionCreateStatus === 200 || sessionCreateStatus === 201;
+  }
+
   requestQueryObjects = () => {
     const {
       lazyStudentGet,
@@ -61,12 +75,19 @@ class App extends React.Component {
   }
 
   render() {
-    return <LoginForm lazySessionPost={this.props.lazySessionPost}/>;
+    if (!this.userIsAuthenticated(this.props)) {
+      return <LoginForm lazySessionPost={this.props.lazySessionPost}/>;
+    }
+
+    const promiseValues = this.getPromiseValues();
+    if (!promiseValues) {
+      return null;
+    }
 
     return (
       <div>
+        <SearchBar {...this.props}/>
         <BrowserRouter>
-          <SearchBar {...this.props}/>
           <Switch>
             <Route
               component={Worksheet}
