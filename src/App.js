@@ -66,7 +66,7 @@ class App extends React.Component {
     return (
       <div>
         <BrowserRouter>
-          <SearchBar />
+          <SearchBar {...this.props}/>
           <Switch>
             <Route
               component={Worksheet}
