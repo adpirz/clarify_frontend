@@ -51,7 +51,6 @@ class SearchBar extends React.Component {
 			selectedOption: [],
       minDate: minDate,
       maxDate: maxDate,
-      options: [],
 		};
 	}
 
@@ -189,9 +188,9 @@ class SearchBar extends React.Component {
 		let loaded = false;
 		let pending = false;
 
-		if (allFetches.pending) {
-			pending = true;
-		} else if (allFetches.fulfilled) {
+		// if (allFetches.pending) {
+			// pending = true;
+		if (allFetches.fulfilled) {
 			this.optionsGenerator('Grade Level', gradeLevelFetch.value.data, 'grade_level');
 			this.optionsGenerator('Schools', schoolFetch.value.data, 'school_name');
 			this.optionsGenerator('Sections', sectionFetch.value.data, 'section_name');
