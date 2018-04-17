@@ -1,42 +1,9 @@
 import React from 'react';
 import Select from 'react-select-plus';
-import { PromiseState } from 'react-refetch';
-import { CircularProgress, DatePicker } from 'material-ui';
+import { DatePicker } from 'material-ui';
 import 'react-select-plus/dist/react-select-plus.css';
 
 import './styles.css';
-
-let options = [
-	{
-		label: 'Students',
-		options: [],
-	},
-	{
-		label: 'Sections',
-		options: [],
-	},
-	{
-		label: 'Schools',
-		options: [],
-	},
-	{
-		label: 'Grade Level',
-		options: [],
-	},
-	{
-		label: 'Categories',
-		options: [{
-			label: 'Attendance',
-			value: 'attendance',
-			id: 999,
-		},
-		{
-			label: 'Academic Grades',
-			value: 'student_grades',
-			id: 1000,
-		}],
-	},
-];
 
 class SearchBar extends React.Component {
 	constructor(props) {
@@ -66,7 +33,7 @@ class SearchBar extends React.Component {
 		this.setState({ selectedOption });
 	};
 
-	handleGroupFilter = (filterGroup) => {
+	handleGroupFilter = (filterGroup, options) => {
 		return options.filter((o) => {
 			let { label } = o;
 			if (label === 'Schools' || label === 'Sections' ||
@@ -79,16 +46,18 @@ class SearchBar extends React.Component {
 			if (label === 'Categories') {
 				return o;
 			}
+			return null;
 		});
 	};
 
-	handleGroupCategoryFilter = (filterGroup) => {
+	handleGroupCategoryFilter = (filterGroup, options) => {
 		return options.filter((o) => {
 			let { label } = o;
 			label = label.toLowerCase();
 			if (label.includes(filterGroup)) {
 				return o;
 			}
+			return null;
 		});
 	};
 
@@ -103,26 +72,6 @@ class SearchBar extends React.Component {
 	};
 
 	checkCategoryValue = (value) => (value === 'student_grades' || value === 'attendance');
-
-	optionsGenerator = (labelString, dataArray, optionValue) => {
-		let index;
-		for (let i = 0; i < options.length; i++) {
-			if (options[i].label === labelString) {
-				index = i;
-			}
-		}
-
-		dataArray.forEach((dataObj, i) => {
-			let optionsArray = {
-				label: dataObj.name,
-				value: `${optionValue}_${i}`,
-				id: dataObj.id,
-			}
-			if (index !== undefined) {
-				options[index].options.push(optionsArray);
-			}
-		});
-	};
 
 	submitQuery = (e) => {
 		e.preventDefault();
@@ -175,28 +124,8 @@ class SearchBar extends React.Component {
 
 	render() {
 		const { selectedOption, minDate, maxDate } = this.state;
+		const { options } = this.props;
 		const isDisabled = this.validateQuery();
-		const {
-			schoolFetch,
-			gradeLevelFetch,
-			sectionFetch,
-			studentFetch,
-		} = this.props;
-
-		const allFetches = PromiseState.all([ schoolFetch, gradeLevelFetch, sectionFetch, studentFetch ]);
-
-		let loaded = false;
-		let pending = false;
-
-		// if (allFetches.pending) {
-			// pending = true;
-		if (allFetches.fulfilled) {
-			this.optionsGenerator('Grade Level', gradeLevelFetch.value.data, 'grade_level');
-			this.optionsGenerator('Schools', schoolFetch.value.data, 'school_name');
-			this.optionsGenerator('Sections', sectionFetch.value.data, 'section_name');
-			this.optionsGenerator('Students', studentFetch.value.data, 'student_name');
-			loaded = true;
-		}
 
 		let groupOptions = options;
 
@@ -221,10 +150,10 @@ class SearchBar extends React.Component {
 			});
 
 			if (category && group) {
-				let filtered = this.handleGroupCategoryFilter(filterGroup);
+				let filtered = this.handleGroupCategoryFilter(filterGroup, options);
 				groupOptions = filtered;
 			} else if (group) {
-				let filtered = this.handleGroupFilter(filterGroup);
+				let filtered = this.handleGroupFilter(filterGroup, options);
 				groupOptions = filtered;
 			} else {
 				let filtered = options.filter((o) => o.label !== 'Categories');
@@ -234,61 +163,50 @@ class SearchBar extends React.Component {
 
 		return (
 			<div>
-				{!loaded && pending &&
-					<div className="loading">
-						<CircularProgress
-							size={100}
-							thickness={7}
+				<form
+					onSubmit={this.submitQuery}
+					className="search-container"
+				>
+					<div className="inline-block dashboard-search">
+						<Select
+							multi
+							noResultsText="Sorry, your request is invalid"
+							onChange={this.handleChange}
+						  options={groupOptions}
+							value={selectedOption}
 						/>
 					</div>
-				}
-				{
-					loaded &&
-					<form
-						onSubmit={this.submitQuery}
-						className="search-container"
-					>
-						<div className="inline-block dashboard-search">
-							<Select
-								multi
-								noResultsText="Sorry, your request is invalid"
-								onChange={this.handleChange}
-							  options={groupOptions}
-								value={selectedOption}
-							/>
-						</div>
-						<div className="inline-block">
-							<button
-								className={`
-									${isDisabled ? 'disabled-color' : 'active-color'}
-									search-btn
-								`}
-								disabled={isDisabled}
-							>
-								Search
-							</button>
-						</div>
-						<h4>Please Select a Date Range</h4>
-						<div>
-			         <DatePicker
-			           onChange={this.handleChangeMinDate}
-			           autoOk
-			           floatingLabelText="Min Date"
-			           defaultDate={minDate}
-			           locale="en-US"
-			           floatingLabelStyle={{ zIndex: 0 }}
-			         />
-			         <DatePicker
-			           onChange={this.handleChangeMaxDate}
-			           autoOk
-			           floatingLabelText="Max Date"
-			           defaultDate={maxDate}
-			           locale="en-US"
-			           floatingLabelStyle={{ zIndex: 0 }}
-			         />
-						</div>
-					</form>
-				}
+					<div className="inline-block">
+						<button
+							className={`
+								${isDisabled ? 'disabled-color' : 'active-color'}
+								search-btn
+							`}
+							disabled={isDisabled}
+						>
+							Search
+						</button>
+					</div>
+					<h4>Please Select a Date Range</h4>
+					<div>
+		         <DatePicker
+		           onChange={this.handleChangeMinDate}
+		           autoOk
+		           floatingLabelText="Min Date"
+		           defaultDate={minDate}
+		           locale="en-US"
+		           floatingLabelStyle={{ zIndex: 0 }}
+		         />
+		         <DatePicker
+		           onChange={this.handleChangeMaxDate}
+		           autoOk
+		           floatingLabelText="Max Date"
+		           defaultDate={maxDate}
+		           locale="en-US"
+		           floatingLabelStyle={{ zIndex: 0 }}
+		         />
+					</div>
+				</form>
 			</div>
 		);
 	}

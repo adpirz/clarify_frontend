@@ -7,7 +7,39 @@ import {
   Worksheet,
   SearchBar,
   LoginForm,
-} from './components';
+} from './components/index';
+
+let options = [
+  {
+    label: 'Students',
+    options: [],
+  },
+  {
+    label: 'Sections',
+    options: [],
+  },
+  {
+    label: 'Schools',
+    options: [],
+  },
+  {
+    label: 'Grade Level',
+    options: [],
+  },
+  {
+    label: 'Categories',
+    options: [{
+      label: 'Attendance',
+      value: 'attendance',
+      id: 999,
+    },
+    {
+      label: 'Academic Grades',
+      value: 'student_grades',
+      id: 1000,
+    }],
+  },
+];
 
 class App extends React.Component {
   componentDidMount() {
@@ -20,6 +52,26 @@ class App extends React.Component {
       // User is signed in, so let's make our object api calls.
       this.requestQueryObjects();
     }
+  }
+
+  optionsGenerator = (labelString, dataArray, optionValue) => {
+    let index;
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].label === labelString) {
+        index = i;
+      }
+    }
+
+    dataArray.forEach((dataObj, i) => {
+      let optionsArray = {
+        label: dataObj.name,
+        value: `${optionValue}_${i}`,
+        id: dataObj.id,
+      }
+      if (index !== undefined) {
+        options[index].options.push(optionsArray);
+      }
+    });
   }
 
   userIsAuthenticated = (props) => {
@@ -49,8 +101,8 @@ class App extends React.Component {
 
   queryRequestsFulfilled = (props) => {
     const { schoolGet, gradeLevelGet, sectionGet, studentGet } = props;
-    const allRequestse = PromiseState.all([ schoolGet, gradeLevelGet, sectionGet, studentGet ]);
-    return !allRequestse.fulfilled
+    const allRequests = PromiseState.all([ schoolGet, gradeLevelGet, sectionGet, studentGet ]);
+    return allRequests.fulfilled
   }
 
   getPromiseValues = () => {
@@ -75,22 +127,44 @@ class App extends React.Component {
   }
 
   render() {
+    const promiseValues = this.getPromiseValues();
+    
     if (!this.userIsAuthenticated(this.props)) {
       return <LoginForm lazySessionPost={this.props.lazySessionPost}/>;
     }
 
-    const promiseValues = this.getPromiseValues();
     if (!promiseValues) {
       return null;
     }
 
+    const {
+      gradeLevels,
+      schools,
+      sections,
+      students,
+    } = promiseValues;
+
+    if (gradeLevels.length && schools.length && sections.length && students.length) {
+      this.optionsGenerator('Grade Level', gradeLevels, 'grade_level');
+      this.optionsGenerator('Schools', schools, 'school_name');
+      this.optionsGenerator('Sections', sections, 'section_name');
+      this.optionsGenerator('Students', students, 'student_name');
+    }
+
     return (
       <div>
-        <SearchBar {...this.props}/>
+        <div className="navbar" />
+        <hr />
+        <SearchBar
+          options={options}
+          {...this.props}
+        />
         <BrowserRouter>
           <Switch>
             <Route
-              component={Worksheet}
+              render={(renderProps) => {
+                return <Worksheet {...this.props} />
+              }}
               key="WorksheetRoute"
             />
             <Route
