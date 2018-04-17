@@ -57,15 +57,15 @@ class SearchBar extends React.Component {
 
 	handleChangeMinDate = (event, date) => {
 	  this.setState({ minDate: date });
-	}
+	};
 
 	handleChangeMaxDate = (event, date) => {
 	  this.setState({ maxDate: date });
-	}
+	};
 
 	handleChange = (selectedOption) => {
 		this.setState({ selectedOption });
-	}
+	};
 
 	handleGroupFilter = (filterGroup) => {
 		return options.filter((o) => {
@@ -81,7 +81,7 @@ class SearchBar extends React.Component {
 				return o;
 			}
 		});
-	}
+	};
 
 	handleGroupCategoryFilter = (filterGroup) => {
 		return options.filter((o) => {
@@ -91,12 +91,19 @@ class SearchBar extends React.Component {
 				return o;
 			}
 		});
-	}
+	};
 
 	formatValue = (value) => {
 		let splitValue = value.split('_');
 		return (value !== 'attendance') ? `${splitValue[0]}_${splitValue[1]}` : 'attendance';
-	}
+	};
+
+	checkGroupValue = (value) => {
+		return (value === 'student_name' || value === 'school_name' ||
+					value === 'section_name' || value === 'grade_level');
+	};
+
+	checkCategoryValue = (value) => (value === 'student_grades' || value === 'attendance');
 
 	optionsGenerator = (labelString, dataArray, optionValue) => {
 		let index;
@@ -116,10 +123,11 @@ class SearchBar extends React.Component {
 				options[index].options.push(optionsArray);
 			}
 		});
-	}
+	};
 
 	submitQuery = (e) => {
 		e.preventDefault();
+		const { submitReportQuery } = this.props;
 		const { selectedOption, minDate, maxDate } = this.state;
 
 		let group;
@@ -127,63 +135,54 @@ class SearchBar extends React.Component {
 
 		let groupId = [];
 
-		for (let i = 0; i < selectedOption.length; i++) {
-			let { value, id } = selectedOption[i];
+		selectedOption.forEach(option => {
+			let { value, id } = option;
 			value = this.formatValue(value);
 
-			if (value === 'student_name' || value === 'school_name' ||
-				value === 'section_name' || value === 'grade_level') {
+			if (this.checkGroupValue(value)) {
 				group = value;
 				groupId.push(id);
 			}
-			if (value === 'attendance' || value === 'student_grades') {
+
+			if (this.checkCategoryValue(value)) {
 				category = value;
 			}
-		}
+		});
 
-		return fetch(`/report/group=${group}&${group}_id=
-			${groupId}&category=${category}&
-			from_date=${minDate}&to_date=${maxDate}`,
-			{
-	      headers : {
-	        'Content-Type': 'application/json',
-	        'Accept': 'application/json'
-      	},
-      })
-			.then((response) => response.json())
-			.then((json) => json)
-			.catch((err) => {
-				// TODO: Make error handling for client
-				console.error('Looks like there was an error on our end, please try again later');
-			});
-	}
-
+		submitReportQuery(group, groupId, category, minDate, maxDate);
+	};
+	
 	validateQuery = () => {
 		const { selectedOption } = this.state;
 
 		let partOne = false;
 		let partTwo = false;
 
-		for (let i = 0; i < selectedOption.length; i++) {
-			let { value } = selectedOption[i];
+		selectedOption.forEach((option) => {
+			let { value } = option;
 			value = this.formatValue(value);
 
-			if (value === 'student_name' || value === 'school_name' ||
-					value === 'section_name' || value === 'grade_level') {
+			if (this.checkGroupValue(value)) {
 				partOne = true;
 			}
-			if (value === 'student_grades' || value === 'attendance') {
+
+			if (this.checkCategoryValue(value)) {
 				partTwo = true;
 			}
-		}
+		});
 
 		return partOne && partTwo ? false : true;
-	}
+	};
 
 	render() {
 		const { selectedOption, minDate, maxDate } = this.state;
 		const isDisabled = this.validateQuery();
-		const { schoolFetch, gradeLevelFetch, sectionFetch, studentFetch } = this.props;
+		const {
+			schoolFetch,
+			gradeLevelFetch,
+			sectionFetch,
+			studentFetch,
+		} = this.props;
 
 		const allFetches = PromiseState.all([ schoolFetch, gradeLevelFetch, sectionFetch, studentFetch ]);
 
@@ -207,20 +206,20 @@ class SearchBar extends React.Component {
 		if (selectedOption.length) {
 			let group = false;
 			let category = false;
-			for (let i = 0; i < selectedOption.length; i++) {
-				let { value } = selectedOption[i];
+
+			selectedOption.forEach(option => {
+				let { value } = option;
 				value = this.formatValue(value);
 				
-				if (value === 'student_name' || value === 'school_name' ||
-					value === 'section_name' || value === 'grade_level') {
+				if (this.checkGroupValue(value)) {
 					group = true;
 					filterGroup = value.split('_')[0];
 				}
 				
-				if (value === 'attendance' || value === 'student_grades') {
+				if (this.checkCategoryValue(value)) {
 					category = true;
 				}
-			}
+			});
 
 			if (category && group) {
 				let filtered = this.handleGroupCategoryFilter(filterGroup);
