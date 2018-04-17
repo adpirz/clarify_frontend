@@ -1,47 +1,59 @@
 import _ from 'lodash';
 import React from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { PromiseState } from 'react-refetch';
-import Worksheet from './routes/Worksheet/Worksheet';
-import ReportDetail from './routes/ReportDetail/components/ReportDetail/ReportDetail';
-
+import {
+  ReportDetail,
+  Worksheet,
+  SearchBar,
+  LoginForm,
+} from './components';
 
 class App extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    if (this.userIsLoggedIn(nextProps)) {
-
-    }
+  componentDidMount() {
+    this.props.lazySessionGet();
   }
 
-  userIsLoggedIn = (props) => {
-    const { sessionGet } = props;
-    if (!sessionGet || !sessionGet.fulfilled) {
-      return false;
-    }
-    return sessionGet.status in ['200', '201'];
+  requestQueryObjects = () => {
+    const {
+      lazyStudentGet,
+      lazySectionGet,
+      lazyGradeLevelGet,
+      lazySchoolGet,
+    } = this.props;
+
+    lazyStudentGet();
+    lazySectionGet();
+    lazyGradeLevelGet();
+    lazySchoolGet();
   }
 
-  requestsHaveBeenMade = (props) => {
+  queryRequestsMade = (props) => {
     const { schoolGet, gradeLevelGet, sectionGet, studentGet } = props;
-    return schoolGet && gradeLevelGet && sectionGet && studentGet)
+    return schoolGet && gradeLevelGet && sectionGet && studentGet;
   }
 
-  requestsHaveBeenFulfilled = (props) => {
+  queryRequestsFulfilled = (props) => {
     const { schoolGet, gradeLevelGet, sectionGet, studentGet } = props;
     const allRequestse = PromiseState.all([ schoolGet, gradeLevelGet, sectionGet, studentGet ]);
     return !allRequestse.fulfilled
   }
 
   getPromiseValues = () => {
-    if (!this.requestsHaveBeenMade(this.props) || !requestsHaveBeenFulfilled(this.props) {
+    if (!this.queryRequestsMade(this.props) || !this.queryRequestsFulfilled(this.props)) {
       return null;
     }
-    const { studentGet, gradeLevelGet, sectionGet, schoolGet } = props;
+    const {
+      studentGet,
+      gradeLevelGet,
+      sectionGet,
+      schoolGet,
+    } = this.props;
 
     const promiseValues = {
       students: _.get(studentGet, 'value.data', []),
       gradeLevels: _.get(gradeLevelGet, 'value.data', []),
-      sections: _.get(studentGet, 'value.data', []),
+      sections: _.get(sectionGet, 'value.data', []),
       schools: _.get(schoolGet, 'value.data', []),
     };
 
@@ -49,19 +61,15 @@ class App extends React.Component {
   }
 
   render() {
-    if (!this.getPromiseValues()) {
-      return null;
-    }
+    return <LoginForm lazySessionPost={this.props.lazySessionPost}/>;
 
     return (
       <div>
         <BrowserRouter>
-          <div>
+          <SearchBar />
+          <Switch>
             <Route
-              path={`/`}
-              render={(routerProps) => (
-                <Worksheet {...this.props} {...routerProps} />
-              )}
+              component={Worksheet}
               key="WorksheetRoute"
             />
             <Route
@@ -70,7 +78,7 @@ class App extends React.Component {
               exact
               key="ReportDetailRoute"
             />
-          </div>
+          </Switch>
         </BrowserRouter>
       </div>
     );

@@ -20,10 +20,16 @@ export default connect(() => {
       schoolGet: `${BASE_API_URL}/api/school/`,
     }),
     lazySessionPost: (username, password) => ({
-      sessionPost: `${BASE_API_URL}/api/session/`,
+      sessionPost: {
+        method: 'POST',
+        body: JSON.stringify({username, password}),
+        url: `${BASE_API_URL}/api/session/`,
+      },
     }),
     lazySessionGet: () => ({
-      sessionGet: `${BASE_API_URL}/api/session/`,
+      sessionGet: {
+        url: `${BASE_API_URL}/api/session/`,
+      },
     }),
   };
 })(App);
