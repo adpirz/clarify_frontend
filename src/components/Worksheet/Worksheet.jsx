@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import './Worksheet.css';
 
@@ -8,10 +9,10 @@ class Worksheet extends React.Component {
 	}
 
 	render() {
-		const { sessionGet: { value: { data } } } = this.props;
+		const userData = _.get(this.props, 'lazyUserGet.value');
 		return (
 			<div className="worksheetContainer">
-				<h4 className="userWorksheetTitle">{data}'s Worksheet</h4>
+				<h4 className="userWorksheetTitle">{userData ? `${userData.first_name} ${userData.last_name}'s worksheet'` : ''}</h4>
 				<hr />
 			</div>
 		);

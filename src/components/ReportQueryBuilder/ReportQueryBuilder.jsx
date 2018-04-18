@@ -5,7 +5,7 @@ import 'react-select-plus/dist/react-select-plus.css';
 
 import './styles.css';
 
-let options = [
+const options = [
   {
     label: 'Students',
     options: [],
@@ -24,16 +24,18 @@ let options = [
   },
   {
     label: 'Categories',
-    options: [{
-      label: 'Attendance',
-      value: 'attendance',
-      id: 999,
-    },
-    {
-      label: 'Academic Grades',
-      value: 'student_grades',
-      id: 1000,
-    }],
+    options: [
+      {
+        label: 'Attendance',
+        value: 'attendance',
+        id: 999,
+      },
+      {
+        label: 'Academic Grades',
+        value: 'grades',
+        id: 1000,
+      }
+    ],
   },
 ];
 
@@ -43,7 +45,7 @@ class ReportQueryBuilder extends React.Component {
 		const minDate = new Date();
 		const maxDate = new Date();
 
-		minDate.setFullYear(minDate.getFullYear()); // will get start of school year date from DB
+		minDate.setFullYear(minDate.getFullYear()); // TODO: get start of school year date from DB
 		maxDate.setFullYear(maxDate.getFullYear());
 
 		this.state = {
@@ -151,7 +153,7 @@ class ReportQueryBuilder extends React.Component {
 
 		submitReportQuery(group, groupId, category, minDate, maxDate);
 	};
-	
+
 	validateQuery = () => {
 		const { selectedOption } = this.state;
 
@@ -187,9 +189,9 @@ class ReportQueryBuilder extends React.Component {
 
 		if (gradeLevels.length && schools.length && sections.length && students.length) {
       this.optionsGenerator('Grade Level', gradeLevels, 'grade_level');
-      this.optionsGenerator('Schools', schools, 'school_name');
-      this.optionsGenerator('Sections', sections, 'section_name');
-      this.optionsGenerator('Students', students, 'student_name');
+      this.optionsGenerator('Schools', schools, 'school');
+      this.optionsGenerator('Sections', sections, 'section');
+      this.optionsGenerator('Students', students, 'name');
     }
 
 		let groupOptions = options;
@@ -203,12 +205,12 @@ class ReportQueryBuilder extends React.Component {
 			selectedOption.forEach(option => {
 				let { value } = option;
 				value = this.formatValue(value);
-				
+
 				if (this.checkGroupValue(value)) {
 					group = true;
 					filterGroup = value.split('_')[0];
 				}
-				
+
 				if (this.checkCategoryValue(value)) {
 					category = true;
 				}

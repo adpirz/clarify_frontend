@@ -4,30 +4,30 @@ import App from './App';
 
 export default connect(() => {
   //TODO: Import baseurl from an environment variable
-  const BASE_API_URL = 'http://localhost:8000'
+  const BASE_URL = 'http://localhost:8000'
 
   return {
     lazyStudentGet: () => ({
       studentGet: {
-        url: `${BASE_API_URL}/api/student/`,
+        url: `${BASE_URL}/api/student/`,
         credentials: 'include',
       },
     }),
     lazySectionGet: () => ({
       sectionGet: {
-        url: `${BASE_API_URL}/api/section/`,
+        url: `${BASE_URL}/api/section/`,
         credentials: 'include',
       },
     }),
     lazyGradeLevelGet: () => ({
       gradeLevelGet: {
-        url: `${BASE_API_URL}/api/grade-level/`,
+        url: `${BASE_URL}/api/grade-level/`,
         credentials: 'include',
       },
     }),
     lazySchoolGet: () => ({
       schoolGet: {
-        url: `${BASE_API_URL}/api/school/`,
+        url: `${BASE_URL}/api/school/`,
         credentials: 'include',
       },
     }),
@@ -35,21 +35,24 @@ export default connect(() => {
       sessionPost: {
         method: 'POST',
         body: JSON.stringify({username, password}),
-        url: `${BASE_API_URL}/api/session/`,
+        url: `${BASE_URL}/api/session/`,
         credentials: 'include',
       },
     }),
-    lazySessionGet: () => ({
-      sessionGet: {
-        url: `${BASE_API_URL}/api/session/`,
+    lazyUserGet: () => ({
+      userGet: {
+        url: `${BASE_URL}/api/user/me`,
         credentials: 'include',
         force: 'true',
       },
     }),
-    submitReportQuery: (group, groupId, category, minDate, maxDate) => {
-      const queryString = `${group}&${group}_id=${groupId}&category=${category}&from_date=${minDate}&to_date=${maxDate}`;
+    submitReportQuery: (group, groupIds, category, minDate, maxDate) => {
+      const queryString = `group=${group}&${group}_id=${groupIds.join(',')}&category=${category}&from_date=${minDate}&to_date=${maxDate}`;
       return {
-        postReportQuery: `${BASE_API_URL}/report/group=${queryString}`,
+        postReportQuery: {
+          url: `${BASE_URL}/report/?${queryString}`,
+          credentials: 'include',
+        },
       }
     }
   };

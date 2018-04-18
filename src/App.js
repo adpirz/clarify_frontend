@@ -11,7 +11,7 @@ import {
 
 class App extends React.Component {
   componentDidMount() {
-    this.props.lazySessionGet();
+    this.props.lazyUserGet();
   }
 
   componentWillReceiveProps = (nextProps) => {
@@ -23,9 +23,9 @@ class App extends React.Component {
   }
 
   userIsAuthenticated = (props) => {
-    const sessionGetStatus = _.get(props, 'sessionGet.meta.response.status');
+    const userGetStatus = _.get(props, 'userGet.meta.response.status');
     const sessionCreateStatus = _.get(props, 'sessionPost.meta.response.status');
-    return sessionGetStatus === 200 || sessionCreateStatus === 200 || sessionCreateStatus === 201;
+    return userGetStatus === 200 || sessionCreateStatus === 200 || sessionCreateStatus === 201;
   }
 
   requestQueryObjects = () => {
@@ -76,7 +76,7 @@ class App extends React.Component {
 
   render() {
     const promiseValues = this.getPromiseValues();
-    
+
     if (!this.userIsAuthenticated(this.props)) {
       return <LoginForm lazySessionPost={this.props.lazySessionPost}/>;
     }
@@ -85,22 +85,12 @@ class App extends React.Component {
       return null;
     }
 
-    const {
-      gradeLevels,
-      schools,
-      sections,
-      students,
-    } = promiseValues;
-
     return (
       <div>
         <div className="navbar" />
         <hr />
         <ReportQueryBuilder
-          gradeLevels={gradeLevels}
-          schools={schools}
-          sections={sections}
-          students={students}
+          {...promiseValues}
           submitReportQuery={this.props.submitReportQuery}
         />
         <BrowserRouter>
