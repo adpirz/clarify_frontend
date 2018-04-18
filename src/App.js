@@ -3,43 +3,11 @@ import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { PromiseState } from 'react-refetch';
 import {
-  ReportDetail,
-  Worksheet,
-  SearchBar,
   LoginForm,
+  ReportDetail,
+  ReportQueryBuilder,
+  Worksheet,
 } from './components/index';
-
-let options = [
-  {
-    label: 'Students',
-    options: [],
-  },
-  {
-    label: 'Sections',
-    options: [],
-  },
-  {
-    label: 'Schools',
-    options: [],
-  },
-  {
-    label: 'Grade Level',
-    options: [],
-  },
-  {
-    label: 'Categories',
-    options: [{
-      label: 'Attendance',
-      value: 'attendance',
-      id: 999,
-    },
-    {
-      label: 'Academic Grades',
-      value: 'student_grades',
-      id: 1000,
-    }],
-  },
-];
 
 class App extends React.Component {
   componentDidMount() {
@@ -52,26 +20,6 @@ class App extends React.Component {
       // User is signed in, so let's make our object api calls.
       this.requestQueryObjects();
     }
-  }
-
-  optionsGenerator = (labelString, dataArray, optionValue) => {
-    let index;
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].label === labelString) {
-        index = i;
-      }
-    }
-
-    dataArray.forEach((dataObj, i) => {
-      let optionsArray = {
-        label: dataObj.name,
-        value: `${optionValue}_${i}`,
-        id: dataObj.id,
-      }
-      if (index !== undefined) {
-        options[index].options.push(optionsArray);
-      }
-    });
   }
 
   userIsAuthenticated = (props) => {
@@ -144,20 +92,16 @@ class App extends React.Component {
       students,
     } = promiseValues;
 
-    if (gradeLevels.length && schools.length && sections.length && students.length) {
-      this.optionsGenerator('Grade Level', gradeLevels, 'grade_level');
-      this.optionsGenerator('Schools', schools, 'school_name');
-      this.optionsGenerator('Sections', sections, 'section_name');
-      this.optionsGenerator('Students', students, 'student_name');
-    }
-
     return (
       <div>
         <div className="navbar" />
         <hr />
-        <SearchBar
-          options={options}
-          {...this.props}
+        <ReportQueryBuilder
+          gradeLevels={gradeLevels}
+          schools={schools}
+          sections={sections}
+          students={students}
+          submitReportQuery={this.props.submitReportQuery}
         />
         <BrowserRouter>
           <Switch>

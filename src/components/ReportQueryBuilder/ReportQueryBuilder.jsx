@@ -5,7 +5,39 @@ import 'react-select-plus/dist/react-select-plus.css';
 
 import './styles.css';
 
-class SearchBar extends React.Component {
+let options = [
+  {
+    label: 'Students',
+    options: [],
+  },
+  {
+    label: 'Sections',
+    options: [],
+  },
+  {
+    label: 'Schools',
+    options: [],
+  },
+  {
+    label: 'Grade Level',
+    options: [],
+  },
+  {
+    label: 'Categories',
+    options: [{
+      label: 'Attendance',
+      value: 'attendance',
+      id: 999,
+    },
+    {
+      label: 'Academic Grades',
+      value: 'student_grades',
+      id: 1000,
+    }],
+  },
+];
+
+class ReportQueryBuilder extends React.Component {
 	constructor(props) {
 		super(props);
 		const minDate = new Date();
@@ -33,7 +65,7 @@ class SearchBar extends React.Component {
 		this.setState({ selectedOption });
 	};
 
-	handleGroupFilter = (filterGroup, options) => {
+	handleGroupFilter = (filterGroup) => {
 		return options.filter((o) => {
 			let { label } = o;
 			if (label === 'Schools' || label === 'Sections' ||
@@ -50,7 +82,7 @@ class SearchBar extends React.Component {
 		});
 	};
 
-	handleGroupCategoryFilter = (filterGroup, options) => {
+	handleGroupCategoryFilter = (filterGroup) => {
 		return options.filter((o) => {
 			let { label } = o;
 			label = label.toLowerCase();
@@ -72,6 +104,26 @@ class SearchBar extends React.Component {
 	};
 
 	checkCategoryValue = (value) => (value === 'student_grades' || value === 'attendance');
+
+	optionsGenerator = (labelString, dataArray, optionValue) => {
+    let index;
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].label === labelString) {
+        index = i;
+      }
+    }
+
+    dataArray.forEach((dataObj, i) => {
+      let optionsArray = {
+        label: dataObj.name,
+        value: `${optionValue}_${i}`,
+        id: dataObj.id,
+      }
+      if (index !== undefined) {
+        options[index].options.push(optionsArray);
+      }
+    });
+  }
 
 	submitQuery = (e) => {
 		e.preventDefault();
@@ -124,8 +176,21 @@ class SearchBar extends React.Component {
 
 	render() {
 		const { selectedOption, minDate, maxDate } = this.state;
-		const { options } = this.props;
+		const {
+			gradeLevels,
+			schools,
+			sections,
+			students,
+		} = this.props;
+
 		const isDisabled = this.validateQuery();
+
+		if (gradeLevels.length && schools.length && sections.length && students.length) {
+      this.optionsGenerator('Grade Level', gradeLevels, 'grade_level');
+      this.optionsGenerator('Schools', schools, 'school_name');
+      this.optionsGenerator('Sections', sections, 'section_name');
+      this.optionsGenerator('Students', students, 'student_name');
+    }
 
 		let groupOptions = options;
 
@@ -150,10 +215,10 @@ class SearchBar extends React.Component {
 			});
 
 			if (category && group) {
-				let filtered = this.handleGroupCategoryFilter(filterGroup, options);
+				let filtered = this.handleGroupCategoryFilter(filterGroup);
 				groupOptions = filtered;
 			} else if (group) {
-				let filtered = this.handleGroupFilter(filterGroup, options);
+				let filtered = this.handleGroupFilter(filterGroup);
 				groupOptions = filtered;
 			} else {
 				let filtered = options.filter((o) => o.label !== 'Categories');
@@ -212,4 +277,4 @@ class SearchBar extends React.Component {
 	}
 }
 
-export default SearchBar;
+export default ReportQueryBuilder;
