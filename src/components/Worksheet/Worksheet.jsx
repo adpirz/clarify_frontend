@@ -12,7 +12,7 @@ class Worksheet extends React.Component {
 		const userData = _.get(this.props, 'lazyUserGet.value');
 		return (
 			<div className="worksheetContainer">
-				<h4 className="userWorksheetTitle">{userData ? `${userData.first_name} ${userData.last_name}'s '` : ''}Worksheet</h4>
+				<h4 className="userWorksheetTitle">{userData ? `${userData.first_name} ${userData.last_name}'s'` : ''}&nbsp;Worksheet</h4>
 				<hr />
 			</div>
 		);

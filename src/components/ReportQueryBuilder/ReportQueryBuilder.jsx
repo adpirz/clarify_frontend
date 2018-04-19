@@ -56,6 +56,24 @@ class ReportQueryBuilder extends React.Component {
 		};
 	}
 
+	componentWillMount() {
+		const {
+			gradeLevels,
+			schools,
+			sections,
+			students,
+		} = this.props;
+		const { loaded } = this.state;
+
+		if (loaded && gradeLevels.length && schools.length && sections.length && students.length) {
+      this.optionsGenerator('Grade Level', gradeLevels, 'grade_level');
+      this.optionsGenerator('Schools', schools, 'school');
+      this.optionsGenerator('Sections', sections, 'section');
+      this.optionsGenerator('Students', students, 'student');
+      this.setState({ loaded: false });
+    }
+	}
+
 	handleChangeMinDate = (event, date) => {
 	  this.setState({ minDate: date });
 	};
@@ -128,6 +146,10 @@ class ReportQueryBuilder extends React.Component {
     });
   }
 
+  setLoadFunction = () => {
+  	this.setState({ loaded: false });
+  }
+
 	submitQuery = (e) => {
 		e.preventDefault();
 		const { submitReportQuery } = this.props;
@@ -182,25 +204,9 @@ class ReportQueryBuilder extends React.Component {
 			selectedOption,
 			minDate,
 			maxDate,
-			loaded,
 		} = this.state;
-		const {
-			gradeLevels,
-			schools,
-			sections,
-			students,
-		} = this.props;
 
 		const isDisabled = this.validateQuery();
-
-		if (loaded && gradeLevels.length && schools.length && sections.length && students.length) {
-      this.optionsGenerator('Grade Level', gradeLevels, 'grade_level');
-      this.optionsGenerator('Schools', schools, 'school');
-      this.optionsGenerator('Sections', sections, 'section');
-      this.optionsGenerator('Students', students, 'student');
-      this.setState({ loaded: false }); // makes sure this conditional statement is only hit once upon 
-      
-    }
 
 		let groupOptions = options;
 
@@ -231,7 +237,6 @@ class ReportQueryBuilder extends React.Component {
 				let filtered = this.handleGroupFilter(filterGroup);
 				groupOptions = filtered;
 			} else {
-				console.log('what?')
 				let filtered = options.filter((o) => o.label !== 'Categories');
 				groupOptions = filtered;
 			}
