@@ -52,6 +52,7 @@ class ReportQueryBuilder extends React.Component {
 			selectedOption: [],
       minDate: minDate,
       maxDate: maxDate,
+      loaded: true,
 		};
 	}
 
@@ -177,7 +178,12 @@ class ReportQueryBuilder extends React.Component {
 	};
 
 	render() {
-		const { selectedOption, minDate, maxDate } = this.state;
+		const {
+			selectedOption,
+			minDate,
+			maxDate,
+			loaded,
+		} = this.state;
 		const {
 			gradeLevels,
 			schools,
@@ -187,11 +193,13 @@ class ReportQueryBuilder extends React.Component {
 
 		const isDisabled = this.validateQuery();
 
-		if (gradeLevels.length && schools.length && sections.length && students.length) {
+		if (loaded && gradeLevels.length && schools.length && sections.length && students.length) {
       this.optionsGenerator('Grade Level', gradeLevels, 'grade_level');
       this.optionsGenerator('Schools', schools, 'school');
       this.optionsGenerator('Sections', sections, 'section');
       this.optionsGenerator('Students', students, 'student');
+      this.setState({ loaded: false }); // makes sure this conditional statement is only hit once upon 
+      
     }
 
 		let groupOptions = options;
@@ -215,9 +223,6 @@ class ReportQueryBuilder extends React.Component {
 					category = true;
 				}
 			});
-
-			console.log('category: ', category);
-			console.log('group: ', group);
 
 			if (category && group) {
 				let filtered = this.handleGroupCategoryFilter(filterGroup);
