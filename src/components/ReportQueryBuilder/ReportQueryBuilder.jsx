@@ -97,15 +97,15 @@ class ReportQueryBuilder extends React.Component {
 
 	formatValue = (value) => {
 		let splitValue = value.split('_');
-		return (value !== 'attendance') ? `${splitValue[0]}_${splitValue[1]}` : 'attendance';
+		return (splitValue.length === 3) ? `${splitValue[0]}_${splitValue[1]}` : splitValue[0];
 	};
 
 	checkGroupValue = (value) => {
-		return (value === 'student_name' || value === 'school_name' ||
-					value === 'section_name' || value === 'grade_level');
+		return (value === 'student' || value === 'school' ||
+					value === 'section' || value === 'grade_level');
 	};
 
-	checkCategoryValue = (value) => (value === 'student_grades' || value === 'attendance');
+	checkCategoryValue = (value) => (value === 'grades' || value === 'attendance');
 
 	optionsGenerator = (labelString, dataArray, optionValue) => {
     let index;
@@ -191,7 +191,7 @@ class ReportQueryBuilder extends React.Component {
       this.optionsGenerator('Grade Level', gradeLevels, 'grade_level');
       this.optionsGenerator('Schools', schools, 'school');
       this.optionsGenerator('Sections', sections, 'section');
-      this.optionsGenerator('Students', students, 'name');
+      this.optionsGenerator('Students', students, 'student');
     }
 
 		let groupOptions = options;
@@ -216,6 +216,9 @@ class ReportQueryBuilder extends React.Component {
 				}
 			});
 
+			console.log('category: ', category);
+			console.log('group: ', group);
+
 			if (category && group) {
 				let filtered = this.handleGroupCategoryFilter(filterGroup);
 				groupOptions = filtered;
@@ -223,6 +226,7 @@ class ReportQueryBuilder extends React.Component {
 				let filtered = this.handleGroupFilter(filterGroup);
 				groupOptions = filtered;
 			} else {
+				console.log('what?')
 				let filtered = options.filter((o) => o.label !== 'Categories');
 				groupOptions = filtered;
 			}

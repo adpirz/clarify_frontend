@@ -8,6 +8,7 @@ import {
   ReportQueryBuilder,
   Worksheet,
 } from './components/index';
+import './App.css';
 
 class App extends React.Component {
   componentDidMount() {
