@@ -50,8 +50,18 @@ class App extends React.Component {
 
   queryRequestsFulfilled = (props) => {
     const { schoolGet, gradeLevelGet, sectionGet, studentGet } = props;
-    const allRequests = PromiseState.all([ schoolGet, gradeLevelGet, sectionGet, studentGet ]);
+    const allRequests = PromiseState.all([schoolGet, gradeLevelGet, sectionGet, studentGet]);
     return allRequests.fulfilled
+  }
+
+  submitQueryFulfilled = () => {
+    if (this.props.postReportQuery) {
+      const { postReportQuery } = this.props;
+      const postRequestResponse = PromiseState.all([postReportQuery]);
+      if (postRequestResponse.fulfilled) {
+        return postRequestResponse.value[0].data;
+      }
+    }
   }
 
   getPromiseValues = () => {
@@ -79,12 +89,14 @@ class App extends React.Component {
     const promiseValues = this.getPromiseValues();
 
     if (!this.userIsAuthenticated(this.props)) {
-      return <LoginForm lazySessionPost={this.props.lazySessionPost}/>;
+      return <LoginForm lazySessionPost={this.props.lazySessionPost} />;
     }
 
     if (!promiseValues) {
       return null;
     }
+
+    const queryResponseValues = this.submitQueryFulfilled();
 
     return (
       <div>
@@ -98,7 +110,12 @@ class App extends React.Component {
           <Switch>
             <Route
               render={(renderProps) => {
-                return <Worksheet {...this.props} />
+                return (
+                  <Worksheet
+                    {...this.props}
+                    queryResponseValues={queryResponseValues}
+                  />
+                )
               }}
               key="WorksheetRoute"
             />

@@ -34,7 +34,7 @@ export default connect(() => {
     lazySessionPost: (username, password) => ({
       sessionPost: {
         method: 'POST',
-        body: JSON.stringify({username, password}),
+        body: JSON.stringify({ username, password }),
         url: `${BASE_URL}/api/session/`,
         credentials: 'include',
       },
@@ -47,7 +47,7 @@ export default connect(() => {
       },
     }),
     submitReportQuery: (group, groupIds, category, minDate, maxDate) => {
-      const queryString = `group=${group}&${group}_id=${groupIds.join(',')}&category=${category}&from_date=${minDate}&to_date=${maxDate}`;
+      const queryString = `group=${group}&${group}_ids=${groupIds.join(',')}&category=${category}&from_date=${minDate}&to_date=${maxDate}`;
       return {
         postReportQuery: {
           url: `${BASE_URL}/report/?${queryString}`,
