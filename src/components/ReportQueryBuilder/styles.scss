@@ -1,0 +1,44 @@
+.search-container {
+	margin: 50px auto 0;
+	width: 50%;
+
+}
+
+.inline-block {
+	display: inline-block;
+}
+
+.dashboard-search {
+	width: 85%;
+}
+
+.active-color {
+	background-color: #00b5ad;
+}
+
+.disabled-color {
+	background-color: #d3d3d3;
+}
+
+.search-btn {
+	color: #fff;
+	border: 0;
+  border-radius: 4px;
+  border-spacing: 0;
+  border-collapse: separate;
+  height: 36px;
+  outline: none;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  top: -14px;
+  line-height: 17px;
+}
+
+.active-color:hover {
+	cursor: pointer;
+}
+
+.loading {
+	text-align: center;
+}
