@@ -8,7 +8,6 @@ import {
   ReportQueryBuilder,
   Worksheet,
 } from './components/index';
-import './App.css';
 
 class App extends React.Component {
   componentDidMount() {
@@ -100,7 +99,6 @@ class App extends React.Component {
 
     return (
       <div>
-        <div className="navbar" />
         <hr />
         <ReportQueryBuilder
           {...promiseValues}
