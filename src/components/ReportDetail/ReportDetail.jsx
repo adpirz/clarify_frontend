@@ -35,13 +35,15 @@ class ReportDetail extends React.Component {
   renderData = () => {
     const { queryResponseValues } = this.props;
     let result = [];
-    for (let i = 0; i < queryResponseValues.length; i++) {
-      let id = queryResponseValues[i].student_id;
-      let data = this.formatData(queryResponseValues[i]);
-      let studentName = this.findStudent(id);
-      data.firstName = studentName[0];
-      data.lastName = studentName[1];
-      result.push(data);
+    if (queryResponseValues) {
+      for (let i = 0; i < queryResponseValues.length; i++) {
+        let id = queryResponseValues[i].student_id;
+        let data = this.formatData(queryResponseValues[i]);
+        let studentName = this.findStudent(id);
+        data.firstName = studentName[0];
+        data.lastName = studentName[1];
+        result.push(data);
+      }
     }
     return result;
   }
@@ -56,12 +58,15 @@ class ReportDetail extends React.Component {
       Header: 'Last Name',
       accessor: 'lastName'
     }];
-    for (let prop in queryResponseValues[0].data) {
-      let header = this.formatHeader(prop);
-      columns.push({
-        Header: header,
-        accessor: prop,
-      });
+
+    if (queryResponseValues) {
+      for (let prop in queryResponseValues[0].data) {
+        let header = this.formatHeader(prop);
+        columns.push({
+          Header: header,
+          accessor: prop,
+        });
+      }
     }
     return columns;
   }
