@@ -57,9 +57,9 @@ class App extends React.Component {
   submitQueryFulfilled = () => {
     if (this.props.postReportQuery) {
       const { postReportQuery } = this.props;
-      const postRequestResponse = PromiseState.all([postReportQuery]);
+      const postRequestResponse = PromiseState.resolve(postReportQuery);
       if (postRequestResponse.fulfilled) {
-        return postRequestResponse.value[0].data;
+        return postRequestResponse.value.data;
       }
     }
   }

@@ -14,6 +14,7 @@ class WorksheetList extends React.Component {
       <div>
         {queryResponseValues &&
           <WorksheetItem
+            queryResponseValues={queryResponseValues}
             selectReport={selectReport}
           />
         }
