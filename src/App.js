@@ -87,6 +87,7 @@ class App extends React.Component {
 
   render() {
     const promiseValues = this.getPromiseValues();
+    const queryResponseValues = this.submitQueryFulfilled();
 
     if (!this.userIsAuthenticated(this.props)) {
       return <LoginForm lazySessionPost={this.props.lazySessionPost} />;
@@ -95,8 +96,6 @@ class App extends React.Component {
     if (!promiseValues) {
       return null;
     }
-
-    const queryResponseValues = this.submitQueryFulfilled();
 
     return (
       <div>
@@ -113,6 +112,7 @@ class App extends React.Component {
                 return (
                   <Worksheet
                     {...this.props}
+                    students={promiseValues.students}
                     queryResponseValues={queryResponseValues}
                   />
                 )

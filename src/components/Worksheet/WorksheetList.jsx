@@ -9,15 +9,13 @@ class WorksheetList extends React.Component {
   }
 
   render() {
-    const { queryResponseValues } = this.props;
+    const { queryResponseValues, selectReport } = this.props;
     return (
       <div>
         {queryResponseValues &&
-          queryResponseValues.map((value, i) => {
-            return (
-              <WorksheetItem value={value} key={`worksheet-${i}`} />
-            );
-          })
+          <WorksheetItem
+            selectReport={selectReport}
+          />
         }
       </div>
     );

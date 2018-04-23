@@ -17,10 +17,12 @@ class WorksheetItem extends React.Component {
   }
 
   render() {
-    const { value } = this.props;
-    console.log('value: ', value);
+    const { selectReport } = this.props;
     return (
-      <div className="inline-block">
+      <div
+        onClick={() => selectReport()}
+        className="inline-block"
+      >
         <Paper style={style} zDepth={2} rounded={false}>
           <div>
             <div className="worksheetTitle">title
