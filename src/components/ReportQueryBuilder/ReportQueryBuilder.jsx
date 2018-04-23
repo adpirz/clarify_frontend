@@ -15,7 +15,7 @@ const reactSelectOptions = [
     options: [],
   },
   {
-    label: 'Schools',
+    label: 'Sites',
     options: [],
   },
   {
@@ -58,14 +58,14 @@ class ReportQueryBuilder extends React.Component {
   componentWillMount() {
     const {
       gradeLevels,
-      schools,
+      sites,
       sections,
       students,
     } = this.props;
 
-    if (gradeLevels.length && schools.length && sections.length && students.length) {
+    if (gradeLevels.length && sites.length && sections.length && students.length) {
       this.optionsGenerator('Grade Level', gradeLevels, 'grade_level');
-      this.optionsGenerator('Schools', sites, 'site');
+      this.optionsGenerator('Sites', sites, 'site');
       this.optionsGenerator('Sections', sections, 'section');
       this.optionsGenerator('Students', students, 'student');
     }
@@ -86,7 +86,7 @@ class ReportQueryBuilder extends React.Component {
   handleGroupFilter = (filterGroup) => {
     return reactSelectOptions.filter((o) => {
       let { label } = o;
-      if (label === 'Schools' || label === 'Sections' ||
+      if (label === 'Sites' || label === 'Sections' ||
         label === 'Students' || label === 'Grade Level') {
         label = label.toLowerCase();
         if (label.includes(filterGroup)) {
@@ -117,7 +117,7 @@ class ReportQueryBuilder extends React.Component {
   };
 
   checkGroupValue = (value) => {
-    return (value === 'student' || value === 'school' ||
+    return (value === 'student' || value === 'site' ||
       value === 'section' || value === 'grade_level');
   };
 
