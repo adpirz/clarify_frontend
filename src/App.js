@@ -33,23 +33,23 @@ class App extends React.Component {
       lazyStudentGet,
       lazySectionGet,
       lazyGradeLevelGet,
-      lazySchoolGet,
+      lazySiteGet,
     } = this.props;
 
     lazyStudentGet();
     lazySectionGet();
     lazyGradeLevelGet();
-    lazySchoolGet();
+    lazySiteGet();
   }
 
   queryRequestsMade = (props) => {
-    const { schoolGet, gradeLevelGet, sectionGet, studentGet } = props;
-    return schoolGet && gradeLevelGet && sectionGet && studentGet;
+    const { siteGet, gradeLevelGet, sectionGet, studentGet } = props;
+    return !!(siteGet && gradeLevelGet && sectionGet && studentGet);
   }
 
   queryRequestsFulfilled = (props) => {
-    const { schoolGet, gradeLevelGet, sectionGet, studentGet } = props;
-    const allRequests = PromiseState.all([schoolGet, gradeLevelGet, sectionGet, studentGet]);
+    const { siteGet, gradeLevelGet, sectionGet, studentGet } = props;
+    const allRequests = PromiseState.all([siteGet, gradeLevelGet, sectionGet, studentGet]);
     return allRequests.fulfilled
   }
 
@@ -71,14 +71,14 @@ class App extends React.Component {
       studentGet,
       gradeLevelGet,
       sectionGet,
-      schoolGet,
+      siteGet,
     } = this.props;
 
     const promiseValues = {
       students: _.get(studentGet, 'value.data', []),
       gradeLevels: _.get(gradeLevelGet, 'value.data', []),
       sections: _.get(sectionGet, 'value.data', []),
-      schools: _.get(schoolGet, 'value.data', []),
+      sites: _.get(siteGet, 'value.data', []),
     };
 
     return promiseValues;

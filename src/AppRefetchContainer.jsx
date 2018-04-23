@@ -25,9 +25,9 @@ export default connect(() => {
         credentials: 'include',
       },
     }),
-    lazySchoolGet: () => ({
-      schoolGet: {
-        url: `${BASE_URL}/api/school/`,
+    lazySiteGet: () => ({
+      siteGet: {
+        url: `${BASE_URL}/api/site/`,
         credentials: 'include',
       },
     }),

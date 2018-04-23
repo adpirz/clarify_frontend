@@ -65,7 +65,7 @@ class ReportQueryBuilder extends React.Component {
 
     if (gradeLevels.length && schools.length && sections.length && students.length) {
       this.optionsGenerator('Grade Level', gradeLevels, 'grade_level');
-      this.optionsGenerator('Schools', schools, 'school');
+      this.optionsGenerator('Schools', sites, 'site');
       this.optionsGenerator('Sections', sections, 'section');
       this.optionsGenerator('Students', students, 'student');
     }
