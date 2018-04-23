@@ -5,7 +5,7 @@ import 'react-select-plus/dist/react-select-plus.css';
 
 import './styles.css';
 
-const options = [
+const reactSelectOptions = [
   {
     label: 'Students',
     options: [],
@@ -40,96 +40,93 @@ const options = [
 ];
 
 class ReportQueryBuilder extends React.Component {
-	constructor(props) {
-		super(props);
-		const minDate = new Date();
-		const maxDate = new Date();
+  constructor(props) {
+    super(props);
+    const minDate = new Date();
+    const maxDate = new Date();
 
-		minDate.setFullYear(minDate.getFullYear()); // TODO: get start of school year date from DB
-		maxDate.setFullYear(maxDate.getFullYear());
+    minDate.setFullYear(minDate.getFullYear()); // TODO: get start of school year date from DB
+    maxDate.setFullYear(maxDate.getFullYear());
 
-		this.state = {
-			selectedOption: [],
+    this.state = {
+      selectedOption: [],
       minDate: minDate,
       maxDate: maxDate,
-      loaded: true,
-		};
-	}
+    };
+  }
 
-	componentWillMount() {
-		const {
-			gradeLevels,
-			schools,
-			sections,
-			students,
-		} = this.props;
-		const { loaded } = this.state;
+  componentWillMount() {
+    const {
+      gradeLevels,
+      schools,
+      sections,
+      students,
+    } = this.props;
 
-		if (loaded && gradeLevels.length && schools.length && sections.length && students.length) {
+    if (gradeLevels.length && schools.length && sections.length && students.length) {
       this.optionsGenerator('Grade Level', gradeLevels, 'grade_level');
       this.optionsGenerator('Schools', schools, 'school');
       this.optionsGenerator('Sections', sections, 'section');
       this.optionsGenerator('Students', students, 'student');
-      this.setState({ loaded: false });
     }
-	}
+  }
 
-	handleChangeMinDate = (event, date) => {
-	  this.setState({ minDate: date });
-	};
+  handleChangeMinDate = (event, date) => {
+    this.setState({ minDate: date });
+  };
 
-	handleChangeMaxDate = (event, date) => {
-	  this.setState({ maxDate: date });
-	};
+  handleChangeMaxDate = (event, date) => {
+    this.setState({ maxDate: date });
+  };
 
-	handleChange = (selectedOption) => {
-		this.setState({ selectedOption });
-	};
+  handleChange = (selectedOption) => {
+    this.setState({ selectedOption });
+  };
 
-	handleGroupFilter = (filterGroup) => {
-		return options.filter((o) => {
-			let { label } = o;
-			if (label === 'Schools' || label === 'Sections' ||
-				label === 'Students' || label === 'Grade Level')  {
-				label = label.toLowerCase();
-				if (label.includes(filterGroup)) {
-					return o;
-				}
-			}
-			if (label === 'Categories') {
-				return o;
-			}
-			return null;
-		});
-	};
+  handleGroupFilter = (filterGroup) => {
+    return reactSelectOptions.filter((o) => {
+      let { label } = o;
+      if (label === 'Schools' || label === 'Sections' ||
+        label === 'Students' || label === 'Grade Level') {
+        label = label.toLowerCase();
+        if (label.includes(filterGroup)) {
+          return o;
+        }
+      }
+      if (label === 'Categories') {
+        return o;
+      }
+      return null;
+    });
+  };
 
-	handleGroupCategoryFilter = (filterGroup) => {
-		return options.filter((o) => {
-			let { label } = o;
-			label = label.toLowerCase();
-			if (label.includes(filterGroup)) {
-				return o;
-			}
-			return null;
-		});
-	};
+  handleGroupCategoryFilter = (filterGroup) => {
+    return reactSelectOptions.filter((o) => {
+      let { label } = o;
+      label = label.toLowerCase();
+      if (label.includes(filterGroup)) {
+        return o;
+      }
+      return null;
+    });
+  };
 
-	formatValue = (value) => {
-		let splitValue = value.split('_');
-		return (splitValue.length === 3) ? `${splitValue[0]}_${splitValue[1]}` : splitValue[0];
-	};
+  formatValue = (value) => {
+    let splitValue = value.split('_');
+    return (splitValue.length === 3) ? `${splitValue[0]}_${splitValue[1]}` : splitValue[0];
+  };
 
-	checkGroupValue = (value) => {
-		return (value === 'student' || value === 'school' ||
-					value === 'section' || value === 'grade_level');
-	};
+  checkGroupValue = (value) => {
+    return (value === 'student' || value === 'school' ||
+      value === 'section' || value === 'grade_level');
+  };
 
-	checkCategoryValue = (value) => (value === 'grades' || value === 'attendance');
+  checkCategoryValue = (value) => (value === 'grades' || value === 'attendance');
 
-	optionsGenerator = (labelString, dataArray, optionValue) => {
+  optionsGenerator = (labelString, dataArray, optionValue) => {
     let index;
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].label === labelString) {
+    for (let i = 0; i < reactSelectOptions.length; i++) {
+      if (reactSelectOptions[i].label === labelString) {
         index = i;
       }
     }
@@ -140,157 +137,153 @@ class ReportQueryBuilder extends React.Component {
         value: `${optionValue}_${i}`,
         id: dataObj.id,
       }
-      if (index !== undefined) {
-        options[index].options.push(optionsArray);
+      if (typeof index !== 'undefined') {
+        reactSelectOptions[index].options.push(optionsArray);
       }
     });
   }
 
-  setLoadFunction = () => {
-  	this.setState({ loaded: false });
-  }
+  submitQuery = (e) => {
+    e.preventDefault();
+    const { submitReportQuery } = this.props;
+    const { selectedOption, minDate, maxDate } = this.state;
 
-	submitQuery = (e) => {
-		e.preventDefault();
-		const { submitReportQuery } = this.props;
-		const { selectedOption, minDate, maxDate } = this.state;
+    let group;
+    let category;
 
-		let group;
-		let category;
+    let groupId = [];
 
-		let groupId = [];
+    selectedOption.forEach(option => {
+      let { value, id } = option;
+      value = this.formatValue(value);
 
-		selectedOption.forEach(option => {
-			let { value, id } = option;
-			value = this.formatValue(value);
+      if (this.checkGroupValue(value)) {
+        group = value;
+        groupId.push(id);
+      }
 
-			if (this.checkGroupValue(value)) {
-				group = value;
-				groupId.push(id);
-			}
+      if (this.checkCategoryValue(value)) {
+        category = value;
+      }
+    });
 
-			if (this.checkCategoryValue(value)) {
-				category = value;
-			}
-		});
+    submitReportQuery(group, groupId, category, minDate, maxDate);
+  };
 
-		submitReportQuery(group, groupId, category, minDate, maxDate);
-	};
+  validateQuery = () => {
+    const { selectedOption } = this.state;
 
-	validateQuery = () => {
-		const { selectedOption } = this.state;
+    let groupQuerySelected = false;
+    let categoryQuerySelected = false;
 
-		let partOne = false;
-		let partTwo = false;
+    selectedOption.forEach((option) => {
+      let { value } = option;
+      value = this.formatValue(value);
 
-		selectedOption.forEach((option) => {
-			let { value } = option;
-			value = this.formatValue(value);
+      if (this.checkGroupValue(value)) {
+        groupQuerySelected = true;
+      }
 
-			if (this.checkGroupValue(value)) {
-				partOne = true;
-			}
+      if (this.checkCategoryValue(value)) {
+        categoryQuerySelected = true;
+      }
+    });
 
-			if (this.checkCategoryValue(value)) {
-				partTwo = true;
-			}
-		});
+    return groupQuerySelected && categoryQuerySelected ? false : true;
+  };
 
-		return partOne && partTwo ? false : true;
-	};
+  render() {
+    const {
+      selectedOption,
+      minDate,
+      maxDate,
+    } = this.state;
 
-	render() {
-		const {
-			selectedOption,
-			minDate,
-			maxDate,
-		} = this.state;
+    const isDisabled = this.validateQuery();
 
-		const isDisabled = this.validateQuery();
+    let groupOptions = reactSelectOptions;
 
-		let groupOptions = options;
+    let filterGroup = '';
 
-		let filterGroup = '';
+    if (selectedOption.length) {
+      let isGroupSelected = false;
+      let isCategorySelected = false;
 
-		if (selectedOption.length) {
-			let group = false;
-			let category = false;
+      selectedOption.forEach(option => {
+        let { value } = option;
+        value = this.formatValue(value);
 
-			selectedOption.forEach(option => {
-				let { value } = option;
-				value = this.formatValue(value);
+        if (this.checkGroupValue(value)) {
+          isGroupSelected = true;
+          filterGroup = value.split('_')[0];
+        }
 
-				if (this.checkGroupValue(value)) {
-					group = true;
-					filterGroup = value.split('_')[0];
-				}
+        if (this.checkCategoryValue(value)) {
+          isCategorySelected = true;
+        }
+      });
 
-				if (this.checkCategoryValue(value)) {
-					category = true;
-				}
-			});
+      if (isCategorySelected && isGroupSelected) {
+        const filtered = this.handleGroupCategoryFilter(filterGroup);
+        groupOptions = filtered;
+      } else if (isGroupSelected) {
+        const filtered = this.handleGroupFilter(filterGroup);
+        groupOptions = filtered;
+      } else {
+        const filtered = reactSelectOptions.filter((o) => o.label !== 'Categories');
+        groupOptions = filtered;
+      }
+    }
 
-			if (category && group) {
-				let filtered = this.handleGroupCategoryFilter(filterGroup);
-				groupOptions = filtered;
-			} else if (group) {
-				let filtered = this.handleGroupFilter(filterGroup);
-				groupOptions = filtered;
-			} else {
-				let filtered = options.filter((o) => o.label !== 'Categories');
-				groupOptions = filtered;
-			}
-		}
-
-		return (
-			<div>
-				<form
-					onSubmit={this.submitQuery}
-					className="search-container"
-				>
-					<div className="inline-block dashboard-search">
-						<Select
-							multi
-							noResultsText="Sorry, your request is invalid"
-							onChange={this.handleChange}
-						  options={groupOptions}
-							value={selectedOption}
-						/>
-					</div>
-					<div className="inline-block">
-						<button
-							className={`
+    return (
+      <div>
+        <form
+          onSubmit={this.submitQuery}
+          className="search-container"
+        >
+          <div className="inline-block dashboard-search">
+            <Select
+              multi
+              noResultsText="Sorry, your request is invalid"
+              onChange={this.handleChange}
+              options={groupOptions}
+              value={selectedOption}
+            />
+          </div>
+          <div className="inline-block">
+            <button
+              className={`
 								${isDisabled ? 'disabled-color' : 'active-color'}
 								search-btn
 							`}
-							disabled={isDisabled}
-						>
-							Search
+              disabled={isDisabled}
+            >
+              Search
 						</button>
-					</div>
-					<h4>Please Select a Date Range</h4>
-					<div>
-		         <DatePicker
-		           onChange={this.handleChangeMinDate}
-		           autoOk
-		           floatingLabelText="Min Date"
-		           defaultDate={minDate}
-		           locale="en-US"
-		           floatingLabelStyle={{ zIndex: 0 }}
-		         />
-		         <DatePicker
-		           onChange={this.handleChangeMaxDate}
-		           autoOk
-		           floatingLabelText="Max Date"
-		           defaultDate={maxDate}
-		           locale="en-US"
-		           floatingLabelStyle={{ zIndex: 0 }}
-		         />
-					</div>
-				</form>
-			</div>
-		);
-	}
+          </div>
+          <h4>Please Select a Date Range</h4>
+          <div>
+            <DatePicker
+              onChange={this.handleChangeMinDate}
+              autoOk
+              floatingLabelText="Min Date"
+              defaultDate={minDate}
+              locale="en-US"
+              floatingLabelStyle={{ zIndex: 0 }}
+            />
+            <DatePicker
+              onChange={this.handleChangeMaxDate}
+              autoOk
+              floatingLabelText="Max Date"
+              defaultDate={maxDate}
+              locale="en-US"
+              floatingLabelStyle={{ zIndex: 0 }}
+            />
+          </div>
+        </form>
+      </div>
+    );
+  }
 }
 
 export default ReportQueryBuilder;
