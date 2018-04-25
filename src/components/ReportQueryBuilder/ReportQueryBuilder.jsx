@@ -147,7 +147,7 @@ class ReportQueryBuilder extends React.Component {
   submitQuery = (e) => {
     e.preventDefault();
     const { submitReportQuery } = this.props;
-    const { selectedOption, minDate, maxDate } = this.state;
+    let { selectedOption, minDate, maxDate } = this.state;
 
     let group;
     let category;
