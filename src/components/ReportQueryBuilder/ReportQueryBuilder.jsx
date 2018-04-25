@@ -5,7 +5,7 @@ import 'react-select-plus/dist/react-select-plus.css';
 
 import './styles.css';
 
-const options = [
+const reactSelectOptions = [
   {
     label: 'Students',
     options: [],
@@ -15,7 +15,7 @@ const options = [
     options: [],
   },
   {
-    label: 'Schools',
+    label: 'Sites',
     options: [],
   },
   {
@@ -52,25 +52,22 @@ class ReportQueryBuilder extends React.Component {
       selectedOption: [],
       minDate: minDate,
       maxDate: maxDate,
-      loaded: true,
     };
   }
 
   componentWillMount() {
     const {
       gradeLevels,
-      schools,
+      sites,
       sections,
       students,
     } = this.props;
-    const { loaded } = this.state;
 
-    if (loaded && gradeLevels.length && schools.length && sections.length && students.length) {
+    if (gradeLevels.length && sites.length && sections.length && students.length) {
       this.optionsGenerator('Grade Level', gradeLevels, 'grade_level');
-      this.optionsGenerator('Schools', schools, 'school');
+      this.optionsGenerator('Sites', sites, 'site');
       this.optionsGenerator('Sections', sections, 'section');
       this.optionsGenerator('Students', students, 'student');
-      this.setState({ loaded: false });
     }
   }
 
@@ -87,9 +84,9 @@ class ReportQueryBuilder extends React.Component {
   };
 
   handleGroupFilter = (filterGroup) => {
-    return options.filter((o) => {
+    return reactSelectOptions.filter((o) => {
       let { label } = o;
-      if (label === 'Schools' || label === 'Sections' ||
+      if (label === 'Sites' || label === 'Sections' ||
         label === 'Students' || label === 'Grade Level') {
         label = label.toLowerCase();
         if (label.includes(filterGroup)) {
@@ -104,7 +101,7 @@ class ReportQueryBuilder extends React.Component {
   };
 
   handleGroupCategoryFilter = (filterGroup) => {
-    return options.filter((o) => {
+    return reactSelectOptions.filter((o) => {
       let { label } = o;
       label = label.toLowerCase();
       if (label.includes(filterGroup)) {
@@ -119,19 +116,18 @@ class ReportQueryBuilder extends React.Component {
     return (splitValue.length === 3) ? `${splitValue[0]}_${splitValue[1]}` : splitValue[0];
   };
 
-  formatTime = (time) => new Date(time).getTime();
-
   checkGroupValue = (value) => {
-    return (value === 'student' || value === 'school' ||
+    return (value === 'student' || value === 'site' ||
       value === 'section' || value === 'grade_level');
   };
+  formatTime = (time) => new Date(time).getTime();
 
   checkCategoryValue = (value) => (value === 'grades' || value === 'attendance');
 
   optionsGenerator = (labelString, dataArray, optionValue) => {
     let index;
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].label === labelString) {
+    for (let i = 0; i < reactSelectOptions.length; i++) {
+      if (reactSelectOptions[i].label === labelString) {
         index = i;
       }
     }
@@ -142,27 +138,22 @@ class ReportQueryBuilder extends React.Component {
         value: `${optionValue}_${i}`,
         id: dataObj.id,
       }
-      if (index !== undefined) {
-        options[index].options.push(optionsArray);
+      if (typeof index !== 'undefined') {
+        reactSelectOptions[index].options.push(optionsArray);
       }
     });
-  }
-
-  setLoadFunction = () => {
-    this.setState({ loaded: false });
   }
 
   submitQuery = (e) => {
     e.preventDefault();
     const { submitReportQuery } = this.props;
-    let { selectedOption, minDate, maxDate } = this.state;
-
-    minDate = this.formatTime(minDate);
-    maxDate = this.formatTime(maxDate)
+    const { selectedOption, minDate, maxDate } = this.state;
 
     let group;
     let category;
 
+    minDate = this.formatTime(minDate);
+    maxDate = this.formatTime(maxDate)
     let groupId = [];
 
     selectedOption.forEach(option => {
@@ -185,23 +176,23 @@ class ReportQueryBuilder extends React.Component {
   validateQuery = () => {
     const { selectedOption } = this.state;
 
-    let partOne = false;
-    let partTwo = false;
+    let groupQuerySelected = false;
+    let categoryQuerySelected = false;
 
     selectedOption.forEach((option) => {
       let { value } = option;
       value = this.formatValue(value);
 
       if (this.checkGroupValue(value)) {
-        partOne = true;
+        groupQuerySelected = true;
       }
 
       if (this.checkCategoryValue(value)) {
-        partTwo = true;
+        categoryQuerySelected = true;
       }
     });
 
-    return partOne && partTwo ? false : true;
+    return groupQuerySelected && categoryQuerySelected ? false : true;
   };
 
   render() {
@@ -213,36 +204,36 @@ class ReportQueryBuilder extends React.Component {
 
     const isDisabled = this.validateQuery();
 
-    let groupOptions = options;
+    let groupOptions = reactSelectOptions;
 
     let filterGroup = '';
 
     if (selectedOption.length) {
-      let group = false;
-      let category = false;
+      let isGroupSelected = false;
+      let isCategorySelected = false;
 
       selectedOption.forEach(option => {
         let { value } = option;
         value = this.formatValue(value);
 
         if (this.checkGroupValue(value)) {
-          group = true;
+          isGroupSelected = true;
           filterGroup = value.split('_')[0];
         }
 
         if (this.checkCategoryValue(value)) {
-          category = true;
+          isCategorySelected = true;
         }
       });
 
-      if (category && group) {
-        let filtered = this.handleGroupCategoryFilter(filterGroup);
+      if (isCategorySelected && isGroupSelected) {
+        const filtered = this.handleGroupCategoryFilter(filterGroup);
         groupOptions = filtered;
-      } else if (group) {
-        let filtered = this.handleGroupFilter(filterGroup);
+      } else if (isGroupSelected) {
+        const filtered = this.handleGroupFilter(filterGroup);
         groupOptions = filtered;
       } else {
-        let filtered = options.filter((o) => o.label !== 'Categories');
+        const filtered = reactSelectOptions.filter((o) => o.label !== 'Categories');
         groupOptions = filtered;
       }
     }
