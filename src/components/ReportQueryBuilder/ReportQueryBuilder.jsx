@@ -46,7 +46,6 @@ class ReportQueryBuilder extends React.Component {
     const maxDate = new Date();
 
     // minDate.setFullYear(minDate.getFullYear()); // TODO: get start of school year date from DB
-    // maxDate.setFullYear(maxDate.getFullYear());
 
     this.state = {
       selectedOption: [],
@@ -120,7 +119,6 @@ class ReportQueryBuilder extends React.Component {
     return (value === 'student' || value === 'site' ||
       value === 'section' || value === 'grade_level');
   };
-  formatTime = (time) => new Date(time).getTime();
 
   checkCategoryValue = (value) => (value === 'grades' || value === 'attendance');
 
@@ -132,10 +130,22 @@ class ReportQueryBuilder extends React.Component {
       }
     }
 
-    dataArray.forEach((dataObj, i) => {
+    dataArray.forEach((dataObj) => {
+      let name;
+      if (dataObj.section_name) {
+        name = dataObj.section_name;
+      } else if (dataObj.long_name) {
+        name = dataObj.long_name;
+      } else if (dataObj.section_name) {
+        name = dataObj.section_name;
+      } else if (dataObj.site_name) {
+        name = dataObj.site_name;
+      } else {
+        name = `${dataObj.first_name} ${dataObj.last_name}`;
+      }
       let optionsArray = {
-        label: dataObj.name,
-        value: `${optionValue}_${i}`,
+        label: name,
+        value: `${optionValue}_${dataObj.id}`,
         id: dataObj.id,
       }
       if (typeof index !== 'undefined') {
@@ -147,17 +157,20 @@ class ReportQueryBuilder extends React.Component {
   submitQuery = (e) => {
     e.preventDefault();
     const { submitReportQuery } = this.props;
-    let { selectedOption, minDate, maxDate } = this.state;
+    const { selectedOption } = this.state;
+    let { minDate, maxDate } = this.state;
 
     let group;
     let category;
 
-    minDate = this.formatTime(minDate);
-    maxDate = this.formatTime(maxDate)
+    minDate = minDate.toISOString();
+    maxDate = maxDate.toISOString();
+
     let groupId = [];
 
     selectedOption.forEach(option => {
-      let { value, id } = option;
+      let { value } = option;
+      const { id } = option;
       value = this.formatValue(value);
 
       if (this.checkGroupValue(value)) {

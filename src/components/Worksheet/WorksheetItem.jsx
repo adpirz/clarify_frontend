@@ -20,7 +20,7 @@ class WorksheetItem extends React.Component {
 
   render() {
     const { selectReport, queryResponseValues } = this.props;
-    let previewValues = Object.keys(queryResponseValues[0].data);
+    const previewValues = Object.keys(queryResponseValues[0].data);
     return (
       <div
         onClick={() => selectReport()}

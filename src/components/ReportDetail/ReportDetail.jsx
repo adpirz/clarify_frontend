@@ -14,7 +14,7 @@ class ReportDetail extends React.Component {
   }
 
   formatData = (student) => {
-    let data = {};
+    const data = {};
     for (let prop in student.data) {
       data[prop] = student.data[prop];
     }
@@ -25,27 +25,25 @@ class ReportDetail extends React.Component {
     const { students } = this.props;
     for (let i = 0; i < students.length; i++) {
       if (students[i].id === id) {
-        return this.formatStudentName(students[i].name);
+        return [students[i].first_name, students[i].last_name];
       }
     }
   }
 
-  formatStudentName = (name) => name.split(' ');
-
   renderData = () => {
     const { queryResponseValues } = this.props;
-    let result = [];
+    const tableData = [];
     if (queryResponseValues) {
       for (let i = 0; i < queryResponseValues.length; i++) {
-        let id = queryResponseValues[i].student_id;
-        let data = this.formatData(queryResponseValues[i]);
-        let studentName = this.findStudent(id);
+        const id = queryResponseValues[i].student_id;
+        const data = this.formatData(queryResponseValues[i]);
+        const studentName = this.findStudent(id);
         data.firstName = studentName[0];
         data.lastName = studentName[1];
-        result.push(data);
+        tableData.push(data);
       }
     }
-    return result;
+    return tableData;
   }
 
   renderColumns = () => {
@@ -61,7 +59,7 @@ class ReportDetail extends React.Component {
 
     if (queryResponseValues) {
       for (let prop in queryResponseValues[0].data) {
-        let header = this.formatHeader(prop);
+        const header = this.formatHeader(prop);
         columns.push({
           Header: header,
           accessor: prop,
@@ -72,11 +70,11 @@ class ReportDetail extends React.Component {
   }
 
   render() {
-    let columns = this.renderColumns();
-    let data = this.renderData()
+    const columns = this.renderColumns();
+    const tableData = this.renderData()
     return (
       <ReactTable
-        data={data}
+        data={tableData}
         columns={columns}
       />
     )
