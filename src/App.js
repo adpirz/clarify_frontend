@@ -73,6 +73,7 @@ class App extends React.Component {
       gradeLevelGet,
       sectionGet,
       siteGet,
+      userGet
     } = this.props;
 
     const promiseValues = {
@@ -80,9 +81,14 @@ class App extends React.Component {
       gradeLevels: _.get(gradeLevelGet, 'value.data', []),
       sections: _.get(sectionGet, 'value.data', []),
       sites: _.get(siteGet, 'value.data', []),
+      userData: _.get(userGet, 'value', []),
     };
 
     return promiseValues;
+  }
+
+  logout = () => {
+    console.log('this is being clicked');
   }
 
   render() {
@@ -97,9 +103,28 @@ class App extends React.Component {
       return null;
     }
 
+    const { username } = promiseValues.userData;
+
     return (
       <div>
-        <div className="navbar" />
+        <div className="navbar">
+          <div
+            className="logoutSection inline-block"
+          >
+            <div>
+              <i className="material-icons">person</i>
+              <div className="username inline-block">
+                {username}
+              </div>
+            </div>
+            <div
+              className="logoutBtn"
+              onClick={() => this.logout()}
+            >
+              logout
+            </div>
+          </div>
+        </div>
         <hr />
         <ReportQueryBuilder
           {...promiseValues}

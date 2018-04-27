@@ -1,3 +1,30 @@
 .navbar {
-  height: 50px;
+  height: 55px;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.logoutSection {
+  position: absolute;
+  right: 35px;
+  border-left: 1px rgba(0, 0, 0, .3) solid;
+  padding: 10px 10px 0;
+  text-align: center;
+}
+
+.logoutBtn {
+  text-transform: uppercase;
+  font-size: 13px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.username {
+  padding: 0 10px;
+  position: relative;
+  bottom: 5px;
 }

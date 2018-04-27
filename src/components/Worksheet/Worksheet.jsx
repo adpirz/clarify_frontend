@@ -19,7 +19,7 @@ class Worksheet extends React.Component {
   }
 
   render() {
-    const userData = _.get(this.props, 'lazyUserGet.value');
+    const userData = _.get(this.props, 'userGet.value');
     const { selected } = this.state;
     const { queryResponseValues, students } = this.props;
     return (
@@ -27,7 +27,7 @@ class Worksheet extends React.Component {
         {!selected &&
           <div>
             <h4 className="userWorksheetTitle">
-              {userData ? `${userData.first_name} ${userData.last_name}'s'` : ''}&nbsp;Worksheet
+              {userData ? `${userData.first_name} ${userData.last_name}'s` : ''}&nbsp;Worksheet
             </h4>
             <hr />
             <WorksheetList
