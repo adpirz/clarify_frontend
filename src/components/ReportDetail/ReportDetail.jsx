@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactTable from 'react-table'
+import _ from 'lodash';
 import 'react-table/react-table.css'
 
 class ReportDetail extends React.Component {
@@ -21,32 +22,28 @@ class ReportDetail extends React.Component {
     return data;
   }
 
-  findStudent = (id) => {
+  getStudentName = (id) => {
     const { students } = this.props;
-    for (let i = 0; i < students.length; i++) {
-      if (students[i].id === id) {
-        return [students[i].first_name, students[i].last_name];
-      }
-    }
+    return _.find(students, { id: id })
   }
 
-  renderData = () => {
+  buildTableData = () => {
     const { queryResponseValues } = this.props;
     const tableData = [];
     if (queryResponseValues) {
       for (let i = 0; i < queryResponseValues.length; i++) {
         const id = queryResponseValues[i].student_id;
         const data = this.formatData(queryResponseValues[i]);
-        const studentName = this.findStudent(id);
-        data.firstName = studentName[0];
-        data.lastName = studentName[1];
+        const studentName = this.getStudentName(id);
+        data.firstName = studentName.first_name;
+        data.lastName = studentName.last_name;
         tableData.push(data);
       }
     }
     return tableData;
   }
 
-  renderColumns = () => {
+  buildColumnsData = () => {
     const { queryResponseValues } = this.props;
     const columns = [{
       Header: 'First Name',
@@ -58,11 +55,11 @@ class ReportDetail extends React.Component {
     }];
 
     if (queryResponseValues) {
-      for (let prop in queryResponseValues[0].data) {
-        const header = this.formatHeader(prop);
+      for (let reportField in queryResponseValues[0].data) {
+        const header = this.formatHeader(reportField);
         columns.push({
           Header: header,
-          accessor: prop,
+          accessor: reportField,
         });
       }
     }
@@ -70,8 +67,8 @@ class ReportDetail extends React.Component {
   }
 
   render() {
-    const columns = this.renderColumns();
-    const tableData = this.renderData()
+    const columns = this.buildColumnsData();
+    const tableData = this.buildTableData()
     return (
       <ReactTable
         data={tableData}
