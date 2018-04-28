@@ -1,5 +1,5 @@
 .navbar {
-  height: 55px;
+  height: 65px;
 }
 
 .inline-block {
@@ -8,19 +8,15 @@
 
 .logoutSection {
   position: absolute;
-  right: 35px;
+  right: 25px;
   border-left: 1px rgba(0, 0, 0, .3) solid;
   padding: 10px 10px 0;
   text-align: center;
 }
 
 .logoutBtn {
-  text-transform: uppercase;
-  font-size: 13px;
-
-  &:hover {
-    cursor: pointer;
-  }
+  position: relative;
+  left: 5px;
 }
 
 .username {

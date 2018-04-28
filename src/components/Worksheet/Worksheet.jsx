@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react';
 import { FlatButton } from 'material-ui';
 import './Worksheet.css';
@@ -19,9 +18,8 @@ class Worksheet extends React.Component {
   }
 
   render() {
-    const userData = _.get(this.props, 'userGet.value');
     const { selected } = this.state;
-    const { queryResponseValues, students } = this.props;
+    const { queryResponseValues, students, userData } = this.props;
     return (
       <div className="worksheetContainer">
         {!selected &&

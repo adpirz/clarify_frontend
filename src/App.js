@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import { FlatButton } from 'material-ui';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { PromiseState } from 'react-refetch';
 import {
@@ -19,6 +20,7 @@ class App extends React.Component {
 
     if (this.userIsAuthenticated(nextProps) && !this.queryRequestsMade(nextProps)) {
       // User is signed in, so let's make our object api calls.
+      this.props.lazyUserGet();
       this.requestQueryObjects();
     }
   }
@@ -88,7 +90,8 @@ class App extends React.Component {
   }
 
   logout = () => {
-    console.log('this is being clicked');
+    this.props.lazyUserLogout();
+    window.location.reload();
   }
 
   render() {
@@ -119,9 +122,16 @@ class App extends React.Component {
             </div>
             <div
               className="logoutBtn"
-              onClick={() => this.logout()}
             >
-              logout
+              <FlatButton
+                onClick={() => this.logout()}
+                className="logoutBtn"
+                label="logout"
+                labelStyle={{
+                  fontSize: '13px',
+                  textTransform: 'uppercase',
+                }}
+              />
             </div>
           </div>
         </div>
@@ -137,6 +147,7 @@ class App extends React.Component {
                 return (
                   <Worksheet
                     {...this.props}
+                    userData={promiseValues.userData}
                     students={promiseValues.students}
                     queryResponseValues={queryResponseValues}
                   />
