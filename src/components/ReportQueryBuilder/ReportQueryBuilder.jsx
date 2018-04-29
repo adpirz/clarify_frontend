@@ -121,12 +121,7 @@ class ReportQueryBuilder extends React.Component {
   isCategoryValue = (type) => type === 'category';
 
   optionsGenerator = (dataArray, optionValue) => {
-    let index;
-    for (let i = 0; i < reactSelectOptions.length; i++) {
-      if (reactSelectOptions[i].value === optionValue) {
-        index = i;
-      }
-    }
+    const targetQueryOptionsGroup = _.find(reactSelectOptions, { value: optionValue });
 
     dataArray.forEach((dataObj) => {
       let name;
@@ -148,8 +143,8 @@ class ReportQueryBuilder extends React.Component {
         value: `${optionValue}_${dataObj.id}`,
         id: dataObj.id,
       }
-      if (typeof index !== 'undefined') {
-        reactSelectOptions[index].options.push(optionsArray);
+      if (typeof targetQueryOptionsGroup !== 'undefined') {
+        targetQueryOptionsGroup.options.push(optionsArray);
       }
     });
   }
