@@ -100,11 +100,9 @@ class ReportQueryBuilder extends React.Component {
         if (label.includes(filterGroup)) {
           return o;
         }
-      }
-      if (type === 'category') {
+      } else {
         return o;
       }
-      return null;
     });
   };
 
@@ -115,13 +113,7 @@ class ReportQueryBuilder extends React.Component {
       if (label.includes(filterGroup)) {
         return o;
       }
-      return null;
     });
-  };
-
-  formatValue = (value) => {
-    let splitValue = value.split('_');
-    return (splitValue.length === 3) ? `${splitValue[0]}_${splitValue[1]}` : splitValue[0];
   };
 
   isGroupValue = (type) => type === 'group';
@@ -177,9 +169,7 @@ class ReportQueryBuilder extends React.Component {
     let groupId = [];
 
     selectedOptions.forEach(option => {
-      let { value } = option;
-      const { id, group: { type } } = option;
-      value = this.formatValue(value);
+      const { id, group: { type, value } } = option;
 
       if (this.isGroupValue(type)) {
         group = value;
@@ -219,13 +209,11 @@ class ReportQueryBuilder extends React.Component {
       let isCategorySelected = false;
 
       selectedOptions.forEach(option => {
-        let { value } = option;
-        const { group: { type } } = option;
-        value = this.formatValue(value);
+        const { group: { type, value } } = option;
 
         if (this.isGroupValue(type)) {
           isGroupSelected = true;
-          filterGroup = value.split('_')[0];
+          filterGroup = value;
         }
 
         if (this.isCategoryValue(type)) {

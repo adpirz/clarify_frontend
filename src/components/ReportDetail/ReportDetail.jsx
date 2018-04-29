@@ -56,9 +56,9 @@ class ReportDetail extends React.Component {
 
     if (queryResponseValues) {
       for (let reportField in queryResponseValues[0].data) {
-        const header = this.formatHeader(reportField);
+        const columnHeader = this.formatHeader(reportField);
         columns.push({
-          Header: header,
+          Header: columnHeader,
           accessor: reportField,
         });
       }
