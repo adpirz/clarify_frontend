@@ -20,7 +20,7 @@ class WorksheetItem extends React.Component {
 
   render() {
     const { selectReport, queryResponseValues } = this.props;
-    const previewValues = Object.keys(queryResponseValues[0].data);
+    const previewValues = queryResponseValues.length && Object.keys(queryResponseValues[0].data);
     return (
       <div
         onClick={() => selectReport()}
@@ -40,17 +40,7 @@ class WorksheetItem extends React.Component {
                   <div className="previewItem">
                     Last Name
                   </div>
-                  {previewValues.map((val, i) => {
-                    val = this.formatValue(val);
-                    return (
-                      <div
-                        className={`${i % 2 === 0 ? 'highlight' : ''} previewItem`}
-                        key={`${val}-${i}`}
-                      >
-                        {val}
-                      </div>
-                    )
-                  })}
+
                 </div>
               }
             </div>

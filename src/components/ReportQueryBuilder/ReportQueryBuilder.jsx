@@ -1,6 +1,7 @@
 import React from 'react';
 import Select from 'react-select-plus';
 import { DatePicker } from 'material-ui';
+import _ from 'lodash';
 import 'react-select-plus/dist/react-select-plus.css';
 
 import './styles.css';
@@ -9,21 +10,30 @@ const reactSelectOptions = [
   {
     label: 'Students',
     options: [],
+    type: 'group',
+    value: 'student',
   },
   {
     label: 'Sections',
     options: [],
+    type: 'group',
+    value: 'section',
   },
   {
     label: 'Sites',
     options: [],
+    type: 'group',
+    value: 'site',
   },
   {
     label: 'Grade Level',
     options: [],
+    type: 'group',
+    value: 'grade_level',
   },
   {
     label: 'Categories',
+    type: 'category',
     options: [
       {
         label: 'Attendance',
@@ -43,14 +53,14 @@ class ReportQueryBuilder extends React.Component {
   constructor(props) {
     super(props);
     const minDate = new Date();
+    const pastYear = minDate.getFullYear() - 1;
+    minDate.setFullYear(pastYear);
     const maxDate = new Date();
 
-    // minDate.setFullYear(minDate.getFullYear()); // TODO: get start of school year date from DB
-
     this.state = {
-      selectedOption: [],
-      minDate: minDate,
-      maxDate: maxDate,
+      selectedOptions: [],
+      minDate,
+      maxDate,
     };
   }
 
@@ -63,10 +73,10 @@ class ReportQueryBuilder extends React.Component {
     } = this.props;
 
     if (gradeLevels.length && sites.length && sections.length && students.length) {
-      this.optionsGenerator('Grade Level', gradeLevels, 'grade_level');
-      this.optionsGenerator('Sites', sites, 'site');
-      this.optionsGenerator('Sections', sections, 'section');
-      this.optionsGenerator('Students', students, 'student');
+      this.optionsGenerator(gradeLevels, 'grade_level');
+      this.optionsGenerator(sites, 'site');
+      this.optionsGenerator(sections, 'section');
+      this.optionsGenerator(students, 'student');
     }
   }
 
@@ -78,24 +88,21 @@ class ReportQueryBuilder extends React.Component {
     this.setState({ maxDate: date });
   };
 
-  handleChange = (selectedOption) => {
-    this.setState({ selectedOption });
+  handleChange = (selectedOptions) => {
+    this.setState({ selectedOptions });
   };
 
   handleGroupFilter = (filterGroup) => {
     return reactSelectOptions.filter((o) => {
-      let { label } = o;
-      if (label === 'Sites' || label === 'Sections' ||
-        label === 'Students' || label === 'Grade Level') {
+      let { label, type } = o;
+      if (type === 'group') {
         label = label.toLowerCase();
         if (label.includes(filterGroup)) {
           return o;
         }
-      }
-      if (label === 'Categories') {
+      } else {
         return o;
       }
-      return null;
     });
   };
 
@@ -106,42 +113,35 @@ class ReportQueryBuilder extends React.Component {
       if (label.includes(filterGroup)) {
         return o;
       }
-      return null;
     });
   };
 
-  formatValue = (value) => {
-    let splitValue = value.split('_');
-    return (splitValue.length === 3) ? `${splitValue[0]}_${splitValue[1]}` : splitValue[0];
-  };
+  isGroupValue = (type) => type === 'group';
 
-  checkGroupValue = (value) => {
-    return (value === 'student' || value === 'site' ||
-      value === 'section' || value === 'grade_level');
-  };
+  isCategoryValue = (type) => type === 'category';
 
-  checkCategoryValue = (value) => (value === 'grades' || value === 'attendance');
-
-  optionsGenerator = (labelString, dataArray, optionValue) => {
+  optionsGenerator = (dataArray, optionValue) => {
     let index;
     for (let i = 0; i < reactSelectOptions.length; i++) {
-      if (reactSelectOptions[i].label === labelString) {
+      if (reactSelectOptions[i].value === optionValue) {
         index = i;
       }
     }
 
     dataArray.forEach((dataObj) => {
       let name;
-      if (dataObj.section_name) {
-        name = dataObj.section_name;
-      } else if (dataObj.long_name) {
-        name = dataObj.long_name;
-      } else if (dataObj.section_name) {
-        name = dataObj.section_name;
-      } else if (dataObj.site_name) {
-        name = dataObj.site_name;
-      } else {
-        name = `${dataObj.first_name} ${dataObj.last_name}`;
+      switch (optionValue) {
+        case 'section':
+          name = dataObj.section_name;
+          break;
+        case 'site':
+          name = dataObj.site_name;
+          break;
+        case 'grade_level':
+          name = dataObj.long_name;
+          break;
+        default:
+          name = `${dataObj.first_name} ${dataObj.last_name}`;
       }
       let optionsArray = {
         label: name,
@@ -157,7 +157,7 @@ class ReportQueryBuilder extends React.Component {
   submitQuery = (e) => {
     e.preventDefault();
     const { submitReportQuery } = this.props;
-    const { selectedOption } = this.state;
+    const { selectedOptions } = this.state;
     let { minDate, maxDate } = this.state;
 
     let group;
@@ -168,17 +168,15 @@ class ReportQueryBuilder extends React.Component {
 
     let groupId = [];
 
-    selectedOption.forEach(option => {
-      let { value } = option;
-      const { id } = option;
-      value = this.formatValue(value);
+    selectedOptions.forEach(option => {
+      const { id, group: { type, value } } = option;
 
-      if (this.checkGroupValue(value)) {
+      if (this.isGroupValue(type)) {
         group = value;
         groupId.push(id);
       }
 
-      if (this.checkCategoryValue(value)) {
+      if (this.isCategoryValue(type)) {
         category = value;
       }
     });
@@ -186,68 +184,49 @@ class ReportQueryBuilder extends React.Component {
     submitReportQuery(group, groupId, category, minDate, maxDate);
   };
 
-  validateQuery = () => {
-    const { selectedOption } = this.state;
-
-    let groupQuerySelected = false;
-    let categoryQuerySelected = false;
-
-    selectedOption.forEach((option) => {
-      let { value } = option;
-      value = this.formatValue(value);
-
-      if (this.checkGroupValue(value)) {
-        groupQuerySelected = true;
-      }
-
-      if (this.checkCategoryValue(value)) {
-        categoryQuerySelected = true;
-      }
-    });
-
-    return groupQuerySelected && categoryQuerySelected ? false : true;
+  isInvalidQuery = () => {
+    const { selectedOptions } = this.state;
+    const groupQuerySelected = !!_.find(selectedOptions, { group: { type: 'group' } });
+    const categoryQuerySelected = !!_.find(selectedOptions, { group: { type: 'category' } });
+    return !(groupQuerySelected && categoryQuerySelected);
   };
 
   render() {
     const {
-      selectedOption,
+      selectedOptions,
       minDate,
       maxDate,
     } = this.state;
 
-    const isDisabled = this.validateQuery();
+    const isDisabled = this.isInvalidQuery();
 
     let groupOptions = reactSelectOptions;
 
     let filterGroup = '';
 
-    if (selectedOption.length) {
+    if (selectedOptions.length) {
       let isGroupSelected = false;
       let isCategorySelected = false;
 
-      selectedOption.forEach(option => {
-        let { value } = option;
-        value = this.formatValue(value);
+      selectedOptions.forEach(option => {
+        const { group: { type, value } } = option;
 
-        if (this.checkGroupValue(value)) {
+        if (this.isGroupValue(type)) {
           isGroupSelected = true;
-          filterGroup = value.split('_')[0];
+          filterGroup = value;
         }
 
-        if (this.checkCategoryValue(value)) {
+        if (this.isCategoryValue(type)) {
           isCategorySelected = true;
         }
       });
 
       if (isCategorySelected && isGroupSelected) {
-        const filtered = this.handleGroupCategoryFilter(filterGroup);
-        groupOptions = filtered;
+        groupOptions = this.handleGroupCategoryFilter(filterGroup);
       } else if (isGroupSelected) {
-        const filtered = this.handleGroupFilter(filterGroup);
-        groupOptions = filtered;
+        groupOptions = this.handleGroupFilter(filterGroup);
       } else {
-        const filtered = reactSelectOptions.filter((o) => o.label !== 'Categories');
-        groupOptions = filtered;
+        groupOptions = reactSelectOptions.filter((o) => o.type !== 'category');
       }
     }
 
@@ -263,7 +242,7 @@ class ReportQueryBuilder extends React.Component {
               noResultsText="Sorry, your request is invalid"
               onChange={this.handleChange}
               options={groupOptions}
-              value={selectedOption}
+              value={selectedOptions}
             />
           </div>
           <div className="inline-block">
