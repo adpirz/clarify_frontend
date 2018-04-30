@@ -17,3 +17,25 @@
   margin-top: 10px;
   text-transform: capitalize;
 }
+
+.worksheetItem:hover {
+  cursor: pointer;
+}
+
+.preview {
+  overflow: hidden;
+  height: 122px;
+  text-align: left;
+  margin: 0 10px;
+  font-size: 15px;
+  letter-spacing: 1px;
+  text-transform: capitalize;
+}
+
+.highlight {
+  background-color: #e0e0e0;
+}
+
+.previewItem {
+  padding: 3.5px 10px;
+}

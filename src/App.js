@@ -8,6 +8,7 @@ import {
   ReportQueryBuilder,
   Worksheet,
 } from './components/index';
+import './App.css'
 
 class App extends React.Component {
   componentDidMount() {
@@ -86,6 +87,7 @@ class App extends React.Component {
 
   render() {
     const promiseValues = this.getPromiseValues();
+    const queryResponseValues = this.submitQueryFulfilled();
 
     if (!this.userIsAuthenticated(this.props)) {
       return <LoginForm lazySessionPost={this.props.lazySessionPost} />;
@@ -95,10 +97,9 @@ class App extends React.Component {
       return null;
     }
 
-    const queryResponseValues = this.submitQueryFulfilled();
-
     return (
       <div>
+        <div className="navbar" />
         <hr />
         <ReportQueryBuilder
           {...promiseValues}
@@ -111,6 +112,7 @@ class App extends React.Component {
                 return (
                   <Worksheet
                     {...this.props}
+                    students={promiseValues.students}
                     queryResponseValues={queryResponseValues}
                   />
                 )

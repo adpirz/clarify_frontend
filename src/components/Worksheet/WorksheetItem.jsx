@@ -3,8 +3,8 @@ import { Paper } from 'material-ui';
 import './Worksheet.css';
 
 const style = {
-  height: 150,
-  width: 150,
+  height: 175,
+  width: 175,
   margin: 20,
   textAlign: 'center',
   display: 'inline-block',
@@ -16,16 +16,34 @@ class WorksheetItem extends React.Component {
     this.state = {};
   }
 
+  formatValue = (val) => val.split('_').join(' ');
+
   render() {
-    const { value } = this.props;
-    console.log('value: ', value);
+    const { selectReport, queryResponseValues } = this.props;
+    const previewValues = queryResponseValues.length && Object.keys(queryResponseValues[0].data);
     return (
-      <div className="inline-block">
+      <div
+        onClick={() => selectReport()}
+        className="inline-block worksheetItem"
+      >
         <Paper style={style} zDepth={2} rounded={false}>
           <div>
             <div className="worksheetTitle">title
             </div>
             <hr />
+            <div>
+              {previewValues &&
+                <div className="preview">
+                  <div className="highlight previewItem">
+                    First Name
+                  </div>
+                  <div className="previewItem">
+                    Last Name
+                  </div>
+
+                </div>
+              }
+            </div>
           </div>
         </Paper>
       </div>
