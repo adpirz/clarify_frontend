@@ -140,7 +140,7 @@ class ReportQueryBuilder extends React.Component {
       }
       let optionsArray = {
         label: name,
-        value: optionValue,  //`${optionValue}_${dataObj.id}`, <-- use this when querying multiple same-group options (i.e. more than one student, etc...)
+        value: optionValue,
         id: dataObj.id,
       }
       if (typeof targetQueryOptionsGroup !== 'undefined') {
