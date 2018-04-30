@@ -54,8 +54,8 @@ export default connect(() => {
         force: 'true',
       },
     }),
-    submitReportQuery: (group, groupIds, category, minDate, maxDate) => {
-      const queryString = `group=${group}&${group}_ids=${groupIds.join(',')}&category=${category}&from_date=${minDate}&to_date=${maxDate}`;
+    submitReportQuery: (group, groupId, category, minDate, maxDate) => {
+      const queryString = `group=${group}&group_id=${groupId}&category=${category}&from_date=${minDate}&to_date=${maxDate}`;
       return {
         postReportQuery: {
           url: `${BASE_URL}/report/?${queryString}`,
