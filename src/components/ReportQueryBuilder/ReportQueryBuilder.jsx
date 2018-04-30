@@ -140,7 +140,7 @@ class ReportQueryBuilder extends React.Component {
       }
       let optionsArray = {
         label: name,
-        value: `${optionValue}_${dataObj.id}`,
+        value: optionValue,
         id: dataObj.id,
       }
       if (typeof targetQueryOptionsGroup !== 'undefined') {
