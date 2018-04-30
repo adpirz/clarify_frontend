@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react';
 import { FlatButton } from 'material-ui';
 import './Worksheet.css';
@@ -19,15 +18,14 @@ class Worksheet extends React.Component {
   }
 
   render() {
-    const userData = _.get(this.props, 'lazyUserGet.value');
     const { selected } = this.state;
-    const { queryResponseValues, students } = this.props;
+    const { queryResponseValues, students, userData } = this.props;
     return (
       <div className="worksheetContainer">
         {!selected &&
           <div>
             <h4 className="userWorksheetTitle">
-              {userData ? `${userData.first_name} ${userData.last_name}'s'` : ''}&nbsp;Worksheet
+              {userData ? `${userData.first_name} ${userData.last_name}'s` : ''}&nbsp;Worksheet
             </h4>
             <hr />
             <WorksheetList

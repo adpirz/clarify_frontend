@@ -172,7 +172,7 @@ class ReportQueryBuilder extends React.Component {
       }
 
       if (this.isCategoryValue(type)) {
-        category = value;
+        category = option.value;
       }
     });
 

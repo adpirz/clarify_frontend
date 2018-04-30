@@ -46,6 +46,14 @@ export default connect(() => {
         force: 'true',
       },
     }),
+    lazyUserLogout: () => ({
+      userLogoutResponse: {
+        url: `${BASE_URL}/api/session/`,
+        method: 'DELETE',
+        credentials: 'include',
+        force: 'true',
+      },
+    }),
     submitReportQuery: (group, groupIds, category, minDate, maxDate) => {
       const queryString = `group=${group}&${group}_ids=${groupIds.join(',')}&category=${category}&from_date=${minDate}&to_date=${maxDate}`;
       return {

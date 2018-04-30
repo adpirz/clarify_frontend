@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import { FlatButton } from 'material-ui';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { PromiseState } from 'react-refetch';
 import {
@@ -19,6 +20,7 @@ class App extends React.Component {
 
     if (this.userIsAuthenticated(nextProps) && !this.queryRequestsMade(nextProps)) {
       // User is signed in, so let's make our object api calls.
+      this.props.lazyUserGet();
       this.requestQueryObjects();
     }
   }
@@ -73,6 +75,7 @@ class App extends React.Component {
       gradeLevelGet,
       sectionGet,
       siteGet,
+      userGet
     } = this.props;
 
     const promiseValues = {
@@ -80,9 +83,15 @@ class App extends React.Component {
       gradeLevels: _.get(gradeLevelGet, 'value.data', []),
       sections: _.get(sectionGet, 'value.data', []),
       sites: _.get(siteGet, 'value.data', []),
+      userData: _.get(userGet, 'value', []),
     };
 
     return promiseValues;
+  }
+
+  logout = () => {
+    this.props.lazyUserLogout();
+    window.location.reload();
   }
 
   render() {
@@ -97,9 +106,35 @@ class App extends React.Component {
       return null;
     }
 
+    const { username } = promiseValues.userData;
+
     return (
       <div>
-        <div className="navbar" />
+        <div className="navbar">
+          <div
+            className="logoutSection inline-block"
+          >
+            <div>
+              <i className="material-icons">person</i>
+              <div className="username inline-block">
+                {username}
+              </div>
+            </div>
+            <div
+              className="logoutBtn"
+            >
+              <FlatButton
+                onClick={() => this.logout()}
+                className="logoutBtn"
+                label="logout"
+                labelStyle={{
+                  fontSize: '13px',
+                  textTransform: 'uppercase',
+                }}
+              />
+            </div>
+          </div>
+        </div>
         <hr />
         <ReportQueryBuilder
           {...promiseValues}
@@ -112,6 +147,7 @@ class App extends React.Component {
                 return (
                   <Worksheet
                     {...this.props}
+                    userData={promiseValues.userData}
                     students={promiseValues.students}
                     queryResponseValues={queryResponseValues}
                   />
