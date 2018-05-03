@@ -1,7 +1,7 @@
+import _ from 'lodash';
 import React from 'react';
 import Select from 'react-select-plus';
-import { DatePicker } from 'material-ui';
-import _ from 'lodash';
+import { DatePicker, RaisedButton } from 'material-ui';
 import 'react-select-plus/dist/react-select-plus.css';
 
 import './styles.css';
@@ -49,18 +49,36 @@ const reactSelectOptions = [
   },
 ];
 
+const floatingLabelStyle = {
+  zIndex: 0,
+  fontFamily: 'Tajawal',
+  fontSize: '18px',
+};
+
+const inputStyle = {
+  letterSpacing: '1px',
+  fontFamily: 'Tajawal',
+  fontSize: '22.5px',
+};
+
+const submitLabelStyle = {
+  fontFamily: 'Tajawal',
+  textTransform: 'Capitalize',
+  letterSpacing: '1px',
+  fontSize: '18px',
+}
+
 class ReportQueryBuilder extends React.Component {
   constructor(props) {
     super(props);
     const minDate = new Date();
     const pastYear = minDate.getFullYear() - 1;
     minDate.setFullYear(pastYear);
-    const maxDate = new Date();
 
     this.state = {
       selectedOptions: [],
       minDate,
-      maxDate,
+      maxDate: '',
     };
   }
 
@@ -151,8 +169,7 @@ class ReportQueryBuilder extends React.Component {
     });
   }
 
-  submitQuery = (e) => {
-    e.preventDefault();
+  submitQuery = () => {
     const { submitReportQuery } = this.props;
     const { selectedOptions } = this.state;
     let { minDate, maxDate } = this.state;
@@ -161,7 +178,7 @@ class ReportQueryBuilder extends React.Component {
     let category;
 
     minDate = minDate.toISOString();
-    maxDate = maxDate.toISOString();
+    maxDate = (maxDate === '') ? '' : maxDate.toISOString();
 
     let groupId = [];
 
@@ -192,7 +209,6 @@ class ReportQueryBuilder extends React.Component {
     const {
       selectedOptions,
       minDate,
-      maxDate,
     } = this.state;
 
     const isDisabled = this.isInvalidQuery();
@@ -230,7 +246,6 @@ class ReportQueryBuilder extends React.Component {
     return (
       <div>
         <form
-          onSubmit={this.submitQuery}
           className="search-container"
         >
           <div className="inline-block dashboard-search">
@@ -243,33 +258,50 @@ class ReportQueryBuilder extends React.Component {
             />
           </div>
           <div className="inline-block">
-            <button
-              className={`
-								${isDisabled ? 'disabled-color' : 'active-color'}
-								search-btn
-							`}
+            <RaisedButton
+              label="Search"
+              primary
+              className="btn"
+              labelStyle={submitLabelStyle}
+              disabledLabelColor={'#fff'}
               disabled={isDisabled}
-            >
-              Search
-						</button>
+              onClick={() => this.submitQuery()}
+            />
           </div>
-          <h4>Please Select a Date Range</h4>
+          <div>
+            <RaisedButton
+              label="Search"
+              primary
+              className="mobileBtn"
+              fullWidth
+              labelStyle={submitLabelStyle}
+              disabledLabelColor={'#fff'}
+              disabled={isDisabled}
+              onClick={() => this.submitQuery()}
+            />
+          </div>
+          <div className="dateHeader">
+            Please Select a Date Range
+          </div>
           <div>
             <DatePicker
               onChange={this.handleChangeMinDate}
               autoOk
-              floatingLabelText="Min Date"
+              floatingLabelText="From Date *"
               defaultDate={minDate}
               locale="en-US"
-              floatingLabelStyle={{ zIndex: 0 }}
+              floatingLabelStyle={floatingLabelStyle}
+              className="datePicker"
+              inputStyle={inputStyle}
             />
             <DatePicker
               onChange={this.handleChangeMaxDate}
               autoOk
-              floatingLabelText="Max Date"
-              defaultDate={maxDate}
+              floatingLabelText="To Date (empty signifies to-date)"
               locale="en-US"
-              floatingLabelStyle={{ zIndex: 0 }}
+              floatingLabelStyle={floatingLabelStyle}
+              className="datePicker"
+              inputStyle={inputStyle}
             />
           </div>
         </form>

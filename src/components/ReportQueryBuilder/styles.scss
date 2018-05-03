@@ -1,7 +1,60 @@
 .search-container {
 	margin: 50px auto 0;
-	width: 50%;
+  width: 50%;
 
+  @media (max-width: 904px) and (min-width: 540px) {
+    width: 70%;
+  }
+
+  @media (max-width: 539px) {
+    width: 90%;
+  }
+}
+
+.dateHeader {
+  text-transform: capitalize;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 25px;
+  letter-spacing: 1.5px;
+  margin-top: 30px;
+  display: inline-block;
+
+  @media (max-width: 539px) {
+    text-align: center;
+    margin-top: 50px;
+  }
+}
+
+.infoIcon {
+  position: absolute;
+}
+
+.btn {
+  position: relative !important;
+  top: -13px !important;
+
+  @media (max-width: 539px) {
+    display: none !important;
+  }
+}
+
+.mobileBtn {
+  position: relative !important;
+
+  @media (min-width: 540px) {
+    display: none !important;
+  }
+}
+
+.datePicker {
+  width: 50%;
+  display: inline-block;
+
+  @media (max-width: 539px) {
+    div {
+      width: 100% !important;
+    }
+  }
 }
 
 .inline-block {
@@ -9,34 +62,15 @@
 }
 
 .dashboard-search {
-	width: 85%;
-}
+  width: 80%;
 
-.active-color {
-	background-color: #00b5ad;
-}
+  @media (max-width: 904px) and (min-width: 540px) {
+    width: 75%;
+  }
 
-.disabled-color {
-	background-color: #d3d3d3;
-}
-
-.search-btn {
-	color: #fff;
-	border: 0;
-  border-radius: 4px;
-  border-spacing: 0;
-  border-collapse: separate;
-  height: 36px;
-  outline: none;
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-  top: -14px;
-  line-height: 17px;
-}
-
-.active-color:hover {
-	cursor: pointer;
+  @media (max-width: 539px) {
+    width: 100%;
+  }
 }
 
 .loading {

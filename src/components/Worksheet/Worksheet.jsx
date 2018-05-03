@@ -24,9 +24,9 @@ class Worksheet extends React.Component {
       <div className="worksheetContainer">
         {!selected &&
           <div>
-            <h4 className="userWorksheetTitle">
+            <div className="userWorksheetTitle">
               {userData ? `${userData.first_name} ${userData.last_name}'s` : ''}&nbsp;Worksheet
-            </h4>
+            </div>
             <hr />
             <WorksheetList
               selectReport={this.selectReport.bind(this)}

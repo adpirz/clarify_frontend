@@ -2,11 +2,26 @@
 	margin: 0 auto;
 	width: 75%;
 	position: relative;
-	top: 25px;
+  top: 25px;
+
+  @media (max-width: 539px) {
+    width: 90%;
+  }
+}
+
+hr {
+  border: 0;
+  height: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .userWorksheetTitle {
-	text-transform: capitalize;
+  text-transform: capitalize;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 25px;
+  letter-spacing: 1.5px;
+  margin-top: 25px;
 }
 
 .inline-block {
@@ -16,6 +31,8 @@
 .worksheetTitle {
   margin-top: 10px;
   text-transform: capitalize;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 30px;
 }
 
 .worksheetItem:hover {

@@ -1,5 +1,5 @@
 .navbar {
-  height: 65px;
+  height: 70px;
 }
 
 .inline-block {
@@ -9,7 +9,7 @@
 .logoutSection {
   position: absolute;
   right: 25px;
-  border-left: 1px rgba(0, 0, 0, .3) solid;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
   padding: 10px 10px 0;
   text-align: center;
 }
@@ -19,8 +19,26 @@
   left: 5px;
 }
 
+.dialogText {
+  font-family: 'Tajawal', sans-serif;
+}
+
 .username {
   padding: 0 10px;
   position: relative;
   bottom: 5px;
+  font-family: 'Tajawal', sans-serif;
+  letter-spacing: 1px;
+  font-size: 18px;
+}
+
+hr {
+  border: 0;
+  height: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.logo {
+  height: 70px;
 }
