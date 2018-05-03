@@ -6,6 +6,7 @@ cache:
   - node_modules
   yarn: true
 install:
+- npm install
 - npm i -g aws-sdk
 script:
 - npm run build
