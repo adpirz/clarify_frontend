@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
-import { FlatButton } from 'material-ui';
+import { Dialog, FlatButton } from 'material-ui';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { PromiseState } from 'react-refetch';
 import {
@@ -107,10 +107,14 @@ class App extends React.Component {
     }
 
     const { username } = promiseValues.userData;
-
     return (
       <div>
         <div className="navbar">
+          <img
+            src="./logo.png"
+            alt="Clarify Logo"
+            className="logo"
+          />
           <div
             className="logoutSection inline-block"
           >
@@ -134,6 +138,11 @@ class App extends React.Component {
               />
             </div>
           </div>
+          <img
+            src="./logo.png"
+            alt="Clarify Logo"
+            className="logo"
+          />
         </div>
         <hr />
         <ReportQueryBuilder
