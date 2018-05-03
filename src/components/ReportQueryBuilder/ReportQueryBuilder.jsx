@@ -110,32 +110,6 @@ class ReportQueryBuilder extends React.Component {
     this.setState({ selectedOptions });
   };
 
-  handleGroupFilter = (filterGroup) => {
-    return reactSelectOptions.filter((o) => {
-      let { label, type } = o;
-      if (type === 'group') {
-        label = label.toLowerCase();
-        if (label.includes(filterGroup)) {
-          return o;
-        }
-      } else {
-        return o;
-      }
-      return o;
-    });
-  };
-
-  handleGroupCategoryFilter = (filterGroup) => {
-    return reactSelectOptions.filter((o) => {
-      let { label } = o;
-      label = label.toLowerCase();
-      if (label.includes(filterGroup)) {
-        return o;
-      }
-      return o
-    });
-  };
-
   isGroupValue = (type) => type === 'group';
 
   isCategoryValue = (type) => type === 'category';
@@ -215,18 +189,15 @@ class ReportQueryBuilder extends React.Component {
 
     let groupOptions = reactSelectOptions;
 
-    let filterGroup = '';
-
     if (selectedOptions.length) {
       let isGroupSelected = false;
       let isCategorySelected = false;
 
       selectedOptions.forEach(option => {
-        const { group: { type, value } } = option;
+        const { group: { type } } = option;
 
         if (this.isGroupValue(type)) {
           isGroupSelected = true;
-          filterGroup = value;
         }
 
         if (this.isCategoryValue(type)) {
@@ -235,11 +206,11 @@ class ReportQueryBuilder extends React.Component {
       });
 
       if (isCategorySelected && isGroupSelected) {
-        groupOptions = this.handleGroupCategoryFilter(filterGroup);
+        groupOptions = [];
       } else if (isGroupSelected) {
-        groupOptions = this.handleGroupFilter(filterGroup);
+        groupOptions = reactSelectOptions.filter((o) => o.type === 'category');
       } else {
-        groupOptions = reactSelectOptions.filter((o) => o.type !== 'category');
+        groupOptions = reactSelectOptions.filter((o) => o.type === 'group');
       }
     }
 
