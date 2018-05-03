@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
-import { Dialog, FlatButton } from 'material-ui';
+import { FlatButton } from 'material-ui';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { PromiseState } from 'react-refetch';
 import {

@@ -1,7 +1,6 @@
+import _ from 'lodash';
 import React from 'react';
 import Select from 'react-select-plus';
-import { DatePicker, IconButton, RaisedButton } from 'material-ui';
-import _ from 'lodash';
 import { DatePicker, RaisedButton } from 'material-ui';
 import 'react-select-plus/dist/react-select-plus.css';
 
@@ -282,17 +281,6 @@ class ReportQueryBuilder extends React.Component {
           <div className="dateHeader">
             Please Select a Date Range
           </div>
-          <div
-            onClick={() => this.props.toggleDateInfoDialog()}
-            className="inline-block infoIcon"
-          >
-            <IconButton
-              iconClassName="material-icons"
-              tooltip="Click here to find out more about the Date Range"
-            >
-              info_outline
-            </IconButton>
-          </div>
           <div>
             <DatePicker
               onChange={this.handleChangeMinDate}
@@ -307,7 +295,7 @@ class ReportQueryBuilder extends React.Component {
             <DatePicker
               onChange={this.handleChangeMaxDate}
               autoOk
-              floatingLabelText="To Date (empty signifies to_date)"
+              floatingLabelText="To Date (empty signifies to-date)"
               locale="en-US"
               floatingLabelStyle={floatingLabelStyle}
               className="datePicker"
