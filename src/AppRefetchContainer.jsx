@@ -53,14 +53,38 @@ export default connect(() => {
         force: 'true',
       },
     }),
-    submitReportQuery: (group, groupId, category, minDate, maxDate) => {
-      const queryString = `group=${group}&group_ids=${groupId}&category=${category}&from_date=${minDate}&to_date=${maxDate}`;
+    lazyWorksheetGet: () => ({
+      worksheetGet: {
+        url: `${BASE_URL}/api/worksheet/`,
+        credentials: 'include',
+        force: 'true',
+      },
+    }),
+    lazyReportDataGet: (group, groupId, category, minDate, maxDate) => {
+      const queryString = `group=${group}&group_id=${groupId}&category=${category}&from_date=${minDate}&to_date=${maxDate}`;
       return {
-        postReportQuery: {
+        reportDataGet: {
           url: `${BASE_URL}/report/?${queryString}`,
           credentials: 'include',
         },
       }
-    }
+    },
+    lazyReportObjectPost: () => ({
+      reportObjectPost: {
+        url: `${BASE_URL}/api/report`,
+        method: 'POST',
+        credentials: 'include',
+        force: 'true',
+      },
+    }),
+    lazyWorksheetMembershipPost: (report_id) => ({
+      worksheetMembershipPost: {
+        url: `${BASE_URL}/api/worksheet-membership`,
+        method: 'POST',
+        body: JSON.stringify({ report_id }),
+        credentials: 'include',
+        force: 'true',
+      },
+    }),
   };
 })(App);

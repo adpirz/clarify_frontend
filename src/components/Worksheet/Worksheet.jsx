@@ -1,56 +1,30 @@
+import _ from 'lodash';
 import React from 'react';
-import { FlatButton } from 'material-ui';
 import './Worksheet.css';
-import WorksheetList from './WorksheetList';
 import ReportDetail from '../ReportDetail/ReportDetail';
 
 class Worksheet extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selected: false,
-    };
-  }
-
-  selectReport = () => {
-    const { selected } = this.state;
-    this.setState({ selected: !selected });
-  }
-
   render() {
-    const { selected } = this.state;
-    const { queryResponseValues, students, userData } = this.props;
+    const { reports, students, userData } = this.props;
     return (
       <div className="worksheetContainer">
-        {!selected &&
-          <div>
-            <div className="userWorksheetTitle">
-              {userData ? `${userData.first_name} ${userData.last_name}'s` : ''}&nbsp;Worksheet
-            </div>
-            <hr />
-            <WorksheetList
-              selectReport={this.selectReport.bind(this)}
-              queryResponseValues={queryResponseValues}
-            />
+        <div>
+          <div className="userWorksheetTitle">
+            {userData ? `${userData.first_name} ${userData.last_name}'s` : ''}&nbsp;Worksheet
           </div>
-        }
-        {selected &&
-          <div>
-            <FlatButton
-              className="userWorksheetTitle"
-              label="Back to Dashboard"
-              labelStyle={{
-                textTransform: 'Capitalize',
-              }}
-              onClick={() => { this.selectReport() }}
-            />
-            <hr />
-            <ReportDetail
-              students={students}
-              queryResponseValues={queryResponseValues}
-            />
-          </div>
-        }
+          <hr />
+        </div>
+        <div>
+          {_.map(reports, (report) => {
+            return (
+              <ReportDetail
+                displayMode="summary"
+                students={students}
+                reportDate={report.data}
+              />
+            );
+          })}
+        </div>
       </div>
     );
   }

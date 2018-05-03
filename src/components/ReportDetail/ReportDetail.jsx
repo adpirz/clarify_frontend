@@ -66,9 +66,33 @@ class ReportDetail extends React.Component {
     return columns;
   }
 
+  getSummaryData = (reportData) => {
+    return {
+      count: 25,
+      meanStudent: "Ariel Salem",
+      mean: "68%",
+      highestStudent: "Adnan Pirzada",
+      highest: "98%",
+      lowestStudent: "Tristan McCormick",
+      lowest: "45%",
+    };
+  }
+
   render() {
     const columns = this.buildColumnsData();
-    const tableData = this.buildTableData()
+    const tableData = this.buildTableData();
+    const { reportData, displayMode } = this.props;
+    if (displayMode === 'summary') {
+      const summaryData = this.getSummaryData(reportData);
+      return (
+        <div>
+          <span>Number of Students: {summaryData.count}</span>
+          <span>Mean: {summaryData.meanStudent} {summaryData.mean}</span>
+          <span>Highest: {summaryData.highestStudent} {summaryData.highest}</span>
+          <span>Lowest: {summaryData.lowestStudent} {summaryData.lowest}</span>
+        </div>
+      )
+    }
     return (
       <ReactTable
         data={tableData}

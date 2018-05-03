@@ -3,6 +3,7 @@ import React from 'react';
 import { FlatButton } from 'material-ui';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { PromiseState } from 'react-refetch';
+import ApiFetcher from './fetchModule';
 import {
   LoginForm,
   ReportDetail,
@@ -17,11 +18,20 @@ class App extends React.Component {
   }
 
   componentWillReceiveProps = (nextProps) => {
-
     if (this.userIsAuthenticated(nextProps) && !this.queryRequestsMade(nextProps)) {
       // User is signed in, so let's make our object api calls.
-      this.props.lazyUserGet();
       this.requestQueryObjects();
+    }
+    const oldSessionValue = _.get(this.props.sessionGet, 'value');
+    const newSessionValue = _.get(nextProps.sessionGet, 'value');
+    if (newSessionValue && oldSessionValue !== newSessionValue) {
+      this.props.lazyUserGet();
+    }
+    const oldWorksheetValue = _.get(this.props.worksheetGet, 'value');
+    const newWorksheetValue = _.get(nextProps.worksheetGet, 'value');
+
+    if (newWorksheetValue && oldWorksheetValue !== newWorksheetValue) {
+      console.debug(newWorksheetValue);
     }
   }
 
@@ -37,8 +47,10 @@ class App extends React.Component {
       lazySectionGet,
       lazyGradeLevelGet,
       lazySiteGet,
+      lazyWorksheetGet,
     } = this.props;
 
+    lazyWorksheetGet();
     lazyStudentGet();
     lazySectionGet();
     lazyGradeLevelGet();
@@ -46,24 +58,14 @@ class App extends React.Component {
   }
 
   queryRequestsMade = (props) => {
-    const { siteGet, gradeLevelGet, sectionGet, studentGet } = props;
-    return !!(siteGet && gradeLevelGet && sectionGet && studentGet);
+    const { siteGet, gradeLevelGet, sectionGet, studentGet, worksheetGet } = props;
+    return !!(siteGet && gradeLevelGet && sectionGet && studentGet && worksheetGet);
   }
 
   queryRequestsFulfilled = (props) => {
-    const { siteGet, gradeLevelGet, sectionGet, studentGet } = props;
-    const allRequests = PromiseState.all([siteGet, gradeLevelGet, sectionGet, studentGet]);
-    return allRequests.fulfilled
-  }
-
-  submitQueryFulfilled = () => {
-    if (this.props.postReportQuery) {
-      const { postReportQuery } = this.props;
-      const postRequestResponse = PromiseState.resolve(postReportQuery);
-      if (postRequestResponse.fulfilled) {
-        return postRequestResponse.value.data;
-      }
-    }
+    const { siteGet, gradeLevelGet, sectionGet, studentGet, worksheetGet } = props;
+    const allRequests = PromiseState.all([siteGet, gradeLevelGet, sectionGet, studentGet, worksheetGet]);
+    return allRequests.fulfilled;
   }
 
   getPromiseValues = () => {
@@ -96,7 +98,7 @@ class App extends React.Component {
 
   render() {
     const promiseValues = this.getPromiseValues();
-    const queryResponseValues = this.submitQueryFulfilled();
+    const queryResponseValues = _.get(this.props.reportDataGet, 'value') || [];
 
     if (!this.userIsAuthenticated(this.props)) {
       return <LoginForm lazySessionPost={this.props.lazySessionPost} />;
@@ -147,7 +149,7 @@ class App extends React.Component {
         <hr />
         <ReportQueryBuilder
           {...promiseValues}
-          submitReportQuery={this.props.submitReportQuery}
+          lazyReportDataGet={this.props.lazyReportDataGet}
         />
         <BrowserRouter>
           <Switch>

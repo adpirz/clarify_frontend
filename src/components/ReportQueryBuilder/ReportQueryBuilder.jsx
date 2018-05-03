@@ -103,6 +103,7 @@ class ReportQueryBuilder extends React.Component {
   };
 
   handleChangeMaxDate = (event, date) => {
+
     this.setState({ maxDate: date });
   };
 
@@ -144,15 +145,15 @@ class ReportQueryBuilder extends React.Component {
   }
 
   submitQuery = () => {
-    const { submitReportQuery } = this.props;
+    const { lazyReportDataGet } = this.props;
     const { selectedOptions } = this.state;
     let { minDate, maxDate } = this.state;
 
     let group;
     let category;
 
-    minDate = minDate.toISOString();
-    maxDate = (maxDate === '') ? '' : maxDate.toISOString();
+    minDate = minDate.toLocaleDateString();
+    maxDate = (maxDate === '') ? '' : maxDate.toLocaleDateString();
 
     let groupId = [];
 
@@ -169,7 +170,7 @@ class ReportQueryBuilder extends React.Component {
       }
     });
 
-    submitReportQuery(group, groupId, category, minDate, maxDate);
+    lazyReportDataGet(group, groupId, category, minDate, maxDate);
   };
 
   isInvalidQuery = () => {
