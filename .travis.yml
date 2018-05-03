@@ -7,7 +7,7 @@ cache:
   yarn: true
 install:
 - npm install
-- npm i -g aws-sdk
+- npm i aws-sdk
 script:
 - npm run build
 deploy:
