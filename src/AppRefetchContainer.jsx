@@ -3,8 +3,7 @@ import App from './App';
 
 
 export default connect(() => {
-  //TODO: Import baseurl from an environment variable
-  const BASE_URL = 'http://localhost:8000'
+  const BASE_URL = process.env.NODE_ENV === "production" ? process.env.REACT_APP_BASE_URL : 'http://localhost:8000'
 
   return {
     lazyStudentGet: () => ({

@@ -103,6 +103,7 @@ class ReportQueryBuilder extends React.Component {
       } else {
         return o;
       }
+      return o;
     });
   };
 
@@ -113,6 +114,7 @@ class ReportQueryBuilder extends React.Component {
       if (label.includes(filterGroup)) {
         return o;
       }
+      return o
     });
   };
 
