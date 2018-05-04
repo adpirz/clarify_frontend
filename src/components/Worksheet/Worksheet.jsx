@@ -5,12 +5,12 @@ import ReportDetail from '../ReportDetail/ReportDetail';
 
 class Worksheet extends React.Component {
   render() {
-    const { reports, students, userData } = this.props;
+    const { reports, students, user } = this.props;
     return (
       <div className="worksheetContainer">
         <div>
           <div className="userWorksheetTitle">
-            {userData ? `${userData.first_name} ${userData.last_name}'s` : ''}&nbsp;Worksheet
+            {user ? `${user.first_name} ${user.last_name}'s` : ''}&nbsp;Worksheet
           </div>
           <hr />
         </div>

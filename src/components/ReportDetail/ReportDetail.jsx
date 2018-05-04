@@ -9,43 +9,43 @@ class ReportDetail extends React.Component {
     this.state = {};
   }
 
-  formatHeader = (value) => {
-    value = value.split('_').join(' ');
-    return value;
-  }
-
-  formatData = (student) => {
-    const data = {};
-    for (let prop in student.data) {
-      data[prop] = student.data[prop];
-    }
-    return data;
-  }
-
-  getStudentName = (id) => {
-    const { students } = this.props;
-    return _.find(students, { id: id })
-  }
-
-  buildTableData = () => {
-    const { queryResponseValues } = this.props;
-    const tableData = [];
-    if (queryResponseValues) {
-      for (let i = 0; i < queryResponseValues.length; i++) {
-        const id = queryResponseValues[i].student_id;
-        const data = this.formatData(queryResponseValues[i]);
-        const studentName = this.getStudentName(id);
-        data.firstName = studentName.first_name;
-        data.lastName = studentName.last_name;
-        tableData.push(data);
+  formatStudentRowData = (studentAttendanceData) => {
+    let studentDataRow = {};
+    const { flags } = _.get(this.props, 'reportResponse');
+    _.forEach(_.keys(studentAttendanceData), (key) => {
+      const attendanceFlagCode = flags[key].code;
+      const attendanceFlagCount = studentAttendanceData[key][0];
+      const attendanceFlagPercentage = studentAttendanceData[key][1];
+      studentDataRow[attendanceFlagCode] = {
+          attendanceFlagCount,
+          attendanceFlagPercentage,
+        };
       }
+    );
+    return studentDataRow;
+  }
+
+  buildStudentRowData = () => {
+    const { reportResponse, students } = this.props;
+    let tableData;
+    if (reportResponse) {
+      tableData = _.map(reportResponse.data, (studentRow) => {
+        const studentName = _.find(students, { id: studentRow.student_id });
+        const formattedData = this.formatStudentRowData(studentRow.attendance_data);
+        formattedData.firstName = _.get(studentName, 'first_name') || 'Student';
+        formattedData.lastName = _.get(studentName, 'last_name') || '';
+        return formattedData;
+      });
     }
     return tableData;
   }
 
-  buildColumnsData = () => {
-    const { queryResponseValues } = this.props;
-    const columns = [{
+  buildColumns = () => {
+    const { reportResponse } = this.props;
+    if (!_.size(reportResponse)) {
+      return null;
+    }
+    const nameColumns = [{
       Header: 'First Name',
       accessor: 'firstName'
     },
@@ -54,19 +54,26 @@ class ReportDetail extends React.Component {
       accessor: 'lastName'
     }];
 
-    if (queryResponseValues) {
-      for (let reportField in queryResponseValues[0].data) {
-        const columnHeader = this.formatHeader(reportField);
-        columns.push({
-          Header: columnHeader,
-          accessor: reportField,
-        });
-      }
-    }
-    return columns;
+    const { flags } = _.get(this.props, 'reportResponse');
+    const attendanceColumns = _.map(flags, (flag) => {
+      const {text, code} = flag;
+      return {
+        Header: text,
+        accessor: code,
+        Cell: props => {
+          const { attendanceFlagCount, attendanceFlagPercentage } = props.value;
+          return (
+            <span>
+              {attendanceFlagCount} ({attendanceFlagPercentage})
+            </span>
+          );
+        },
+      };
+    });
+    return [...nameColumns, ...attendanceColumns];
   }
 
-  getSummaryData = (reportData) => {
+  getSummaryData = () => {
     return {
       count: 25,
       meanStudent: "Ariel Salem",
@@ -79,11 +86,9 @@ class ReportDetail extends React.Component {
   }
 
   render() {
-    const columns = this.buildColumnsData();
-    const tableData = this.buildTableData();
-    const { reportData, displayMode } = this.props;
+    const { displayMode } = this.props;
     if (displayMode === 'summary') {
-      const summaryData = this.getSummaryData(reportData);
+      const summaryData = this.getSummaryData();
       return (
         <div>
           <span>Number of Students: {summaryData.count}</span>
@@ -93,9 +98,11 @@ class ReportDetail extends React.Component {
         </div>
       )
     }
+    const columns = this.buildColumns();
+    const studentRowData = this.buildStudentRowData();
     return (
       <ReactTable
-        data={tableData}
+        data={studentRowData}
         columns={columns}
       />
     )

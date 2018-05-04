@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
 import { FlatButton } from 'material-ui';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { PromiseState } from 'react-refetch';
 import ApiFetcher from './fetchModule';
 import {
@@ -13,6 +12,14 @@ import {
 import './App.css'
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      enrichedReports: []
+    };
+  }
+
   componentDidMount() {
     this.props.lazyUserGet();
   }
@@ -85,7 +92,7 @@ class App extends React.Component {
       gradeLevels: _.get(gradeLevelGet, 'value.data', []),
       sections: _.get(sectionGet, 'value.data', []),
       sites: _.get(siteGet, 'value.data', []),
-      userData: _.get(userGet, 'value', []),
+      user: _.get(userGet, 'value', {}),
     };
 
     return promiseValues;
@@ -96,9 +103,29 @@ class App extends React.Component {
     window.location.reload();
   }
 
+  getReportOrWorksheet = () => {
+    const reportResponse = _.get(this.props.reportDataGet, 'value');
+    const { user, students } = this.getPromiseValues();
+    if (reportResponse) {
+      return (
+        <ReportDetail
+          reportResponse={reportResponse}
+          students={students}
+        />
+      );
+    }
+    const { enrichedReports } = this.state;
+    return (
+      <Worksheet
+        reports={enrichedReports}
+        students={students}
+        user={user}
+      />
+    );
+  }
+
   render() {
     const promiseValues = this.getPromiseValues();
-    const queryResponseValues = _.get(this.props.reportDataGet, 'value') || [];
 
     if (!this.userIsAuthenticated(this.props)) {
       return <LoginForm lazySessionPost={this.props.lazySessionPost} />;
@@ -108,15 +135,10 @@ class App extends React.Component {
       return null;
     }
 
-    const { username } = promiseValues.userData;
+    const username = _.get(promiseValues.user, 'username');
     return (
       <div>
         <div className="navbar">
-          <img
-            src="./logo.png"
-            alt="Clarify Logo"
-            className="logo"
-          />
           <div
             className="logoutSection inline-block"
           >
@@ -151,29 +173,7 @@ class App extends React.Component {
           {...promiseValues}
           lazyReportDataGet={this.props.lazyReportDataGet}
         />
-        <BrowserRouter>
-          <Switch>
-            <Route
-              render={(renderProps) => {
-                return (
-                  <Worksheet
-                    {...this.props}
-                    userData={promiseValues.userData}
-                    students={promiseValues.students}
-                    queryResponseValues={queryResponseValues}
-                  />
-                )
-              }}
-              key="WorksheetRoute"
-            />
-            <Route
-              path={`/report/:reportId`}
-              component={ReportDetail}
-              exact
-              key="ReportDetailRoute"
-            />
-          </Switch>
-        </BrowserRouter>
+      {this.getReportOrWorksheet()}
       </div>
     );
   }

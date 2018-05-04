@@ -40,11 +40,6 @@ const reactSelectOptions = [
         value: 'attendance',
         id: 999,
       },
-      {
-        label: 'Academic Grades',
-        value: 'grades',
-        id: 1000,
-      }
     ],
   },
 ];
@@ -71,13 +66,10 @@ const submitLabelStyle = {
 class ReportQueryBuilder extends React.Component {
   constructor(props) {
     super(props);
-    const minDate = new Date();
-    const pastYear = minDate.getFullYear() - 1;
-    minDate.setFullYear(pastYear);
 
     this.state = {
       selectedOptions: [],
-      minDate,
+      minDate: this.getBeginningOfSchoolYear(),
       maxDate: '',
     };
   }
@@ -144,6 +136,19 @@ class ReportQueryBuilder extends React.Component {
     });
   }
 
+  // If it's before January 1, get august 1 of that year.
+  // If it's after January 1, get august 1 of the previous year.
+  getBeginningOfSchoolYear = () => {
+    const currentDate = new Date();
+    // 0 == January and 7 == august
+    if (0 < currentDate.month < 7) {
+      // The beginning of the school year is the previous calendar years august 1st
+      return new Date(currentDate.getFullYear() - 1, 7);
+    } else {
+      return new Date(currentDate.getFullYear(), 7);
+    }
+  }
+
   submitQuery = () => {
     const { lazyReportDataGet } = this.props;
     const { selectedOptions } = this.state;
@@ -152,8 +157,8 @@ class ReportQueryBuilder extends React.Component {
     let group;
     let category;
 
-    minDate = minDate.toLocaleDateString();
-    maxDate = (maxDate === '') ? '' : maxDate.toLocaleDateString();
+    minDate = minDate.toISOString();
+    maxDate = (maxDate === '') ? '' : maxDate.toISOString();
 
     let groupId = [];
 
