@@ -69,21 +69,29 @@ export default connect(() => {
         },
       }
     },
-    lazyReportObjectPost: () => ({
+    lazyReportObjectPost: (currentReportQuery) => ({
       reportObjectPost: {
-        url: `${BASE_URL}/api/report`,
+        url: `${BASE_URL}/api/report/`,
+        body: JSON.stringify({ query: currentReportQuery }),
         method: 'POST',
         credentials: 'include',
         force: 'true',
-      },
-    }),
-    lazyWorksheetMembershipPost: (report_id) => ({
-      worksheetMembershipPost: {
-        url: `${BASE_URL}/api/worksheet-membership`,
-        method: 'POST',
-        body: JSON.stringify({ report_id }),
-        credentials: 'include',
-        force: 'true',
+        andThen: resp => ({
+          worksheetMembershipPost: {
+            url: `${BASE_URL}/api/worksheet-membership/`,
+            method: 'POST',
+            body: JSON.stringify({ report_id: resp.data.id }),
+            credentials: 'include',
+            force: 'true',
+            andThen: resp => ({
+              worksheetGet: {
+                url: `${BASE_URL}/api/worksheet/`,
+                credentials: 'include',
+                force: 'true',
+              },
+            })
+          }
+        }),
       },
     }),
   };

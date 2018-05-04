@@ -5,7 +5,8 @@ import ReportDetail from '../ReportDetail/ReportDetail';
 
 class Worksheet extends React.Component {
   render() {
-    const { reports, students, user } = this.props;
+    const { reports, students, user, selectReport, reportDataList } = this.props;
+    const randomReport = reportDataList[_.random(0, reportDataList.length)];
     return (
       <div className="worksheetContainer">
         <div>
@@ -20,7 +21,10 @@ class Worksheet extends React.Component {
               <ReportDetail
                 displayMode="summary"
                 students={students}
-                reportDate={report.data}
+                reportData={randomReport}
+                report={report}
+                key={report.id}
+                selectReport={selectReport}
               />
             );
           })}

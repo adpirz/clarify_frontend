@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import { FlatButton } from 'material-ui';
 import { PromiseState } from 'react-refetch';
-import ApiFetcher from './fetchModule';
+import { ApiFetcher, ReportFetcher } from './fetchModule';
 import {
   LoginForm,
   ReportDetail,
@@ -16,7 +16,9 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      enrichedReports: []
+      reports: [],
+      currentReportQuery: '',
+      selectedReport: null,
     };
   }
 
@@ -36,9 +38,32 @@ class App extends React.Component {
     }
     const oldWorksheetValue = _.get(this.props.worksheetGet, 'value');
     const newWorksheetValue = _.get(nextProps.worksheetGet, 'value');
-
     if (newWorksheetValue && oldWorksheetValue !== newWorksheetValue) {
-      console.debug(newWorksheetValue);
+      const reports = _.get(newWorksheetValue, 'data[0].reports');
+      let reportFetchPromises = [];
+      _.forEach(reports, (r) => {
+        reportFetchPromises.push(ApiFetcher.get('report', r.id));
+      });
+
+      Promise.all(reportFetchPromises).then(reports =>  {
+        this.setState({reports});
+        const reportQueries = _.map(reports, 'query');
+        let reportDataFetchPromises = [];
+        _.forEach(reportQueries, (query) => {
+          reportDataFetchPromises.push(ReportFetcher.get(query));
+        });
+        Promise.all(reportDataFetchPromises).then(reportDataList => {
+          this.setState({reportDataList});
+        })
+      });
+    }
+
+    const oldReportDataGet = _.get(this.props.reportDataGet, 'value');
+    const newReportDataGet = _.get(nextProps.reportDataGet, 'value');
+    if (newReportDataGet && oldReportDataGet !== newReportDataGet) {
+      this.setState({
+        selectedReport: newReportDataGet,
+      });
     }
   }
 
@@ -103,24 +128,81 @@ class App extends React.Component {
     window.location.reload();
   }
 
+  saveReport = () => {
+    this.props.lazyReportObjectPost(this.state.currentReportQuery);
+  }
+
+  submitReportQuery = (group, groupId, category, minDate, maxDate) => {
+    this.setState({
+      currentReportQuery: `group=${group}&group_id=${groupId}&category=${category}&from_date=${minDate}&to_date=${maxDate}`,
+    });
+    this.props.lazyReportDataGet(group, groupId, category, minDate, maxDate);
+  }
+
+  selectReport = (report) => {
+    this.setState({selectedReport: report});
+  }
+
+  clearReportDetail = () => {
+    this.setState({
+      selectedReport: null,
+      currentReportQuery: null,
+    });
+  }
+
   getReportOrWorksheet = () => {
-    const reportResponse = _.get(this.props.reportDataGet, 'value');
+    const selectedReport = this.state.selectedReport;
     const { user, students } = this.getPromiseValues();
-    if (reportResponse) {
+    if (selectedReport) {
+      const randomReport = this.state.reportDataList[_.random(0, this.state.reportDataList.length)];
       return (
         <ReportDetail
-          reportResponse={reportResponse}
+          report={selectedReport}
+          reportData={randomReport}
           students={students}
         />
       );
     }
-    const { enrichedReports } = this.state;
+    const { reports, reportDataList } = this.state;
+    if (_.isEmpty(reports) || _.isEmpty(reportDataList)) {
+      return null;
+    }
     return (
       <Worksheet
-        reports={enrichedReports}
+        reports={reports}
         students={students}
         user={user}
+        reportDataList={reportDataList}
+        selectReport={this.selectReport}
       />
+    );
+  }
+
+  getReportButtons = () => {
+    if (!this.state.currentReportQuery && !this.state.selectedReport) {
+      return null;
+    }
+    return (
+      <div className="reportActionContainer">
+        <FlatButton
+          onClick={this.saveReport}
+          className="saveReport"
+          label="Save Report"
+          labelStyle={{
+            fontSize: '13px',
+            textTransform: 'uppercase',
+          }}
+        />
+        <FlatButton
+          onClick={this.clearReportDetail}
+          className="clearReport"
+          label="Clear Report Results"
+          labelStyle={{
+            fontSize: '13px',
+            textTransform: 'uppercase',
+          }}
+        />
+      </div>
     );
   }
 
@@ -139,20 +221,16 @@ class App extends React.Component {
     return (
       <div>
         <div className="navbar">
-          <div
-            className="logoutSection inline-block"
-          >
+          <div className="logoutSection inline-block">
             <div>
               <i className="material-icons">person</i>
               <div className="username inline-block">
                 {username}
               </div>
             </div>
-            <div
-              className="logoutBtn"
-            >
+            <div>
               <FlatButton
-                onClick={() => this.logout()}
+                onClick={this.logout}
                 className="logoutBtn"
                 label="logout"
                 labelStyle={{
@@ -172,9 +250,13 @@ class App extends React.Component {
         <ReportQueryBuilder
           {...promiseValues}
           lazyReportDataGet={this.props.lazyReportDataGet}
+          submitReportQuery={this.submitReportQuery}
         />
-      {this.getReportOrWorksheet()}
+      {this.getReportButtons()}
+      <div>
+        {this.getReportOrWorksheet()}
       </div>
+    </div>
     );
   }
 }

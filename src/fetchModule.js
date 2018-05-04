@@ -1,19 +1,31 @@
 
 
 class ApiFetcher {
-  constructor() {
-    this.baseApiUrl = 'http://localhost:8000/api/';
-  }
-
-  static get(path) {
-    const apiRequest = new Request(`${this.baseApiUrl}/${path}`, {
-      credentials: 'same-origin'
+  static get(objectPath, objectId) {
+    const apiRequest = new Request(`http://localhost:8000/api/${objectPath}/${objectId}`, {
+      credentials: 'include'
     });
 
-    fetch(apiRequest).then((resp) => {
-      return resp;
-    })
+    return fetch(apiRequest).then(resp => {
+      return resp.json();
+    });
   }
 }
 
-export default ApiFetcher;
+class ReportFetcher {
+  static get(query) {
+    const reportRequest = new Request(`http://localhost:8000/report/?${query}`, {
+      credentials: 'include'
+    });
+
+    return fetch(reportRequest).then(resp => {
+      return resp.json();
+    });
+  }
+}
+
+
+export {
+  ApiFetcher,
+  ReportFetcher
+};

@@ -2,6 +2,11 @@
   height: 70px;
 }
 
+.baseButton {
+  border: 1px solid black !important;
+  border-radius: 15px !important;
+}
+
 .inline-block {
   display: inline-block;
 }
@@ -15,8 +20,21 @@
 }
 
 .logoutBtn {
-  position: relative;
-  left: 5px;
+  @extend .baseButton;
+}
+
+.reportActionContainer {
+  width: 70%;
+  margin: 0 auto;
+  text-align: right;
+}
+
+.saveReport {
+  @extend .baseButton;
+}
+
+.clearReport {
+  @extend .baseButton;
 }
 
 .dialogText {

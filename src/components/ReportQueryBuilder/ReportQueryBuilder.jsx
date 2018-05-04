@@ -150,7 +150,7 @@ class ReportQueryBuilder extends React.Component {
   }
 
   submitQuery = () => {
-    const { lazyReportDataGet } = this.props;
+    const { submitReportQuery } = this.props;
     const { selectedOptions } = this.state;
     let { minDate, maxDate } = this.state;
 
@@ -175,7 +175,7 @@ class ReportQueryBuilder extends React.Component {
       }
     });
 
-    lazyReportDataGet(group, groupId, category, minDate, maxDate);
+    submitReportQuery(group, groupId, category, minDate, maxDate);
   };
 
   isInvalidQuery = () => {
