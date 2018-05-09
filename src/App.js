@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import React from 'react';
 import { FlatButton } from 'material-ui';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { PromiseState } from 'react-refetch';
+import { ApiFetcher, ReportFetcher } from './fetchModule';
 import {
   LoginForm,
   ReportDetail,
@@ -12,16 +12,58 @@ import {
 import './App.css'
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      reports: [],
+      currentReportQuery: '',
+      selectedReport: null,
+    };
+  }
+
   componentDidMount() {
     this.props.lazyUserGet();
   }
 
   componentWillReceiveProps = (nextProps) => {
-
     if (this.userIsAuthenticated(nextProps) && !this.queryRequestsMade(nextProps)) {
       // User is signed in, so let's make our object api calls.
-      this.props.lazyUserGet();
       this.requestQueryObjects();
+    }
+    const oldSessionValue = _.get(this.props.sessionGet, 'value');
+    const newSessionValue = _.get(nextProps.sessionGet, 'value');
+    if (newSessionValue && oldSessionValue !== newSessionValue) {
+      this.props.lazyUserGet();
+    }
+    const oldWorksheetValue = _.get(this.props.worksheetGet, 'value');
+    const newWorksheetValue = _.get(nextProps.worksheetGet, 'value');
+    if (newWorksheetValue && oldWorksheetValue !== newWorksheetValue) {
+      const reports = _.get(newWorksheetValue, 'data[0].reports');
+      let reportFetchPromises = [];
+      _.forEach(reports, (r) => {
+        reportFetchPromises.push(ApiFetcher.get('report', r.id));
+      });
+
+      Promise.all(reportFetchPromises).then(reports =>  {
+        this.setState({reports});
+        const reportQueries = _.map(reports, 'query');
+        let reportDataFetchPromises = [];
+        _.forEach(reportQueries, (query) => {
+          reportDataFetchPromises.push(ReportFetcher.get(query));
+        });
+        Promise.all(reportDataFetchPromises).then(reportDataList => {
+          this.setState({reportDataList});
+        })
+      });
+    }
+
+    const oldReportDataGet = _.get(this.props.reportDataGet, 'value');
+    const newReportDataGet = _.get(nextProps.reportDataGet, 'value');
+    if (newReportDataGet && oldReportDataGet !== newReportDataGet) {
+      this.setState({
+        selectedReport: newReportDataGet,
+      });
     }
   }
 
@@ -37,8 +79,10 @@ class App extends React.Component {
       lazySectionGet,
       lazyGradeLevelGet,
       lazySiteGet,
+      lazyWorksheetGet,
     } = this.props;
 
+    lazyWorksheetGet();
     lazyStudentGet();
     lazySectionGet();
     lazyGradeLevelGet();
@@ -46,24 +90,14 @@ class App extends React.Component {
   }
 
   queryRequestsMade = (props) => {
-    const { siteGet, gradeLevelGet, sectionGet, studentGet } = props;
-    return !!(siteGet && gradeLevelGet && sectionGet && studentGet);
+    const { siteGet, gradeLevelGet, sectionGet, studentGet, worksheetGet } = props;
+    return !!(siteGet && gradeLevelGet && sectionGet && studentGet && worksheetGet);
   }
 
   queryRequestsFulfilled = (props) => {
-    const { siteGet, gradeLevelGet, sectionGet, studentGet } = props;
-    const allRequests = PromiseState.all([siteGet, gradeLevelGet, sectionGet, studentGet]);
-    return allRequests.fulfilled
-  }
-
-  submitQueryFulfilled = () => {
-    if (this.props.postReportQuery) {
-      const { postReportQuery } = this.props;
-      const postRequestResponse = PromiseState.resolve(postReportQuery);
-      if (postRequestResponse.fulfilled) {
-        return postRequestResponse.value.data;
-      }
-    }
+    const { siteGet, gradeLevelGet, sectionGet, studentGet, worksheetGet } = props;
+    const allRequests = PromiseState.all([siteGet, gradeLevelGet, sectionGet, studentGet, worksheetGet]);
+    return allRequests.fulfilled;
   }
 
   getPromiseValues = () => {
@@ -83,7 +117,7 @@ class App extends React.Component {
       gradeLevels: _.get(gradeLevelGet, 'value.data', []),
       sections: _.get(sectionGet, 'value.data', []),
       sites: _.get(siteGet, 'value.data', []),
-      userData: _.get(userGet, 'value', []),
+      user: _.get(userGet, 'value', {}),
     };
 
     return promiseValues;
@@ -94,9 +128,86 @@ class App extends React.Component {
     window.location.reload();
   }
 
+  saveReport = () => {
+    this.props.lazyReportObjectPost(this.state.currentReportQuery);
+  }
+
+  submitReportQuery = (group, groupId, category, minDate, maxDate) => {
+    this.setState({
+      currentReportQuery: `group=${group}&group_id=${groupId}&category=${category}&from_date=${minDate}&to_date=${maxDate}`,
+    });
+    this.props.lazyReportDataGet(group, groupId, category, minDate, maxDate);
+  }
+
+  selectReport = (report) => {
+    this.setState({selectedReport: report});
+  }
+
+  clearReportDetail = () => {
+    this.setState({
+      selectedReport: null,
+      currentReportQuery: null,
+    });
+  }
+
+  getReportOrWorksheet = () => {
+    const selectedReport = this.state.selectedReport;
+    const { user, students } = this.getPromiseValues();
+    if (selectedReport) {
+      const randomReport = this.state.reportDataList[_.random(0, this.state.reportDataList.length)];
+      return (
+        <ReportDetail
+          report={selectedReport}
+          reportData={randomReport}
+          students={students}
+        />
+      );
+    }
+    const { reports, reportDataList } = this.state;
+    if (_.isEmpty(reports) || _.isEmpty(reportDataList)) {
+      return null;
+    }
+    return (
+      <Worksheet
+        reports={reports}
+        students={students}
+        user={user}
+        reportDataList={reportDataList}
+        selectReport={this.selectReport}
+      />
+    );
+  }
+
+  getReportButtons = () => {
+    if (!this.state.currentReportQuery && !this.state.selectedReport) {
+      return null;
+    }
+    return (
+      <div className="reportActionContainer">
+        <FlatButton
+          onClick={this.saveReport}
+          className="saveReport"
+          label="Save Report"
+          labelStyle={{
+            fontSize: '13px',
+            textTransform: 'uppercase',
+          }}
+        />
+        <FlatButton
+          onClick={this.clearReportDetail}
+          className="clearReport"
+          label="Clear Report Results"
+          labelStyle={{
+            fontSize: '13px',
+            textTransform: 'uppercase',
+          }}
+        />
+      </div>
+    );
+  }
+
   render() {
     const promiseValues = this.getPromiseValues();
-    const queryResponseValues = this.submitQueryFulfilled();
 
     if (!this.userIsAuthenticated(this.props)) {
       return <LoginForm lazySessionPost={this.props.lazySessionPost} />;
@@ -106,29 +217,20 @@ class App extends React.Component {
       return null;
     }
 
-    const { username } = promiseValues.userData;
+    const username = _.get(promiseValues.user, 'username');
     return (
       <div>
         <div className="navbar">
-          <img
-            src="./logo.png"
-            alt="Clarify Logo"
-            className="logo"
-          />
-          <div
-            className="logoutSection inline-block"
-          >
+          <div className="logoutSection inline-block">
             <div>
               <i className="material-icons">person</i>
               <div className="username inline-block">
                 {username}
               </div>
             </div>
-            <div
-              className="logoutBtn"
-            >
+            <div>
               <FlatButton
-                onClick={() => this.logout()}
+                onClick={this.logout}
                 className="logoutBtn"
                 label="logout"
                 labelStyle={{
@@ -147,32 +249,14 @@ class App extends React.Component {
         <hr />
         <ReportQueryBuilder
           {...promiseValues}
-          submitReportQuery={this.props.submitReportQuery}
+          lazyReportDataGet={this.props.lazyReportDataGet}
+          submitReportQuery={this.submitReportQuery}
         />
-        <BrowserRouter>
-          <Switch>
-            <Route
-              render={(renderProps) => {
-                return (
-                  <Worksheet
-                    {...this.props}
-                    userData={promiseValues.userData}
-                    students={promiseValues.students}
-                    queryResponseValues={queryResponseValues}
-                  />
-                )
-              }}
-              key="WorksheetRoute"
-            />
-            <Route
-              path={`/report/:reportId`}
-              component={ReportDetail}
-              exact
-              key="ReportDetailRoute"
-            />
-          </Switch>
-        </BrowserRouter>
+      {this.getReportButtons()}
+      <div>
+        {this.getReportOrWorksheet()}
       </div>
+    </div>
     );
   }
 }
