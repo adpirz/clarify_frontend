@@ -66,7 +66,7 @@ class ReportDetail extends React.Component {
           const { attendanceFlagCount, attendanceFlagPercentage } = props.value;
           return (
             <span>
-              {attendanceFlagCount} ({attendanceFlagPercentage})
+              {attendanceFlagCount} ({_.round(attendanceFlagPercentage, 2)}%)
             </span>
           );
         },
@@ -100,11 +100,11 @@ class ReportDetail extends React.Component {
     minAttendanceStudent = _.find(this.props.students, {id: minAttendanceStudent}) || randomStudent2;
     return {
       count: _.size(data),
-      mean: sumAttendance / _.size(data),
+      mean: _.round(sumAttendance / _.size(data), 2),
       highestStudent: `${maxAttendanceStudent.first_name} ${maxAttendanceStudent.last_name}`,
-      highest: `${maxAttendancePercentage * 100}%`,
+      highest: `${_.round(maxAttendancePercentage, 2) * 100}%`,
       lowestStudent: `${minAttendanceStudent.first_name} ${minAttendanceStudent.last_name}`,
-      lowest: `${minAttendancePercentage * 100}%`,
+      lowest: `${_.round(minAttendancePercentage, 2) * 100}%`,
     };
   }
 
@@ -132,10 +132,12 @@ class ReportDetail extends React.Component {
     const columns = this.buildColumns();
     const studentRowData = this.buildStudentRowData();
     return (
-      <ReactTable
-        data={studentRowData}
-        columns={columns}
-      />
+      <div className="reportDetail">
+        <ReactTable
+          data={studentRowData}
+          columns={columns}
+        />
+      </div>
     )
   }
 }

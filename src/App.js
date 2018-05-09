@@ -7,7 +7,6 @@ import {
   LoginForm,
   ReportDetail,
   ReportQueryBuilder,
-  Worksheet,
 } from './components/index';
 import './App.css'
 
@@ -167,14 +166,30 @@ class App extends React.Component {
     if (_.isEmpty(reports) || _.isEmpty(reportDataList)) {
       return null;
     }
+    const randomReport = reportDataList[_.random(0, reportDataList.length)];
     return (
-      <Worksheet
-        reports={reports}
-        students={students}
-        user={user}
-        reportDataList={reportDataList}
-        selectReport={this.selectReport}
-      />
+      <div className="worksheetContainer">
+        <div>
+          <div className="userWorksheetTitle">
+            {user ? `${user.first_name} ${user.last_name}'s` : ''}&nbsp;Worksheet
+          </div>
+          <hr />
+        </div>
+        <div>
+          {_.map(reports, (report) => {
+            return (
+              <ReportDetail
+                displayMode="summary"
+                students={students}
+                reportData={randomReport}
+                report={report}
+                key={report.id}
+                selectReport={this.selectReport}
+              />
+            );
+          })}
+        </div>
+      </div>
     );
   }
 

@@ -37,8 +37,14 @@
   @extend .baseButton;
 }
 
-.dialogText {
-  font-family: 'Tajawal', sans-serif;
+.worksheetContainer {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.userWorksheetTitle {
+  margin: 20px 0px;
+  font-weight: bold;
 }
 
 .username {
