@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
-import { FlatButton } from 'material-ui';
+import { Button, Logo } from './components/PatternLibrary';
 import { PromiseState } from 'react-refetch';
 import { ApiFetcher, ReportFetcher } from './fetchModule';
 import {
@@ -8,7 +8,6 @@ import {
   ReportDetail,
   ReportQueryBuilder,
 } from './components/index';
-import './App.css'
 
 class App extends React.Component {
   constructor(props) {
@@ -168,14 +167,14 @@ class App extends React.Component {
     }
     const randomReport = reportDataList[_.random(0, reportDataList.length)];
     return (
-      <div className="worksheetContainer">
+      <div style={{padding: '0 50px'}}>
         <div>
-          <div className="userWorksheetTitle">
+          <div>
             {user ? `${user.first_name} ${user.last_name}'s` : ''}&nbsp;Worksheet
           </div>
           <hr />
         </div>
-        <div>
+        <div style={{display: 'flex', justifyContent: 'space-between', padding: '20px 0'}}>
           {_.map(reports, (report) => {
             return (
               <ReportDetail
@@ -198,25 +197,17 @@ class App extends React.Component {
       return null;
     }
     return (
-      <div className="reportActionContainer">
-        <FlatButton
+      <div>
+        <Button
+          primary
           onClick={this.saveReport}
-          className="saveReport"
-          label="Save Report"
-          labelStyle={{
-            fontSize: '13px',
-            textTransform: 'uppercase',
-          }}
-        />
-        <FlatButton
-          onClick={this.clearReportDetail}
-          className="clearReport"
-          label="Clear Report Results"
-          labelStyle={{
-            fontSize: '13px',
-            textTransform: 'uppercase',
-          }}
-        />
+        >
+        Save Report
+        </Button>
+        <Button onClick={this.clearReportDetail}
+        >
+        Clear Report Results
+        </Button>
       </div>
     );
   }
@@ -235,31 +226,19 @@ class App extends React.Component {
     const username = _.get(promiseValues.user, 'username');
     return (
       <div>
-        <div className="navbar">
-          <div className="logoutSection inline-block">
-            <div>
-              <i className="material-icons">person</i>
-              <div className="username inline-block">
-                {username}
-              </div>
-            </div>
-            <div>
-              <FlatButton
-                onClick={this.logout}
-                className="logoutBtn"
-                label="logout"
-                labelStyle={{
-                  fontSize: '13px',
-                  textTransform: 'uppercase',
-                }}
-              />
-            </div>
+        <div style={{display: 'flex', justifyContent: 'space-between', margin: '0 20px'}}>
+          <Logo alt="Clarify Logo" />
+          <div>
+            <i className="fas fa-user" />
+            <span style={{margin: '0 10px'}}>
+              {username}
+            </span>
+            <Button
+              onClick={this.logout}
+            >
+            Logout
+            </Button>
           </div>
-          <img
-            src="./logo.png"
-            alt="Clarify Logo"
-            className="logo"
-          />
         </div>
         <hr />
         <ReportQueryBuilder
@@ -268,9 +247,7 @@ class App extends React.Component {
           submitReportQuery={this.submitReportQuery}
         />
       {this.getReportButtons()}
-      <div>
-        {this.getReportOrWorksheet()}
-      </div>
+      {this.getReportOrWorksheet()}
     </div>
     );
   }

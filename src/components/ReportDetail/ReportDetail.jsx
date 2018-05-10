@@ -2,7 +2,7 @@ import React from 'react';
 import ReactTable from 'react-table'
 import _ from 'lodash';
 import 'react-table/react-table.css'
-import './styles.css'
+import { ReportSummary } from '../PatternLibrary';
 
 
 class ReportDetail extends React.Component {
@@ -121,18 +121,20 @@ class ReportDetail extends React.Component {
     if (displayMode === 'summary') {
       const summaryData = this.getSummaryData();
       return (
-        <div onClick={this.selectReport}>
+        <ReportSummary
+          onClick={this.selectReport}
+          >
           <div>Number of Students: {summaryData.count}</div>
           <div>Mean: {summaryData.mean}</div>
           <div>Highest: {summaryData.highestStudent} ({summaryData.highest})</div>
           <div>Lowest: {summaryData.lowestStudent} ({summaryData.lowest})</div>
-        </div>
+        </ReportSummary>
       )
     }
     const columns = this.buildColumns();
     const studentRowData = this.buildStudentRowData();
     return (
-      <div className="reportDetail">
+      <div>
         <ReactTable
           data={studentRowData}
           columns={columns}

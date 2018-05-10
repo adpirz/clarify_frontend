@@ -1,10 +1,9 @@
 import _ from 'lodash';
 import React from 'react';
 import Select from 'react-select-plus';
-import { DatePicker, RaisedButton } from 'material-ui';
+import { Button, Error } from '../PatternLibrary';
+import { DatePicker } from 'material-ui';
 import 'react-select-plus/dist/react-select-plus.css';
-
-import './styles.css';
 
 const reactSelectOptions = [
   {
@@ -44,25 +43,6 @@ const reactSelectOptions = [
   },
 ];
 
-const floatingLabelStyle = {
-  zIndex: 0,
-  fontFamily: 'Tajawal',
-  fontSize: '18px',
-};
-
-const inputStyle = {
-  letterSpacing: '1px',
-  fontFamily: 'Tajawal',
-  fontSize: '22.5px',
-};
-
-const submitLabelStyle = {
-  fontFamily: 'Tajawal',
-  textTransform: 'Capitalize',
-  letterSpacing: '1px',
-  fontSize: '18px',
-}
-
 class ReportQueryBuilder extends React.Component {
   constructor(props) {
     super(props);
@@ -71,6 +51,7 @@ class ReportQueryBuilder extends React.Component {
       selectedOptions: [],
       minDate: this.getBeginningOfSchoolYear(),
       maxDate: '',
+      error: "",
     };
   }
 
@@ -100,7 +81,12 @@ class ReportQueryBuilder extends React.Component {
   };
 
   handleChange = (selectedOptions) => {
-    this.setState({ selectedOptions });
+    this.setState((prevState) => {
+      return {
+        selectedOptions,
+        error: this.isInvalidQuery(selectedOptions) ? prevState.error : "",
+      }
+    });
   };
 
   isGroupValue = (type) => type === 'group';
@@ -149,7 +135,14 @@ class ReportQueryBuilder extends React.Component {
     }
   }
 
-  submitQuery = () => {
+  submitQuery = (e) => {
+    e.preventDefault();
+    if(this.isInvalidQuery(this.state.selectedOptions)) {
+      this.setState({
+        error: "Query Invalid",
+      });
+      return;
+    }
     const { submitReportQuery } = this.props;
     const { selectedOptions } = this.state;
     let { minDate, maxDate } = this.state;
@@ -178,8 +171,7 @@ class ReportQueryBuilder extends React.Component {
     submitReportQuery(group, groupId, category, minDate, maxDate);
   };
 
-  isInvalidQuery = () => {
-    const { selectedOptions } = this.state;
+  isInvalidQuery = (selectedOptions) => {
     const groupQuerySelected = !!_.find(selectedOptions, { group: { type: 'group' } });
     const categoryQuerySelected = !!_.find(selectedOptions, { group: { type: 'category' } });
     return !(groupQuerySelected && categoryQuerySelected);
@@ -191,7 +183,7 @@ class ReportQueryBuilder extends React.Component {
       minDate,
     } = this.state;
 
-    const isDisabled = this.isInvalidQuery();
+
 
     let groupOptions = reactSelectOptions;
 
@@ -222,63 +214,50 @@ class ReportQueryBuilder extends React.Component {
 
     return (
       <div>
-        <form
-          className="search-container"
-        >
-          <div className="inline-block dashboard-search">
+        <form>
+          <div style={{margin: '0 auto', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             <Select
               multi
+              placeholder="Start typing the name of a student, section etc..."
               noResultsText="Sorry, your request is invalid"
               onChange={this.handleChange}
               options={groupOptions}
               value={selectedOptions}
+              wrapperStyle={{width: "30%"}}
+              menuContainerStyle={{zIndex: 10}}
             />
-          </div>
-          <div className="inline-block">
-            <RaisedButton
-              label="Search"
+            <Button
               primary
-              className="btn"
-              labelStyle={submitLabelStyle}
-              disabledLabelColor={'#fff'}
-              disabled={isDisabled}
-              onClick={() => this.submitQuery()}
-            />
+              onClick={this.submitQuery}>
+              Search
+            </Button>
           </div>
-          <div>
-            <RaisedButton
-              label="Search"
-              primary
-              className="mobileBtn"
-              fullWidth
-              labelStyle={submitLabelStyle}
-              disabledLabelColor={'#fff'}
-              disabled={isDisabled}
-              onClick={() => this.submitQuery()}
-            />
-          </div>
-          <div className="dateHeader">
+          <Error show={this.state.error}>
+            {this.state.error}
+          </Error>
+          <span style={{width: '100%', display: 'block', textAlign: 'center'}}>
             Please Select a Date Range
-          </div>
-          <div>
+          </span>
+          <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '50%',
+              margin: '0 auto'}}>
             <DatePicker
               onChange={this.handleChangeMinDate}
               autoOk
               floatingLabelText="From Date *"
               defaultDate={minDate}
               locale="en-US"
-              floatingLabelStyle={floatingLabelStyle}
-              className="datePicker"
-              inputStyle={inputStyle}
+              style={{display: 'inline-block'}}
             />
             <DatePicker
               onChange={this.handleChangeMaxDate}
               autoOk
               floatingLabelText="To Date (empty signifies to-date)"
               locale="en-US"
-              floatingLabelStyle={floatingLabelStyle}
-              className="datePicker"
-              inputStyle={inputStyle}
+              style={{display: 'inline-block'}}
             />
           </div>
         </form>

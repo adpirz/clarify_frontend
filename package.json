@@ -9,21 +9,19 @@
     "node-sass-chokidar": "^1.2.2",
     "npm": "^5.8.0",
     "npm-run-all": "^4.1.2",
+    "polished": "^1.9.2",
     "react": "^16.3.0",
     "react-dom": "^16.3.0",
     "react-refetch": "^1.0.4",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.1",
     "react-select-plus": "^1.2.0",
-    "react-table": "^6.8.2"
+    "react-table": "^6.8.2",
+    "styled-components": "^3.2.6"
   },
   "scripts": {
-    "build-css": "node-sass-chokidar src/ -o src/",
-    "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
-    "start-js": "react-scripts start",
-    "start": "npm-run-all -p watch-css start-js",
-    "build-js": "react-scripts build",
-    "build": "npm-run-all build-css build-js",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "travis_after_deploy": "node ./travis_post_deploy.js"
