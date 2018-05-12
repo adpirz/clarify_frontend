@@ -2,10 +2,10 @@ import _ from 'lodash';
 import React from 'react';
 import { Button, Logo } from './components/PatternLibrary';
 import { PromiseState } from 'react-refetch';
-import { ApiFetcher, ReportFetcher } from './fetchModule';
+import { ReportFetcher } from './fetchModule';
 import {
   LoginForm,
-  ReportDetail,
+  Report,
   ReportQueryBuilder,
 } from './components/index';
 
@@ -37,23 +37,14 @@ class App extends React.Component {
     const oldWorksheetValue = _.get(this.props.worksheetGet, 'value');
     const newWorksheetValue = _.get(nextProps.worksheetGet, 'value');
     if (newWorksheetValue && oldWorksheetValue !== newWorksheetValue) {
-      const reports = _.get(newWorksheetValue, 'data[0].reports');
-      let reportFetchPromises = [];
-      _.forEach(reports, (r) => {
-        reportFetchPromises.push(ApiFetcher.get('report', r.id));
+      const reportsForWorksheet = _.get(newWorksheetValue, 'data[0].reports');
+      const reportDataFetchPromises = [];
+      _.forEach(reportsForWorksheet, (report) => {
+        reportDataFetchPromises.push(ReportFetcher.get(report.id));
       });
-
-      Promise.all(reportFetchPromises).then(reports =>  {
-        this.setState({reports});
-        const reportQueries = _.map(reports, 'query');
-        let reportDataFetchPromises = [];
-        _.forEach(reportQueries, (query) => {
-          reportDataFetchPromises.push(ReportFetcher.get(query));
-        });
-        Promise.all(reportDataFetchPromises).then(reportDataList => {
-          this.setState({reportDataList});
-        })
-      });
+      Promise.all(reportDataFetchPromises).then(reportDataList => {
+        this.setState({reportDataList});
+      })
     }
 
     const oldReportDataGet = _.get(this.props.reportDataGet, 'value');
@@ -141,7 +132,7 @@ class App extends React.Component {
     this.setState({selectedReport: report});
   }
 
-  clearReportDetail = () => {
+  clearReport = () => {
     this.setState({
       selectedReport: null,
       currentReportQuery: null,
@@ -152,20 +143,17 @@ class App extends React.Component {
     const selectedReport = this.state.selectedReport;
     const { user, students } = this.getPromiseValues();
     if (selectedReport) {
-      const randomReport = this.state.reportDataList[_.random(0, this.state.reportDataList.length)];
       return (
-        <ReportDetail
+        <Report
           report={selectedReport}
-          reportData={randomReport}
           students={students}
         />
       );
     }
-    const { reports, reportDataList } = this.state;
-    if (_.isEmpty(reports) || _.isEmpty(reportDataList)) {
+    const { reportDataList } = this.state;
+    if (_.isEmpty(reportDataList)) {
       return null;
     }
-    const randomReport = reportDataList[_.random(0, reportDataList.length)];
     return (
       <div style={{padding: '0 50px'}}>
         <div>
@@ -174,15 +162,18 @@ class App extends React.Component {
           </div>
           <hr />
         </div>
-        <div style={{display: 'flex', justifyContent: 'space-between', padding: '20px 0'}}>
-          {_.map(reports, (report) => {
+        <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: '20px 0',
+            flexWrap: 'wrap'}}>
+          {_.map(reportDataList, (reportDataObject) => {
             return (
-              <ReportDetail
+              <Report
                 displayMode="summary"
                 students={students}
-                reportData={randomReport}
-                report={report}
-                key={report.id}
+                report={reportDataObject}
+                key={reportDataObject.report_d}
                 selectReport={this.selectReport}
               />
             );
@@ -204,7 +195,7 @@ class App extends React.Component {
         >
         Save Report
         </Button>
-        <Button onClick={this.clearReportDetail}
+        <Button onClick={this.clearReport}
         >
         Clear Report Results
         </Button>
