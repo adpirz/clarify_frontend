@@ -49,9 +49,7 @@ class Login extends React.Component {
               <TextField
                 hintText={
                   <div>
-                    <i className="material-icons">
-                      person
-                    </i>
+                    <i className="fas fa-user" />
                     <div className="hintText">
                       &nbsp;E-mail address
                     </div>
@@ -70,9 +68,7 @@ class Login extends React.Component {
               <TextField
                 hintText={
                   <div>
-                    <i className="material-icons">
-                      lock
-                    </i>
+                    <i className="fas fa-lock" />
                     <div className="hintText">
                       &nbsp;Password
                     </div>
