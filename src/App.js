@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import { Button, Logo } from './components/PatternLibrary';
 import { PromiseState } from 'react-refetch';
-import { ReportFetcher } from './fetchModule';
+import { ReportFetcher, ApiFetcher } from './fetchModule';
 import {
   LoginForm,
   Report,
@@ -118,7 +118,28 @@ class App extends React.Component {
   }
 
   saveReport = () => {
-    this.props.lazyReportObjectPost(this.state.currentReportQuery);
+    ApiFetcher.post('report', {query: this.state.currentReportQuery}).then((resp) => {
+      if (resp.data) {
+        ApiFetcher.post('worksheet-membership', {report_id: resp.data.id}).then((resp) => {
+          this.setState({
+            selectedReport: null,
+          });
+          this.props.lazyWorksheetGet();
+        })
+      }
+    });
+  }
+
+  removeReport = () => {
+    const report_id = _.get(this.state.selectedReport, 'report_id');
+    ApiFetcher.delete('report', report_id).then((successful) => {
+      if (successful) {
+        this.setState({
+          selectedReport: null,
+        });
+        this.props.lazyWorksheetGet();
+      }
+    });
   }
 
   submitReportQuery = (group, groupId, category, minDate, maxDate) => {
@@ -164,7 +185,7 @@ class App extends React.Component {
         </div>
         <div style={{
             display: 'flex',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-start',
             padding: '20px 0',
             flexWrap: 'wrap'}}>
           {_.map(reportDataList, (reportDataObject) => {
@@ -173,7 +194,7 @@ class App extends React.Component {
                 displayMode="summary"
                 students={students}
                 report={reportDataObject}
-                key={reportDataObject.report_d}
+                key={reportDataObject.report_id}
                 selectReport={this.selectReport}
               />
             );
@@ -187,20 +208,16 @@ class App extends React.Component {
     if (!this.state.currentReportQuery && !this.state.selectedReport) {
       return null;
     }
-    return (
-      <div>
-        <Button
-          primary
-          onClick={this.saveReport}
-        >
-        Save Report
-        </Button>
-        <Button onClick={this.clearReport}
-        >
-        Clear Report Results
-        </Button>
-      </div>
-    );
+    const buttons = [(
+      <Button onClick={this.clearReport}>Back to Worksheet</Button>
+    ),]
+    if (!_.get(this.state.selectedReport, 'report_id')) {
+        buttons.push(<Button primary onClick={this.saveReport}>Save Report</Button>)
+    } else {
+      buttons.push(<Button primary onClick={this.removeReport}>Remove Report from Worksheet</Button>)
+    }
+
+    return buttons;
   }
 
   render() {
@@ -237,7 +254,9 @@ class App extends React.Component {
           lazyReportDataGet={this.props.lazyReportDataGet}
           submitReportQuery={this.submitReportQuery}
         />
-      {this.getReportButtons()}
+      <div>
+        {this.getReportButtons()}
+      </div>
       {this.getReportOrWorksheet()}
     </div>
     );

@@ -1,8 +1,8 @@
 
 
 class ApiFetcher {
-  static get(objectPath, objectId) {
-    const apiRequest = new Request(`http://localhost:8000/api/${objectPath}/${objectId}`, {
+  static get(modelName, objectId) {
+    const apiRequest = new Request(`http://localhost:8000/api/${modelName}/${objectId}`, {
       credentials: 'include'
     });
 
@@ -10,6 +10,31 @@ class ApiFetcher {
       return resp.json();
     });
   }
+
+  static post(modelName, objectProperties) {
+    const postData = JSON.stringify(objectProperties);
+    const apiRequest = new Request(`http://localhost:8000/api/${modelName}/`, {
+      credentials: 'include',
+      method: 'POST',
+      body: postData,
+    });
+
+    return fetch(apiRequest).then(resp => {
+      return resp.json();
+    });
+  }
+
+  static delete(modelName, objectId) {
+    const apiRequest = new Request(`http://localhost:8000/api/${modelName}/${objectId}`, {
+      credentials: 'include',
+      method: 'DELETE',
+    });
+
+    return fetch(apiRequest).then(resp => {
+      return resp.status === 200;
+    });
+  }
+
 }
 
 class ReportFetcher {
