@@ -112,7 +112,7 @@ class App extends React.Component {
     });
   }
 
-  removeReport = () => {
+  deleteReport = () => {
     const report_id = _.get(this.state.selectedReport, 'report_id');
     ApiFetcher.delete('report', report_id).then((successful) => {
       if (successful) {
@@ -198,12 +198,12 @@ class App extends React.Component {
       return null;
     }
     const buttons = [(
-      <Button key='clear' onClick={this.clearReport}>Back to Worksheet</Button>
+      <Button key='back' onClick={this.clearReport}>Back</Button>
     ),]
     if (!_.get(this.state.selectedReport, 'report_id')) {
         buttons.push(<Button key='save' primary onClick={this.saveReport}>Save Report</Button>)
     } else {
-      buttons.push(<Button key='remove' primary onClick={this.removeReport}>Remove Report from Worksheet</Button>)
+      buttons.push(<Button key='delete' onClick={this.deleteReport}>Delete</Button>)
     }
 
     return buttons;
@@ -238,7 +238,7 @@ class App extends React.Component {
           {...promiseValues}
           submitReportQuery={this.submitReportQuery}
         />
-        <div>
+      <div style={{display: 'flex', justifyContent: 'flex-end', margin: '15px 0'}}>
           {this.getReportButtons()}
         </div>
         {this.getReportOrWorksheet()}

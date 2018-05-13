@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { RaisedButton, TextField } from 'material-ui';
+import { Button } from '../PatternLibrary';
+import { TextField } from 'material-ui';
 
 const textFieldStyle = {
   height: '50px',
@@ -81,22 +82,8 @@ class Login extends React.Component {
               style={textFieldStyle}
             />
           </div>
-          <div>
-            <RaisedButton
-              label="Login"
-              type="Submit"
-              fullWidth
-              primary
-              labelStyle={{
-                letterSpacing: '1.5px',
-                fontSize: '20px',
-                lineHeight: '40px',
-              }}
-              style={{
-                marginBottom: '10px',
-                height: '40px',
-              }}
-            />
+          <div style={{textAlign: 'center'}}>
+            <Button primary> Login </Button>
           </div>
         </div>
       </LoginForm>

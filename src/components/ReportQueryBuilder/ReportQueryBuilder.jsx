@@ -215,7 +215,12 @@ class ReportQueryBuilder extends React.Component {
     return (
       <div>
         <form>
-          <div style={{margin: '0 auto', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+          <div style={{
+              margin: '0 auto',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
             <Select
               multi
               placeholder="Start typing the name of a student, section etc..."

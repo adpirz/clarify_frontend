@@ -37,24 +37,25 @@ class ReportSummary extends React.PureComponent {
       let maxAttendancePercentage = 0;
       let minAttendancePercentage = 1;
       let sumAttendance = 0;
-      let maxAttendanceStudent = '';
-      let minAttendanceStudent = '';
+      let maxAttendanceStudentId;
+      let minAttendanceStudentId;
       _.forEach(data, (studentRow) => {
         const attendancePercentage = studentRow.attendance_data[33][1];
         sumAttendance += attendancePercentage;
         if (maxAttendancePercentage < attendancePercentage) {
           maxAttendancePercentage =  attendancePercentage;
-          maxAttendanceStudent = studentRow.student_id;
+          maxAttendanceStudentId = studentRow.student_id;
         }
         if (minAttendancePercentage > attendancePercentage) {
           minAttendancePercentage =  attendancePercentage;
-          minAttendanceStudent = studentRow.student_id;
+          minAttendanceStudentId = studentRow.student_id;
         }
       });
       const randomStudent1 = this.props.students[_.random(0, this.props.students.length)];
       const randomStudent2 = this.props.students[_.random(0, this.props.students.length)];
-      maxAttendanceStudent = _.find(this.props.students, {id: maxAttendanceStudent}) || randomStudent1;
-      minAttendanceStudent = _.find(this.props.students, {id: minAttendanceStudent}) || randomStudent2;
+      const maxAttendanceStudent = _.find(this.props.students, {id: maxAttendanceStudentId}) || randomStudent1;
+      const minAttendanceStudent = _.find(this.props.students, {id: minAttendanceStudentId}) || randomStudent2;
+
       return {
         count: _.size(data),
         mean: _.round(sumAttendance / _.size(data), 2),
