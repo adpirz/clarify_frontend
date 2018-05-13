@@ -150,7 +150,8 @@ class App extends React.Component {
       <Worksheet
         worksheet={_.get(this.props.worksheetGet, 'value.data[0]')}
         currentUser={this.state.currentUser}
-        students={students}/>
+        students={students}
+        selectReport={this.selectReport}/>
     );
   }
 

@@ -54,7 +54,7 @@ class Worksheet extends React.PureComponent {
             students={students}
             report={reportDataObject}
             key={reportDataObject.report_id}
-            selectReport={this.selectReport}
+            selectReport={this.props.selectReport}
           />
         );
       });
