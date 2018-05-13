@@ -222,17 +222,31 @@ class App extends React.Component {
     })
   }
 
-  render() {
-    const promiseValues = this.getPromiseValues();
-
+  getPageBody = () => {
     if (!this.state.currentUser) {
       return <LoginForm logUserIn={this.logUserIn} />;
     }
+    const promiseValues = this.getPromiseValues();
 
     if (!promiseValues) {
       return null;
     }
 
+    return (
+      <div>
+        <ReportQueryBuilder
+          {...promiseValues}
+          submitReportQuery={this.submitReportQuery}
+        />
+        <div>
+          {this.getReportButtons()}
+        </div>
+        {this.getReportOrWorksheet()}
+      </div>
+    );
+  }
+
+  render() {
     const username = _.get(this.state.currentUser, 'username');
     return (
       <div>
@@ -243,23 +257,16 @@ class App extends React.Component {
             <span style={{margin: '0 10px'}}>
               {username}
             </span>
-            <Button
+            {this.state.currentUser && <Button
               onClick={this.logout}
             >
             Logout
-            </Button>
+            </Button>}
           </div>
         </div>
         <hr />
-        <ReportQueryBuilder
-          {...promiseValues}
-          submitReportQuery={this.submitReportQuery}
-        />
-      <div>
-        {this.getReportButtons()}
+        {this.getPageBody()}
       </div>
-      {this.getReportOrWorksheet()}
-    </div>
     );
   }
 }
