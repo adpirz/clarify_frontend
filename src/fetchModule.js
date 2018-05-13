@@ -2,12 +2,16 @@
 
 class ApiFetcher {
   static get(modelName, objectId) {
-    const apiRequest = new Request(`http://localhost:8000/api/${modelName}/${objectId}`, {
+    const apiRequest = new Request(`http://localhost:8000/api/${modelName}/${objectId || ""}`, {
       credentials: 'include'
     });
 
     return fetch(apiRequest).then(resp => {
-      return resp.json();
+      if (resp.status !== 404) {
+        return resp.json();
+      } else {
+        return 404;
+      }
     });
   }
 

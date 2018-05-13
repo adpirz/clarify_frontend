@@ -30,21 +30,6 @@ export default connect(() => {
         credentials: 'include',
       },
     }),
-    lazySessionPost: (username, password) => ({
-      sessionPost: {
-        method: 'POST',
-        body: JSON.stringify({ username, password }),
-        url: `${BASE_URL}/api/session/`,
-        credentials: 'include',
-      },
-    }),
-    lazyUserGet: () => ({
-      userGet: {
-        url: `${BASE_URL}/api/user/me`,
-        credentials: 'include',
-        force: 'true',
-      },
-    }),
     lazyUserLogout: () => ({
       userLogoutResponse: {
         url: `${BASE_URL}/api/session/`,
@@ -60,14 +45,5 @@ export default connect(() => {
         force: 'true',
       },
     }),
-    lazyReportDataGet: (group, groupId, category, minDate, maxDate) => {
-      const queryString = `group=${group}&group_id=${groupId}&category=${category}&from_date=${minDate}&to_date=${maxDate}`;
-      return {
-        reportDataGet: {
-          url: `${BASE_URL}/report/?${queryString}`,
-          credentials: 'include',
-        },
-      }
-    },
   };
 })(App);

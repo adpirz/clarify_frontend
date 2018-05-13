@@ -17,23 +17,20 @@ class App extends React.Component {
       reports: [],
       currentReportQuery: '',
       selectedReport: null,
+      currentUser: null,
     };
   }
 
-  componentDidMount() {
-    this.props.lazyUserGet();
+  componentDidMount = () => {
+    ApiFetcher.get('user/me').then((resp) => {
+      if (resp.id) {
+        this.setState({currentUser: resp});
+        this.requestQueryObjects();
+      }
+    })
   }
 
   componentWillReceiveProps = (nextProps) => {
-    if (this.userIsAuthenticated(nextProps) && !this.queryRequestsMade(nextProps)) {
-      // User is signed in, so let's make our object api calls.
-      this.requestQueryObjects();
-    }
-    const oldSessionValue = _.get(this.props.sessionGet, 'value');
-    const newSessionValue = _.get(nextProps.sessionGet, 'value');
-    if (newSessionValue && oldSessionValue !== newSessionValue) {
-      this.props.lazyUserGet();
-    }
     const oldWorksheetValue = _.get(this.props.worksheetGet, 'value');
     const newWorksheetValue = _.get(nextProps.worksheetGet, 'value');
     if (newWorksheetValue && oldWorksheetValue !== newWorksheetValue) {
@@ -46,20 +43,6 @@ class App extends React.Component {
         this.setState({reportDataList});
       })
     }
-
-    const oldReportDataGet = _.get(this.props.reportDataGet, 'value');
-    const newReportDataGet = _.get(nextProps.reportDataGet, 'value');
-    if (newReportDataGet && oldReportDataGet !== newReportDataGet) {
-      this.setState({
-        selectedReport: newReportDataGet,
-      });
-    }
-  }
-
-  userIsAuthenticated = (props) => {
-    const userGetStatus = _.get(props, 'userGet.meta.response.status');
-    const sessionCreateStatus = _.get(props, 'sessionPost.meta.response.status');
-    return userGetStatus === 200 || sessionCreateStatus === 200 || sessionCreateStatus === 201;
   }
 
   requestQueryObjects = () => {
@@ -98,7 +81,6 @@ class App extends React.Component {
       gradeLevelGet,
       sectionGet,
       siteGet,
-      userGet
     } = this.props;
 
     const promiseValues = {
@@ -106,7 +88,6 @@ class App extends React.Component {
       gradeLevels: _.get(gradeLevelGet, 'value.data', []),
       sections: _.get(sectionGet, 'value.data', []),
       sites: _.get(siteGet, 'value.data', []),
-      user: _.get(userGet, 'value', {}),
     };
 
     return promiseValues;
@@ -123,6 +104,7 @@ class App extends React.Component {
         ApiFetcher.post('worksheet-membership', {report_id: resp.data.id}).then((resp) => {
           this.setState({
             selectedReport: null,
+            currentReportQuery: null,
           });
           this.props.lazyWorksheetGet();
         })
@@ -143,10 +125,17 @@ class App extends React.Component {
   }
 
   submitReportQuery = (group, groupId, category, minDate, maxDate) => {
+    const queryString = `group=${group}&group_id=${groupId}&category=${category}&from_date=${minDate}&to_date=${maxDate}`;
     this.setState({
-      currentReportQuery: `group=${group}&group_id=${groupId}&category=${category}&from_date=${minDate}&to_date=${maxDate}`,
+      currentReportQuery: queryString,
     });
-    this.props.lazyReportDataGet(group, groupId, category, minDate, maxDate);
+    ReportFetcher.get(queryString).then((resp) => {
+      if (resp.data) {
+        this.setState({
+          selectedReport: resp,
+        });
+      }
+    });
   }
 
   selectReport = (report) => {
@@ -162,7 +151,7 @@ class App extends React.Component {
 
   getReportOrWorksheet = () => {
     const selectedReport = this.state.selectedReport;
-    const { user, students } = this.getPromiseValues();
+    const {students } = this.getPromiseValues();
     if (selectedReport) {
       return (
         <Report
@@ -171,7 +160,7 @@ class App extends React.Component {
         />
       );
     }
-    const { reportDataList } = this.state;
+    const { reportDataList, currentUser } = this.state;
     if (_.isEmpty(reportDataList)) {
       return null;
     }
@@ -179,7 +168,7 @@ class App extends React.Component {
       <div style={{padding: '0 50px'}}>
         <div>
           <div>
-            {user ? `${user.first_name} ${user.last_name}'s` : ''}&nbsp;Worksheet
+            {currentUser ? `${currentUser.first_name} ${currentUser.last_name}'s` : ''}&nbsp;Worksheet
           </div>
           <hr />
         </div>
@@ -209,29 +198,42 @@ class App extends React.Component {
       return null;
     }
     const buttons = [(
-      <Button onClick={this.clearReport}>Back to Worksheet</Button>
+      <Button key='clear' onClick={this.clearReport}>Back to Worksheet</Button>
     ),]
     if (!_.get(this.state.selectedReport, 'report_id')) {
-        buttons.push(<Button primary onClick={this.saveReport}>Save Report</Button>)
+        buttons.push(<Button key='save' primary onClick={this.saveReport}>Save Report</Button>)
     } else {
-      buttons.push(<Button primary onClick={this.removeReport}>Remove Report from Worksheet</Button>)
+      buttons.push(<Button key='remove' primary onClick={this.removeReport}>Remove Report from Worksheet</Button>)
     }
 
     return buttons;
   }
 
+  logUserIn = (credentials) => {
+    ApiFetcher.post('session', credentials).then((resp) => {
+      if (resp.data) {
+        ApiFetcher.get('user/me/').then((resp) => {
+          if (_.get(resp, 'id')) {
+            this.setState({currentUser: resp});
+            this.requestQueryObjects();
+          }
+        });
+      }
+    })
+  }
+
   render() {
     const promiseValues = this.getPromiseValues();
 
-    if (!this.userIsAuthenticated(this.props)) {
-      return <LoginForm lazySessionPost={this.props.lazySessionPost} />;
+    if (!this.state.currentUser) {
+      return <LoginForm logUserIn={this.logUserIn} />;
     }
 
     if (!promiseValues) {
       return null;
     }
 
-    const username = _.get(promiseValues.user, 'username');
+    const username = _.get(this.state.currentUser, 'username');
     return (
       <div>
         <div style={{display: 'flex', justifyContent: 'space-between', margin: '0 20px'}}>
@@ -251,7 +253,6 @@ class App extends React.Component {
         <hr />
         <ReportQueryBuilder
           {...promiseValues}
-          lazyReportDataGet={this.props.lazyReportDataGet}
           submitReportQuery={this.submitReportQuery}
         />
       <div>

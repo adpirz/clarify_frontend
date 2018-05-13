@@ -1,5 +1,6 @@
 import React from 'react';
 import { RaisedButton, TextField } from 'material-ui';
+
 import './LoginForm.css';
 
 const textFieldStyle = {
@@ -29,7 +30,7 @@ class Login extends React.Component {
       return null;
     }
 
-    this.props.lazySessionPost(username, password)
+    this.props.logUserIn({username, password});
   };
 
   render() {
