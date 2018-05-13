@@ -30,14 +30,6 @@ export default connect(() => {
         credentials: 'include',
       },
     }),
-    lazyUserLogout: () => ({
-      userLogoutResponse: {
-        url: `${BASE_URL}/api/session/`,
-        method: 'DELETE',
-        credentials: 'include',
-        force: 'true',
-      },
-    }),
     lazyWorksheetGet: () => ({
       worksheetGet: {
         url: `${BASE_URL}/api/worksheet/`,

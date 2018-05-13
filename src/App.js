@@ -94,7 +94,7 @@ class App extends React.Component {
   }
 
   logout = () => {
-    this.props.lazyUserLogout();
+    ApiFetcher.delete('session');
     window.location.reload();
   }
 

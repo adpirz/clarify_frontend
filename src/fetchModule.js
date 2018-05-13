@@ -2,7 +2,7 @@
 
 class ApiFetcher {
   static get(modelName, objectId) {
-    const apiRequest = new Request(`http://localhost:8000/api/${modelName}/${objectId || ""}`, {
+    const apiRequest = new Request(`http://localhost:8000/api/${modelName}/${objectId || ''}`, {
       credentials: 'include'
     });
 
@@ -29,7 +29,7 @@ class ApiFetcher {
   }
 
   static delete(modelName, objectId) {
-    const apiRequest = new Request(`http://localhost:8000/api/${modelName}/${objectId}`, {
+    const apiRequest = new Request(`http://localhost:8000/api/${modelName}/${objectId || ''}`, {
       credentials: 'include',
       method: 'DELETE',
     });
