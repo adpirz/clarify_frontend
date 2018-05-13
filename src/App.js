@@ -254,14 +254,17 @@ class App extends React.Component {
           <Logo alt="Clarify Logo" />
           <div>
             <i className="fas fa-user" />
-            <span style={{margin: '0 10px'}}>
-              {username}
-            </span>
-            {this.state.currentUser && <Button
-              onClick={this.logout}
-            >
-            Logout
-            </Button>}
+            {this.state.currentUser &&
+              <span style={{margin: '0 10px'}}>
+                User: {username}
+              </span>
+            }
+            {this.state.currentUser &&
+              <Button
+                onClick={this.logout}>
+                Logout
+              </Button>
+            }
           </div>
         </div>
         <hr />
