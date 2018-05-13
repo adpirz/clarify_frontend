@@ -87,12 +87,10 @@ class Report extends React.Component {
     const columns = this.buildColumns();
     const studentRowData = this.buildStudentRowData();
     return (
-      <div>
-        <ReactTable
-          data={studentRowData}
-          columns={columns}
-        />
-      </div>
+      <ReactTable
+        data={studentRowData}
+        columns={columns}
+      />
     )
   }
 }

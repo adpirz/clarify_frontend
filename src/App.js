@@ -7,6 +7,7 @@ import {
   LoginForm,
   Report,
   ReportQueryBuilder,
+  Worksheet
 } from './components/index';
 
 class App extends React.Component {
@@ -28,21 +29,6 @@ class App extends React.Component {
         this.requestQueryObjects();
       }
     })
-  }
-
-  componentWillReceiveProps = (nextProps) => {
-    const oldWorksheetValue = _.get(this.props.worksheetGet, 'value');
-    const newWorksheetValue = _.get(nextProps.worksheetGet, 'value');
-    if (newWorksheetValue && oldWorksheetValue !== newWorksheetValue) {
-      const reportsForWorksheet = _.get(newWorksheetValue, 'data[0].reports');
-      const reportDataFetchPromises = [];
-      _.forEach(reportsForWorksheet, (report) => {
-        reportDataFetchPromises.push(ReportFetcher.get(report.id));
-      });
-      Promise.all(reportDataFetchPromises).then(reportDataList => {
-        this.setState({reportDataList});
-      })
-    }
   }
 
   requestQueryObjects = () => {
@@ -160,36 +146,11 @@ class App extends React.Component {
         />
       );
     }
-    const { reportDataList, currentUser } = this.state;
-    if (_.isEmpty(reportDataList)) {
-      return null;
-    }
     return (
-      <div style={{padding: '0 50px'}}>
-        <div>
-          <div>
-            {currentUser ? `${currentUser.first_name} ${currentUser.last_name}'s` : ''}&nbsp;Worksheet
-          </div>
-          <hr />
-        </div>
-        <div style={{
-            display: 'flex',
-            justifyContent: 'flex-start',
-            padding: '20px 0',
-            flexWrap: 'wrap'}}>
-          {_.map(reportDataList, (reportDataObject) => {
-            return (
-              <Report
-                displayMode="summary"
-                students={students}
-                report={reportDataObject}
-                key={reportDataObject.report_id}
-                selectReport={this.selectReport}
-              />
-            );
-          })}
-        </div>
-      </div>
+      <Worksheet
+        worksheet={_.get(this.props.worksheetGet, 'value.data[0]')}
+        currentUser={this.state.currentUser}
+        students={students}/>
     );
   }
 
@@ -241,7 +202,9 @@ class App extends React.Component {
       <div style={{display: 'flex', justifyContent: 'flex-end', margin: '15px 0'}}>
           {this.getReportButtons()}
         </div>
-        {this.getReportOrWorksheet()}
+        <div style={{margin: "0 150px"}}>
+          {this.getReportOrWorksheet()}
+        </div>
       </div>
     );
   }
