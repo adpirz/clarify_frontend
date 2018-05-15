@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import { ReportFetcher } from '../../fetchModule';
+import { Loading } from '../PatternLibrary/';
 import Report from '../Report/Report';
 
 class Worksheet extends React.PureComponent {
@@ -42,9 +43,16 @@ class Worksheet extends React.PureComponent {
     const { reportDataList, loading } = this.state;
     let worksheetBody = null;
     if (loading) {
-      worksheetBody = <div>Worksheet Loading</div>;
+      worksheetBody = <Loading />;
     } else if (_.isEmpty(reportDataList)) {
-        worksheetBody = <div>No Reports</div>;
+        worksheetBody = (
+          <div>
+            <p>
+              No Reports saved at the moment. Try typing a studen or class name in the
+              search bar ☝️
+            </p>
+        </div>
+        );
     } else {
       const { students } = this.props;
       worksheetBody = _.map(reportDataList, (reportDataObject) => {

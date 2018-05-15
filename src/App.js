@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
-import { Button, Logo } from './components/PatternLibrary';
+import { Button, Logo, Loading } from './components/PatternLibrary';
 import { PromiseState } from 'react-refetch';
 import { ReportFetcher, ApiFetcher } from './fetchModule';
 import {
@@ -19,6 +19,7 @@ class App extends React.Component {
       currentReportQuery: '',
       selectedReport: null,
       currentUser: null,
+      loading: false,
     };
   }
 
@@ -172,11 +173,15 @@ class App extends React.Component {
   }
 
   logUserIn = (credentials) => {
+    this.setState({loading: true});
     ApiFetcher.post('session', credentials).then((resp) => {
       if (resp.data) {
         ApiFetcher.get('user/me/').then((resp) => {
           if (_.get(resp, 'id')) {
-            this.setState({currentUser: resp});
+            this.setState({
+              currentUser: resp,
+              loading: false,
+            });
             this.requestQueryObjects();
           }
         });
@@ -187,6 +192,12 @@ class App extends React.Component {
   getPageBody = () => {
     if (!this.state.currentUser) {
       return <LoginForm logUserIn={this.logUserIn} />;
+    }
+
+    if (this.state.loading) {
+      return (
+        <Loading />
+      );
     }
     const promiseValues = this.getPromiseValues();
 
