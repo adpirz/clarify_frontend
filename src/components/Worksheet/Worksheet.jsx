@@ -22,7 +22,10 @@ class Worksheet extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.getReportDataForWorksheet(nextProps.worksheet);
+    const worksheet = nextProps.worksheet;
+    if (worksheet) {
+      this.getReportDataForWorksheet(worksheet);
+    }
   }
 
   getReportDataForWorksheet = (worksheet) => {
@@ -49,7 +52,7 @@ class Worksheet extends React.PureComponent {
           <div>
             <p>
               No Reports saved at the moment. Try typing a studen or class name in the
-              search bar ☝️
+              search bar <span role="img" aria-label="pointing up to search bar">☝️</span>
             </p>
         </div>
         );

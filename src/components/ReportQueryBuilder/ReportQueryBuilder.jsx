@@ -97,7 +97,7 @@ class ReportQueryBuilder extends React.Component {
     const targetQueryOptionsGroup = _.find(reactSelectOptions, { value: optionValue });
 
     dataArray.forEach((dataObj) => {
-      let name;
+      let name, id;
       switch (optionValue) {
         case 'section':
           name = dataObj.section_name;
@@ -110,11 +110,12 @@ class ReportQueryBuilder extends React.Component {
           break;
         default:
           name = `${dataObj.first_name} ${dataObj.last_name}`;
+          id = dataObj.source_object_id;
       }
       let optionsArray = {
         label: name,
         value: optionValue,
-        id: dataObj.id,
+        id: id || dataObj.id,
       }
       if (typeof targetQueryOptionsGroup !== 'undefined') {
         targetQueryOptionsGroup.options.push(optionsArray);

@@ -34,31 +34,31 @@ class ReportSummary extends React.PureComponent {
 
     getSummaryData = () => {
       const { data } = _.get(this.props, 'report');
+      const COLUMN_CODE_FOR_SUMMARY = 4 // The most magic.
       let maxAttendancePercentage = 0;
-      let minAttendancePercentage = 1;
+      let minAttendancePercentage = 100;
       let sumAttendance = 0;
       let maxAttendanceStudentId;
       let minAttendanceStudentId;
       _.forEach(data, (studentRow) => {
-        const attendancePercentage = studentRow.attendance_data[33][1];
-        sumAttendance += attendancePercentage;
-        if (maxAttendancePercentage < attendancePercentage) {
-          maxAttendancePercentage =  attendancePercentage;
+        const percentage = _.find(studentRow.attendance_data, {column_code: COLUMN_CODE_FOR_SUMMARY}).percentage;
+        sumAttendance += percentage;
+        if (maxAttendancePercentage < percentage) {
+          maxAttendancePercentage =  percentage;
           maxAttendanceStudentId = studentRow.student_id;
         }
-        if (minAttendancePercentage > attendancePercentage) {
-          minAttendancePercentage =  attendancePercentage;
+        if (minAttendancePercentage > percentage) {
+          minAttendancePercentage =  percentage;
           minAttendanceStudentId = studentRow.student_id;
         }
       });
-      const randomStudent1 = this.props.students[_.random(0, this.props.students.length)];
-      const randomStudent2 = this.props.students[_.random(0, this.props.students.length)];
-      const maxAttendanceStudent = _.find(this.props.students, {id: maxAttendanceStudentId}) || randomStudent1;
-      const minAttendanceStudent = _.find(this.props.students, {id: minAttendanceStudentId}) || randomStudent2;
+
+      const maxAttendanceStudent = _.find(this.props.students, {source_object_id: maxAttendanceStudentId});
+      const minAttendanceStudent = _.find(this.props.students, {source_object_id: minAttendanceStudentId});
 
       return {
         count: _.size(data),
-        mean: _.round(sumAttendance / _.size(data), 2),
+        mean: `${_.round(sumAttendance / _.size(data) * 100, 2)}%`,
         highestStudent: `${maxAttendanceStudent.first_name} ${maxAttendanceStudent.last_name}`,
         highest: `${_.round(maxAttendancePercentage, 2) * 100}%`,
         lowestStudent: `${minAttendanceStudent.first_name} ${minAttendanceStudent.last_name}`,

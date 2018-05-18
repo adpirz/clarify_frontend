@@ -8,12 +8,14 @@ import { ReportSummary } from '../PatternLibrary';
 class Report extends React.Component {
   formatStudentRowData = (studentAttendanceData) => {
     let studentDataRow = {};
-    const { flags } = _.get(this.props, 'report');
-    _.forEach(_.keys(studentAttendanceData), (key) => {
-      const attendanceFlagCode = flags[key].code;
-      const attendanceFlagCount = studentAttendanceData[key][0];
-      const attendanceFlagPercentage = studentAttendanceData[key][1];
-      studentDataRow[attendanceFlagCode] = {
+    const excludeColumns = _.get(this.props, 'report.exclude_columns');
+    _.forEach(studentAttendanceData, (studentAttendanceNode) => {
+      if (_.includes(excludeColumns, studentAttendanceNode.column_code)) {
+        return;
+      }
+      const attendanceFlagCount = studentAttendanceNode.count;
+      const attendanceFlagPercentage = studentAttendanceNode.percentage;
+      studentDataRow[studentAttendanceNode.column_code] = {
           attendanceFlagCount,
           attendanceFlagPercentage,
         };
@@ -27,10 +29,10 @@ class Report extends React.Component {
     let tableData;
     if (report.data) {
       tableData = _.map(report.data, (studentRow) => {
-        const studentName = _.find(students, { id: studentRow.student_id });
+        const student = _.find(students, { source_object_id: studentRow.student_id });
         const formattedData = this.formatStudentRowData(studentRow.attendance_data);
-        formattedData.firstName = _.get(studentName, 'first_name') || 'Student';
-        formattedData.lastName = _.get(studentName, 'last_name') || '';
+        formattedData.firstName = _.get(student, 'first_name') || 'Student';
+        formattedData.lastName = _.get(student, 'last_name') || '';
         return formattedData;
       });
     }
@@ -51,22 +53,27 @@ class Report extends React.Component {
       accessor: 'lastName'
     }];
 
-    const { flags } = _.get(this.props, 'report');
-    const attendanceColumns = _.map(flags, (flag) => {
-      const {text, code} = flag;
-      return {
-        Header: text,
-        accessor: code,
+    const columns = _.get(this.props, 'report.columns');
+    const excludeColumns = _.get(this.props, 'report.exclude_columns');
+    const attendanceColumns = _.reduce(columns, (accumulator, column) => {
+      if (_.includes(excludeColumns, column.column_code)) {
+        return accumulator;
+      }
+      const {label, column_code} = column;
+      accumulator.push({
+        Header: label,
+        accessor: `${column_code}`,
         Cell: props => {
           const { attendanceFlagCount, attendanceFlagPercentage } = props.value;
           return (
             <span>
-              {attendanceFlagCount} ({_.round(attendanceFlagPercentage, 2)}%)
+              {attendanceFlagCount} ({_.round(attendanceFlagPercentage * 100, 2)}%)
             </span>
           );
         },
-      };
-    });
+      });
+      return accumulator;
+    }, []);
     return [...nameColumns, ...attendanceColumns];
   }
 

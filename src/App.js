@@ -214,7 +214,7 @@ class App extends React.Component {
       <div style={{display: 'flex', justifyContent: 'flex-end', margin: '15px 0'}}>
           {this.getReportButtons()}
         </div>
-        <div style={{margin: "0 150px"}}>
+        <div style={{margin: "0 25px"}}>
           {this.getReportOrWorksheet()}
         </div>
       </div>
