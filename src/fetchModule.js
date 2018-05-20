@@ -1,5 +1,3 @@
-
-
 class ApiFetcher {
   static get(modelName, objectId) {
     const apiRequest = new Request(`http://localhost:8000/api/${modelName}/${objectId || ''}`, {

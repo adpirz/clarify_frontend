@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button } from '../PatternLibrary';
+import { Button, Error } from '../PatternLibrary';
 import { TextField } from 'material-ui';
 
 const textFieldStyle = {
@@ -10,7 +10,7 @@ const textFieldStyle = {
 
 const LoginForm = styled.form`
   border: 5px solid rgba(0, 0, 0, .2);
-  width: 300px;
+  width: 400px;
   padding: 15px;
   margin: 25vh auto;
 `;
@@ -22,6 +22,7 @@ class Login extends React.Component {
     this.state = {
       username: '',
       password: '',
+      error: null,
     };
   }
 
@@ -37,11 +38,21 @@ class Login extends React.Component {
       return null;
     }
 
-    this.props.logUserIn({username, password});
+    this.props.logUserIn({username, password}).then((resp) => {
+      if (resp.error) {
+        this.setState({error: resp.error});
+      }
+    });
   };
 
   render() {
-    const { username, password } = this.state;
+    const { username, password, error } = this.state;
+
+    let errorNode = null;
+    if (error) {
+      errorNode = `There was an error logging in: ${this.state.error}. Shoot an email over to
+        help@clarify.com and we'll take a look.`;
+    }
 
     return (
       <LoginForm
@@ -86,6 +97,9 @@ class Login extends React.Component {
             <Button primary> Login </Button>
           </div>
         </div>
+        <Error>
+          {errorNode}
+        </Error>
       </LoginForm>
     );
   }

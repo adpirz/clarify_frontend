@@ -174,18 +174,20 @@ class App extends React.Component {
 
   logUserIn = (credentials) => {
     this.setState({loading: true});
-    ApiFetcher.post('session', credentials).then((resp) => {
+    return ApiFetcher.post('session', credentials).then((resp) => {
       if (resp.data) {
-        ApiFetcher.get('user/me/').then((resp) => {
+        return ApiFetcher.get('user/me/').then((resp) => {
           if (_.get(resp, 'id')) {
             this.setState({
               currentUser: resp,
               loading: false,
             });
             this.requestQueryObjects();
+            return resp;
           }
         });
       }
+      return resp;
     })
   }
 

@@ -238,7 +238,7 @@ class ReportQueryBuilder extends React.Component {
               Search
             </Button>
           </div>
-          <Error show={this.state.error}>
+          <Error>
             {this.state.error}
           </Error>
           <span style={{width: '100%', display: 'block', textAlign: 'center'}}>
