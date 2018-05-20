@@ -114,7 +114,7 @@ class ReportQueryBuilder extends React.Component {
       }
       let optionsArray = {
         label: name,
-        value: optionValue,
+        value: `${optionValue}_${dataObj.id}`,
         id: id || dataObj.id,
       }
       if (typeof targetQueryOptionsGroup !== 'undefined') {
@@ -241,7 +241,7 @@ class ReportQueryBuilder extends React.Component {
           <Error>
             {this.state.error}
           </Error>
-          <span style={{width: '100%', display: 'block', textAlign: 'center'}}>
+          <span style={{width: '100%', display: 'block', textAlign: 'center', marginTop: '25px'}}>
             Please Select a Date Range
           </span>
           <div style={{

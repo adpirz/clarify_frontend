@@ -65,9 +65,13 @@ class Report extends React.Component {
         accessor: `${column_code}`,
         Cell: props => {
           const { attendanceFlagCount, attendanceFlagPercentage } = props.value;
+          let attendanceNode = 0;
+          if (attendanceFlagCount) {
+            attendanceNode = `${attendanceFlagCount} (${_.round(attendanceFlagPercentage * 100, 2)}%)`;
+          }
           return (
             <span>
-              {attendanceFlagCount} ({_.round(attendanceFlagPercentage * 100, 2)}%)
+              {attendanceNode}
             </span>
           );
         },
