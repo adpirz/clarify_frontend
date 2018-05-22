@@ -23,14 +23,14 @@ const ReportSummaryContainer = styled.div`
 `;
 
 const SummaryRow = styled.div`
-  padding: 8px 5px;
+  padding: 18px 15px;
 `
 
 const Footer = styled.div`
-  padding: 25px;
+  padding: 5px;
   font-size: 0.8em;
   font-style: italic;
-  // margin-top: 20px;
+  margin-top: 15px;
   color: ${lighten(.6, 'black')};
   border-top: 1px solid ${lighten(.8, 'black')};
   text-align:right;
