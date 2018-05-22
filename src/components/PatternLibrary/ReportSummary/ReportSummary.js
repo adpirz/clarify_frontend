@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import React from 'react';
 import styled from 'styled-components';
-import { darken } from 'polished';
+import { lighten, darken } from 'polished';
 import colors from '../colors.js';
 
 const ReportSummaryContainer = styled.div`
@@ -22,6 +22,20 @@ const ReportSummaryContainer = styled.div`
   }
 `;
 
+const SummaryRow = styled.div`
+  padding: 8px 5px;
+`
+
+const Footer = styled.div`
+  padding: 25px;
+  font-size: 0.8em;
+  font-style: italic;
+  // margin-top: 20px;
+  color: ${lighten(.6, 'black')};
+  border-top: 1px solid ${lighten(.8, 'black')};
+  text-align:right;
+`
+
 class ReportSummary extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -33,7 +47,7 @@ class ReportSummary extends React.PureComponent {
     }
 
     getSummaryData = () => {
-      const { data } = _.get(this.props, 'report');
+      const { data, title, subheading } = _.get(this.props, 'report');
       const COLUMN_CODE_FOR_SUMMARY = 4 // The most magic.
       let maxAttendancePercentage = 0;
       let minAttendancePercentage = 100;
@@ -57,6 +71,8 @@ class ReportSummary extends React.PureComponent {
       const minAttendanceStudent = _.find(this.props.students, {id: minAttendanceStudentId});
 
       return {
+        title,
+        subheading,
         count: _.size(data),
         mean: `${_.round(sumAttendance / _.size(data) * 100, 2)}%`,
         highestStudent: `${maxAttendanceStudent.first_name} ${maxAttendanceStudent.last_name}`,
@@ -73,11 +89,12 @@ class ReportSummary extends React.PureComponent {
         <ReportSummaryContainer
           onClick={this.selectReport}
           >
-          <span style={{fontWeight: 'bold'}}>Attendance for David Robertson, 10/20/18 - 06/01/19</span>
-          <div>Number of Students: {summaryData.count}</div>
-          <div>Mean: {summaryData.mean}</div>
-          <div>Highest: {summaryData.highestStudent} ({summaryData.highest})</div>
-          <div>Lowest: {summaryData.lowestStudent} ({summaryData.lowest})</div>
+          <span style={{fontWeight: 'bold', fontSize: '1.2em', paddingBottom: '3px'}}>{summaryData.title}</span>
+          <SummaryRow>Number of Students: {summaryData.count}</SummaryRow>
+          <SummaryRow>Mean: {summaryData.mean}</SummaryRow>
+          <SummaryRow>Highest: {summaryData.highestStudent} ({summaryData.highest})</SummaryRow>
+          <SummaryRow>Lowest: {summaryData.lowestStudent} ({summaryData.lowest})</SummaryRow>
+          <Footer>{summaryData.subheading}</Footer>
         </ReportSummaryContainer>
       )
     }
