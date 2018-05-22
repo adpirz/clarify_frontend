@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import { Button, Logo, Loading } from './components/PatternLibrary';
+import colors from './components/PatternLibrary/colors';
 import { PromiseState } from 'react-refetch';
 import { ReportFetcher, ApiFetcher } from './fetchModule';
 import {
@@ -169,7 +170,16 @@ class App extends React.Component {
       buttons.push(<Button key='delete' onClick={this.deleteReport}>Delete</Button>)
     }
 
-    return buttons;
+
+    return (
+      <div style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          flexShrink: '0'
+        }}>
+        {buttons}
+      </div>
+    );
   }
 
   logUserIn = (credentials) => {
@@ -208,15 +218,25 @@ class App extends React.Component {
     }
 
     return (
-      <div>
+      <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          flexGrow: '1',
+          backgroundColor: colors.accent,
+        }}>
         <ReportQueryBuilder
           {...promiseValues}
           submitReportQuery={this.submitReportQuery}
         />
-      <div style={{display: 'flex', justifyContent: 'flex-end', margin: '15px 0'}}>
-          {this.getReportButtons()}
-        </div>
-        <div style={{margin: "0 25px"}}>
+        {this.getReportButtons()}
+        <div style={{
+            margin: '20px 25px',
+            padding: '25px',
+            border: '1px solid lightgrey',
+            backgroundColor: colors.white,
+            borderRadius: '10px',
+            flexGrow: '1',
+          }}>
           {this.getReportOrWorksheet()}
         </div>
       </div>
@@ -226,13 +246,27 @@ class App extends React.Component {
   render() {
     const username = _.get(this.state.currentUser, 'username');
     return (
-      <div>
-        <div style={{display: 'flex', justifyContent: 'space-between', margin: '0 20px'}}>
+      <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100vh',
+        }}>
+        <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '25px 20px',
+            borderBottom: '1px solid lightgrey',
+            minHeight: '68px',
+          }}>
           <Logo alt="Clarify Logo" />
-          <div>
-            <i className="fas fa-user" />
+          <div style={{
+              borderLeft: '2px solid lightgrey',
+              paddingLeft: '25px',
+            }}>
             {this.state.currentUser &&
-              <span style={{margin: '0 10px'}}>
+              <span>
+                <i className="fas fa-user" style={{margin: '0 10px'}}/>
                 User: {username}
               </span>
             }
@@ -244,7 +278,6 @@ class App extends React.Component {
             }
           </div>
         </div>
-        <hr />
         {this.getPageBody()}
       </div>
     );

@@ -3,6 +3,7 @@ import React from 'react';
 import { ReportFetcher } from '../../fetchModule';
 import { Loading } from '../PatternLibrary/';
 import Report from '../Report/Report';
+import { fonts } from '../PatternLibrary/constants';
 
 class Worksheet extends React.PureComponent {
   constructor(props) {
@@ -75,10 +76,10 @@ class Worksheet extends React.PureComponent {
     return (
       <div>
         <div>
-          <div>
+          <span style={{fontSize: fonts.fontSizeLarge}}>
             {currentUser ? `${currentUser.first_name} ${currentUser.last_name}'s` : ''}&nbsp;Worksheet
-          </div>
-          <hr />
+          </span>
+          <hr style={{margin: '0', width: '50%'}}/>
         </div>
         <div style={{
             display: 'flex',

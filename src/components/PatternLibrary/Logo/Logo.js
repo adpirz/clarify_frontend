@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 
 const Logo = styled.div`
-  background: url('./logo.png');
+  background: url('./alpha-logo.png');
   background-repeat: no-repeat;
   background-size: contain;
   display: inline-block;
-  width: 160px;
-  height: 66px;
+  width: 220px;
+  height: 68px;
 `;
 
 export default Logo;

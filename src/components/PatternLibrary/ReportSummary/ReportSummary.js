@@ -53,8 +53,8 @@ class ReportSummary extends React.PureComponent {
         }
       });
 
-      const maxAttendanceStudent = _.find(this.props.students, {source_object_id: maxAttendanceStudentId});
-      const minAttendanceStudent = _.find(this.props.students, {source_object_id: minAttendanceStudentId});
+      const maxAttendanceStudent = _.find(this.props.students, {id: maxAttendanceStudentId});
+      const minAttendanceStudent = _.find(this.props.students, {id: minAttendanceStudentId});
 
       return {
         count: _.size(data),
@@ -68,10 +68,12 @@ class ReportSummary extends React.PureComponent {
 
     render() {
       const summaryData = this.getSummaryData();
+
       return (
         <ReportSummaryContainer
           onClick={this.selectReport}
           >
+          <span style={{fontWeight: 'bold'}}>Attendance for David Robertson, 10/20/18 - 06/01/19</span>
           <div>Number of Students: {summaryData.count}</div>
           <div>Mean: {summaryData.mean}</div>
           <div>Highest: {summaryData.highestStudent} ({summaryData.highest})</div>

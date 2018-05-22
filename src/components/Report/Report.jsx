@@ -29,7 +29,7 @@ class Report extends React.Component {
     let tableData;
     if (report.data) {
       tableData = _.map(report.data, (studentRow) => {
-        const student = _.find(students, { source_object_id: studentRow.student_id });
+        const student = _.find(students, { id: studentRow.student_id });
         const formattedData = this.formatStudentRowData(studentRow.attendance_data);
         formattedData.firstName = _.get(student, 'first_name') || 'Student';
         formattedData.lastName = _.get(student, 'last_name') || '';
@@ -101,6 +101,8 @@ class Report extends React.Component {
       <ReactTable
         data={studentRowData}
         columns={columns}
+        sortable={false}
+        resizable={false}
       />
     )
   }

@@ -97,7 +97,7 @@ class ReportQueryBuilder extends React.Component {
     const targetQueryOptionsGroup = _.find(reactSelectOptions, { value: optionValue });
 
     dataArray.forEach((dataObj) => {
-      let name, id;
+      let name;
       switch (optionValue) {
         case 'section':
           name = dataObj.section_name;
@@ -110,12 +110,11 @@ class ReportQueryBuilder extends React.Component {
           break;
         default:
           name = `${dataObj.first_name} ${dataObj.last_name}`;
-          id = dataObj.source_object_id;
       }
       let optionsArray = {
         label: name,
         value: `${optionValue}_${dataObj.id}`,
-        id: id || dataObj.id,
+        id: dataObj.id,
       }
       if (typeof targetQueryOptionsGroup !== 'undefined') {
         targetQueryOptionsGroup.options.push(optionsArray);
@@ -140,7 +139,7 @@ class ReportQueryBuilder extends React.Component {
     e.preventDefault();
     if(this.isInvalidQuery(this.state.selectedOptions)) {
       this.setState({
-        error: "Query Invalid",
+        error: "Try adding something to the query bar",
       });
       return;
     }
@@ -213,12 +212,20 @@ class ReportQueryBuilder extends React.Component {
       }
     }
 
+    let borderStyles = null;
+    if (this.state.error) {
+      borderStyles = {
+        border: '2px solid #FDA428',
+        borderRadius: '6px',
+      };
+    }
+
     return (
-      <div>
+      <div style={{backgroundColor: 'white'}}>
         <form>
           <div style={{
-              margin: '0 auto',
               display: 'flex',
+              margin: '0 25px',
               justifyContent: 'center',
               alignItems: 'center',
             }}>
@@ -229,43 +236,41 @@ class ReportQueryBuilder extends React.Component {
               onChange={this.handleChange}
               options={groupOptions}
               value={selectedOptions}
-              wrapperStyle={{width: "30%"}}
+              wrapperStyle={{width: "50%", ...borderStyles}}
               menuContainerStyle={{zIndex: 10}}
+              style={this.state.error ? {border: 'none'} : null}
             />
-            <Button
-              primary
-              onClick={this.submitQuery}>
-              Search
-            </Button>
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                margin: '0 auto'}}>
+              <DatePicker
+                onChange={this.handleChangeMinDate}
+                autoOk
+                floatingLabelText="From Date *"
+                defaultDate={minDate}
+                locale="en-US"
+                style={{display: 'inline-block', margin: '0 20px'}}
+              />
+              <DatePicker
+                onChange={this.handleChangeMaxDate}
+                autoOk
+                floatingLabelText="To Date (empty signifies to-date)"
+                locale="en-US"
+                style={{display: 'inline-block', margin: '0 20px'}}
+              />
+            </div>
           </div>
           <Error>
             {this.state.error}
           </Error>
-          <span style={{width: '100%', display: 'block', textAlign: 'center', marginTop: '25px'}}>
-            Please Select a Date Range
-          </span>
-          <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              width: '50%',
-              margin: '0 auto'}}>
-            <DatePicker
-              onChange={this.handleChangeMinDate}
-              autoOk
-              floatingLabelText="From Date *"
-              defaultDate={minDate}
-              locale="en-US"
-              style={{display: 'inline-block'}}
-            />
-            <DatePicker
-              onChange={this.handleChangeMaxDate}
-              autoOk
-              floatingLabelText="To Date (empty signifies to-date)"
-              locale="en-US"
-              style={{display: 'inline-block'}}
-            />
-          </div>
+          <Button
+            primary
+            onClick={this.submitQuery}
+            style={{width: '250px', margin: '15px auto'}}>
+            Search
+          </Button>
         </form>
       </div>
     );
