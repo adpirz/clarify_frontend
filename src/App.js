@@ -142,23 +142,23 @@ class App extends React.Component {
   getReportOrWorksheet = () => {
     const selectedReport = this.state.selectedReport;
     const {students } = this.getPromiseValues();
-    if (selectedReport) {
       return (
-        <Report
-          report={selectedReport}
-          students={students}
-          back={this.clearReport}
-          saveReport={this.saveReport}
-        />
-      );
-    }
-    return (
-      <Worksheet
-        worksheet={_.get(this.props.worksheetGet, 'value.data[0]')}
-        currentUser={this.state.currentUser}
-        students={students}
-        selectReport={this.selectReport}
-        deleteReport={this.deleteReport}/>
+        <div>
+          <Report
+            report={selectedReport}
+            students={students}
+            back={this.clearReport}
+            saveReport={this.saveReport}
+            show={!!selectedReport}
+          />
+          <Worksheet
+            worksheet={_.get(this.props.worksheetGet, 'value.data[0]')}
+            currentUser={this.state.currentUser}
+            students={students}
+            selectReport={this.selectReport}
+            deleteReport={this.deleteReport}
+            show={!selectedReport}/>
+        </div>
     );
   }
 

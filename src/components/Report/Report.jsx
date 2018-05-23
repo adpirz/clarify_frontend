@@ -108,8 +108,8 @@ class Report extends React.Component {
     return buttons;
   }
   render() {
-    const { displayMode, report, students, selectReport, deleteReport } = this.props;
-    if (_.isEmpty(report.data)) {
+    const { displayMode, report, students, selectReport, deleteReport, show } = this.props;
+    if (_.isEmpty(_.get(report, 'data'))) {
       return null;
     }
     if (displayMode === 'summary') {
@@ -126,7 +126,7 @@ class Report extends React.Component {
     const studentRowData = this.buildStudentRowData();
     const { title, subheading } = _.get(this.props, 'report');
     return (
-      <div>
+      <div style={{display: `${show === false ? 'none': 'block'}`}}>
         <div style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -144,7 +144,7 @@ class Report extends React.Component {
           columns={columns}
           sortable={false}
           resizable={false}
-          defaultPageSize='10'
+          defaultPageSize={10}
         />
       </div>
     )

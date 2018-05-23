@@ -23,8 +23,9 @@ class Worksheet extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
+    const oldWorksheet = this.props.worksheet;
     const worksheet = nextProps.worksheet;
-    if (worksheet) {
+    if (worksheet && _.get(oldWorksheet, 'id') !== worksheet.id) {
       this.getReportDataForWorksheet(worksheet);
     }
   }
@@ -72,10 +73,10 @@ class Worksheet extends React.PureComponent {
         );
       });
     }
-    const { currentUser } = this.props;
+    const { currentUser, show } = this.props;
 
     return (
-      <div>
+      <div style={{display: `${show === false ? 'none': 'block'}`}}>
         <div>
           <span style={{fontSize: fonts.large}}>
             {currentUser ? `${currentUser.first_name} ${currentUser.last_name}'s` : ''}&nbsp;Worksheet

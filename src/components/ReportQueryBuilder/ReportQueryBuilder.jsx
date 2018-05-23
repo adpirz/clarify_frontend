@@ -64,6 +64,7 @@ class ReportQueryBuilder extends React.Component {
     } = this.props;
 
     if (gradeLevels.length && sites.length && sections.length && students.length) {
+      this.clearSelectOptions();
       this.optionsGenerator(gradeLevels, 'grade_level');
       this.optionsGenerator(sites, 'site');
       this.optionsGenerator(sections, 'section');
@@ -76,9 +77,16 @@ class ReportQueryBuilder extends React.Component {
   };
 
   handleChangeMaxDate = (event, date) => {
-
     this.setState({ maxDate: date });
   };
+
+  clearSelectOptions = () => {
+    _.map(reactSelectOptions, (optionGroup) => {
+      if (optionGroup.type === 'group') {
+        optionGroup.options = [];
+      }
+    })
+  }
 
   handleChange = (selectedOptions) => {
     this.setState((prevState) => {
@@ -167,6 +175,7 @@ class ReportQueryBuilder extends React.Component {
     });
 
     submitReportQuery(group, groupId, category, minDate, maxDate);
+
   };
 
   isValidQuery = (selectedOptions) => {
