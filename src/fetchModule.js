@@ -1,9 +1,9 @@
-const BASE_URL = process.env.NODE_ENV === "production" ? process.env.REACT_APP_BASE_URL : 'http://localhost:8000'
+const BASE_URL = process.env.NODE_ENV === "production" ? process.env.REACT_APP_BASE_URL : 'http://localhost:8000/'
 
 
 class ApiFetcher {
   static get(modelName, objectId) {
-    const apiRequest = new Request(`${BASE_URL}/api/${modelName}/${objectId || ''}`, {
+    const apiRequest = new Request(`${BASE_URL}api/${modelName}/${objectId || ''}`, {
       credentials: 'include'
     });
 
@@ -18,7 +18,7 @@ class ApiFetcher {
 
   static post(modelName, objectProperties) {
     const postData = JSON.stringify(objectProperties);
-    const apiRequest = new Request(`${BASE_URL}/api/${modelName}/`, {
+    const apiRequest = new Request(`${BASE_URL}api/${modelName}/`, {
       credentials: 'include',
       method: 'POST',
       body: postData,
@@ -30,7 +30,7 @@ class ApiFetcher {
   }
 
   static delete(modelName, objectId) {
-    const apiRequest = new Request(`http://localhost:8000/api/${modelName}/${objectId || ''}`, {
+    const apiRequest = new Request(`${BASE_URL}api/${modelName}/${objectId || ''}`, {
       credentials: 'include',
       method: 'DELETE',
     });
@@ -48,7 +48,7 @@ class ReportFetcher {
       // Query is a report id
       query = `report_id=${query}`;
     }
-    const reportRequest = new Request(`${BASE_URL}/report/?${query}`, {
+    const reportRequest = new Request(`${BASE_URL}report/?${query}`, {
       credentials: 'include'
     });
 
