@@ -14,12 +14,14 @@ const ReportSummaryContainer = styled.div`
   margin: 20px;
   min-height: 125px;
   display: flex;
+  position: relative;
   flex-direction: column;
   justify-content: space-between;
+  width: 300px;
   cursor: pointer;
 
   &:hover {
-    background: ${() => darken(.1, colors.white) };
+    background: ${darken(.1, colors.white)};
   }
 `;
 
@@ -42,7 +44,7 @@ const SummaryCell = styled.td`
 
 const IndividualData = styled.div`
   margin: 0 auto;
-  font-size: ${fonts.fontSizeHuge};
+  font-size: ${fonts.huge};
 `;
 
 const Footer = styled.div`
@@ -54,6 +56,19 @@ const Footer = styled.div`
   border-top: 1px solid ${lighten(.8, 'black')};
   text-align:right;
 `
+
+const DeleteIcon = styled.i`
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: ${colors.warningRed};
+  font-size: ${fonts.large};
+  cursor: pointer;
+  &:hover {
+    color: ${darken(.1, colors.warningRed)};
+  }
+`;
+
 const COLUMN_CODE_FOR_SUMMARY = 4;
 
 class ReportSummary extends React.PureComponent {
@@ -108,10 +123,20 @@ class ReportSummary extends React.PureComponent {
       };
     }
 
+    handleReportDelete = (e) => {
+      e.preventDefault();
+      this.props.deleteReport(this.props.report);
+    }
+
     render() {
       const { title, subheading } = _.get(this.props, 'report');
       let reportNodes = null;
-      if (_.size(_.get(this.props, 'report.data')) > 1) {
+      if (_.size(_.get(this.props, 'report.data')) === 1) {
+        const individualData = this.getIndividualData();
+        reportNodes = (
+          <IndividualData>{individualData.mean}</IndividualData>
+        );
+      } else {
         const summaryData = this.getSummaryData();
         reportNodes = (
           <SummaryTable>
@@ -123,17 +148,13 @@ class ReportSummary extends React.PureComponent {
             </tbody>
           </SummaryTable>
         );
-      } else {
-        const individualData = this.getIndividualData();
-        reportNodes = (
-          <IndividualData>{individualData.mean}</IndividualData>
-        );
       }
 
       return (
         <ReportSummaryContainer
           onClick={this.selectReport}
           >
+          <DeleteIcon className="fas fa-times" onClick={this.handleReportDelete}/>
           <Title>{title}</Title>
           {reportNodes}
           <Footer>{subheading}</Footer>

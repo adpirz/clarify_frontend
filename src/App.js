@@ -100,9 +100,8 @@ class App extends React.Component {
     });
   }
 
-  deleteReport = () => {
-    const report_id = _.get(this.state.selectedReport, 'report_id');
-    ApiFetcher.delete('report', report_id).then((successful) => {
+  deleteReport = (report) => {
+    ApiFetcher.delete('report', report.report_id).then((successful) => {
       if (successful) {
         this.setState({
           selectedReport: null,
@@ -116,13 +115,16 @@ class App extends React.Component {
     const queryString = `group=${group}&group_id=${groupId}&category=${category}&from_date=${minDate}&to_date=${maxDate}`;
     this.setState({
       currentReportQuery: queryString,
+      loading: true,
     });
     ReportFetcher.get(queryString).then((resp) => {
-      if (resp.data) {
-        this.setState({
-          selectedReport: resp,
-        });
+      const newState = {
+        loading: false,
       }
+      if (!_.isEmpty(resp.data)) {
+        newState.selectedReport = resp;
+      }
+      this.setState(newState);
     });
   }
 
@@ -145,6 +147,8 @@ class App extends React.Component {
         <Report
           report={selectedReport}
           students={students}
+          back={this.clearReport}
+          saveReport={this.saveReport}
         />
       );
     }
@@ -153,32 +157,8 @@ class App extends React.Component {
         worksheet={_.get(this.props.worksheetGet, 'value.data[0]')}
         currentUser={this.state.currentUser}
         students={students}
-        selectReport={this.selectReport}/>
-    );
-  }
-
-  getReportButtons = () => {
-    if (!this.state.currentReportQuery && !this.state.selectedReport) {
-      return null;
-    }
-    const buttons = [(
-      <Button key='back' onClick={this.clearReport}>Back</Button>
-    ),]
-    if (!_.get(this.state.selectedReport, 'report_id')) {
-        buttons.push(<Button key='save' primary onClick={this.saveReport}>Save Report</Button>)
-    } else {
-      buttons.push(<Button key='delete' onClick={this.deleteReport}>Delete</Button>)
-    }
-
-
-    return (
-      <div style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          flexShrink: '0'
-        }}>
-        {buttons}
-      </div>
+        selectReport={this.selectReport}
+        deleteReport={this.deleteReport}/>
     );
   }
 
@@ -205,18 +185,13 @@ class App extends React.Component {
     if (!this.state.currentUser) {
       return <LoginForm logUserIn={this.logUserIn} />;
     }
+    const promiseValues = this.getPromiseValues();
 
-    if (this.state.loading) {
+    if (this.state.loading || !promiseValues) {
       return (
         <Loading />
       );
     }
-    const promiseValues = this.getPromiseValues();
-
-    if (!promiseValues) {
-      return null;
-    }
-
     return (
       <div style={{
           display: 'flex',
@@ -228,7 +203,6 @@ class App extends React.Component {
           {...promiseValues}
           submitReportQuery={this.submitReportQuery}
         />
-        {this.getReportButtons()}
         <div style={{
             margin: '20px 25px',
             padding: '25px',
@@ -249,6 +223,7 @@ class App extends React.Component {
       <div style={{
           display: 'flex',
           flexDirection: 'column',
+          minHeight: '100vh',
         }}>
         <div style={{
             display: 'flex',

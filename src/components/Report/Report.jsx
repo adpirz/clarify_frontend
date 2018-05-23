@@ -2,7 +2,7 @@ import React from 'react';
 import ReactTable from 'react-table'
 import _ from 'lodash';
 import 'react-table/react-table.css'
-import { ReportSummary } from '../PatternLibrary';
+import { ReportSummary, Button } from '../PatternLibrary';
 
 
 class Report extends React.Component {
@@ -81,8 +81,29 @@ class Report extends React.Component {
     return [...nameColumns, ...attendanceColumns];
   }
 
+  getReportButtons = () => {
+    if (this.props.displayMode === 'summary') {
+      return null;
+    }
+    const buttons = [(
+      <Button key='back' onClick={this.props.back}>Back</Button>
+    ),]
+    if (!this.props.report.report_id) {
+        buttons.push(<Button key='save' primary onClick={this.props.saveReport}>Save Report</Button>)
+    }
+
+    return (
+      <div style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          flexShrink: '0'
+        }}>
+        {buttons}
+      </div>
+    );
+  }
   render() {
-    const { displayMode, report, students, selectReport } = this.props;
+    const { displayMode, report, students, selectReport, deleteReport } = this.props;
     if (_.isEmpty(report.data)) {
       return null;
     }
@@ -91,19 +112,23 @@ class Report extends React.Component {
         <ReportSummary
           report={report}
           students={students}
-          selectReport={selectReport}>
+          selectReport={selectReport}
+          deleteReport={deleteReport}>
         </ReportSummary>
       );
     }
     const columns = this.buildColumns();
     const studentRowData = this.buildStudentRowData();
     return (
-      <ReactTable
-        data={studentRowData}
-        columns={columns}
-        sortable={false}
-        resizable={false}
-      />
+      <div>
+        {this.getReportButtons()}
+        <ReactTable
+          data={studentRowData}
+          columns={columns}
+          sortable={false}
+          resizable={false}
+        />
+      </div>
     )
   }
 }

@@ -4,9 +4,9 @@ import colors from '../colors.js';
 import { fonts } from '../constants.js';
 
 const ErrorDiv = styled.div`
-  background-color: ${colors.errorRed};
+  background-color: ${colors.errorOrange};
   color: ${colors.black};
-  font-size: ${fonts.fontSizeSmall};
+  font-size: ${fonts.small};
   font-weight: bold;
   padding: 10px 0px;
   margin: 15px auto;

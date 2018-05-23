@@ -51,7 +51,7 @@ class ReportQueryBuilder extends React.Component {
       selectedOptions: [],
       minDate: this.getBeginningOfSchoolYear(),
       maxDate: '',
-      error: "",
+      errorMessage: "",
     };
   }
 
@@ -84,7 +84,7 @@ class ReportQueryBuilder extends React.Component {
     this.setState((prevState) => {
       return {
         selectedOptions,
-        error: this.isInvalidQuery(selectedOptions) ? prevState.error : "",
+        errorMessage: this.isValidQuery(selectedOptions) ? "" : prevState.error,
       }
     });
   };
@@ -137,10 +137,8 @@ class ReportQueryBuilder extends React.Component {
 
   submitQuery = (e) => {
     e.preventDefault();
-    if(this.isInvalidQuery(this.state.selectedOptions)) {
-      this.setState({
-        error: "Try adding something to the query bar",
-      });
+    if(!this.isValidQuery(this.state.selectedOptions)) {
+      this.setState({errorMessage: `Try typing "attendance" and a student's name in the search bar.`});
       return;
     }
     const { submitReportQuery } = this.props;
@@ -171,10 +169,10 @@ class ReportQueryBuilder extends React.Component {
     submitReportQuery(group, groupId, category, minDate, maxDate);
   };
 
-  isInvalidQuery = (selectedOptions) => {
+  isValidQuery = (selectedOptions) => {
     const groupQuerySelected = !!_.find(selectedOptions, { group: { type: 'group' } });
     const categoryQuerySelected = !!_.find(selectedOptions, { group: { type: 'category' } });
-    return !(groupQuerySelected && categoryQuerySelected);
+    return groupQuerySelected && categoryQuerySelected;
   };
 
   render() {
@@ -182,8 +180,6 @@ class ReportQueryBuilder extends React.Component {
       selectedOptions,
       minDate,
     } = this.state;
-
-
 
     let groupOptions = reactSelectOptions;
 
@@ -263,7 +259,7 @@ class ReportQueryBuilder extends React.Component {
             </div>
           </div>
           <Error>
-            {this.state.error}
+            {this.state.errorMessage}
           </Error>
           <Button
             primary
