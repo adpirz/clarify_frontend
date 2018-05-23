@@ -4,12 +4,13 @@ import React from 'react';
 import styled from 'styled-components';
 import { lighten, darken } from 'polished';
 import colors from '../colors.js';
+import { fonts } from '../constants.js';
 
 const ReportSummaryContainer = styled.div`
   display: inline-block;
   border-radius: 10px;
   box-shadow: 0px -1px 10px 2px rgba(166,166,166,1);
-  padding: 10px;
+  padding: 20px;
   margin: 20px;
   min-height: 125px;
   display: flex;
@@ -22,9 +23,27 @@ const ReportSummaryContainer = styled.div`
   }
 `;
 
-const SummaryRow = styled.div`
-  padding: 18px 15px;
-`
+const Title = styled.span`
+  font-weight: bold;
+  font-size: 1.2em;
+  padding-bottom: 3px;
+`;
+
+const SummaryTable = styled.table`
+  width: 80%;
+  margin: 20px auto;
+  border-collapse: collapse;
+`;
+
+const SummaryCell = styled.td`
+  border: 1px solid #a2a2a2;
+  padding: 10px;
+`;
+
+const IndividualData = styled.div`
+  margin: 0 auto;
+  font-size: ${fonts.fontSizeHuge};
+`;
 
 const Footer = styled.div`
   padding: 5px;
@@ -35,6 +54,7 @@ const Footer = styled.div`
   border-top: 1px solid ${lighten(.8, 'black')};
   text-align:right;
 `
+const COLUMN_CODE_FOR_SUMMARY = 4;
 
 class ReportSummary extends React.PureComponent {
   constructor(props) {
@@ -47,8 +67,8 @@ class ReportSummary extends React.PureComponent {
     }
 
     getSummaryData = () => {
-      const { data, title, subheading } = _.get(this.props, 'report');
-      const COLUMN_CODE_FOR_SUMMARY = 4 // The most magic.
+      const { data, } = _.get(this.props, 'report');
+
       let maxAttendancePercentage = 0;
       let minAttendancePercentage = 100;
       let sumAttendance = 0;
@@ -71,8 +91,6 @@ class ReportSummary extends React.PureComponent {
       const minAttendanceStudent = _.find(this.props.students, {id: minAttendanceStudentId});
 
       return {
-        title,
-        subheading,
         count: _.size(data),
         mean: `${_.round(sumAttendance / _.size(data) * 100, 2)}%`,
         highestStudent: `${maxAttendanceStudent.first_name} ${maxAttendanceStudent.last_name}`,
@@ -82,19 +100,43 @@ class ReportSummary extends React.PureComponent {
       };
     }
 
+    getIndividualData = () => {
+      const { data } = _.get(this.props, 'report');
+      const percentage = _.find(_.first(data).attendance_data, {column_code: COLUMN_CODE_FOR_SUMMARY}).percentage;
+      return {
+        mean: `${_.round(percentage * 100, 2)}%`,
+      };
+    }
+
     render() {
-      const summaryData = this.getSummaryData();
+      const { title, subheading } = _.get(this.props, 'report');
+      let reportNodes = null;
+      if (_.size(_.get(this.props, 'report.data')) > 1) {
+        const summaryData = this.getSummaryData();
+        reportNodes = (
+          <SummaryTable>
+            <tbody>
+              <tr><SummaryCell>Students:</SummaryCell><SummaryCell>{summaryData.count}</SummaryCell></tr>
+              <tr><SummaryCell>Mean:</SummaryCell><SummaryCell>{summaryData.mean}</SummaryCell></tr>
+              <tr><SummaryCell>Highest:</SummaryCell><SummaryCell>{summaryData.highestStudent} ({summaryData.highest})</SummaryCell></tr>
+              <tr><SummaryCell>Lowest:</SummaryCell><SummaryCell>{summaryData.lowestStudent} ({summaryData.lowest})</SummaryCell></tr>
+            </tbody>
+          </SummaryTable>
+        );
+      } else {
+        const individualData = this.getIndividualData();
+        reportNodes = (
+          <IndividualData>{individualData.mean}</IndividualData>
+        );
+      }
 
       return (
         <ReportSummaryContainer
           onClick={this.selectReport}
           >
-          <span style={{fontWeight: 'bold', fontSize: '1.2em', paddingBottom: '3px'}}>{summaryData.title}</span>
-          <SummaryRow>Number of Students: {summaryData.count}</SummaryRow>
-          <SummaryRow>Mean: {summaryData.mean}</SummaryRow>
-          <SummaryRow>Highest: {summaryData.highestStudent} ({summaryData.highest})</SummaryRow>
-          <SummaryRow>Lowest: {summaryData.lowestStudent} ({summaryData.lowest})</SummaryRow>
-          <Footer>{summaryData.subheading}</Footer>
+          <Title>{title}</Title>
+          {reportNodes}
+          <Footer>{subheading}</Footer>
         </ReportSummaryContainer>
       )
     }
