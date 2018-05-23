@@ -51,7 +51,7 @@ class ReportQueryBuilder extends React.Component {
       selectedOptions: [],
       minDate: this.getBeginningOfSchoolYear(),
       maxDate: '',
-      error: "",
+      errorMessage: "",
     };
   }
 
@@ -64,6 +64,7 @@ class ReportQueryBuilder extends React.Component {
     } = this.props;
 
     if (gradeLevels.length && sites.length && sections.length && students.length) {
+      this.clearSelectOptions();
       this.optionsGenerator(gradeLevels, 'grade_level');
       this.optionsGenerator(sites, 'site');
       this.optionsGenerator(sections, 'section');
@@ -76,15 +77,22 @@ class ReportQueryBuilder extends React.Component {
   };
 
   handleChangeMaxDate = (event, date) => {
-
     this.setState({ maxDate: date });
   };
+
+  clearSelectOptions = () => {
+    _.map(reactSelectOptions, (optionGroup) => {
+      if (optionGroup.type === 'group') {
+        optionGroup.options = [];
+      }
+    })
+  }
 
   handleChange = (selectedOptions) => {
     this.setState((prevState) => {
       return {
         selectedOptions,
-        error: this.isInvalidQuery(selectedOptions) ? prevState.error : "",
+        errorMessage: this.isValidQuery(selectedOptions) ? "" : prevState.error,
       }
     });
   };
@@ -137,10 +145,8 @@ class ReportQueryBuilder extends React.Component {
 
   submitQuery = (e) => {
     e.preventDefault();
-    if(this.isInvalidQuery(this.state.selectedOptions)) {
-      this.setState({
-        error: "Try adding something to the query bar",
-      });
+    if(!this.isValidQuery(this.state.selectedOptions)) {
+      this.setState({errorMessage: `Try typing "attendance" and a student's name in the search bar.`});
       return;
     }
     const { submitReportQuery } = this.props;
@@ -169,12 +175,13 @@ class ReportQueryBuilder extends React.Component {
     });
 
     submitReportQuery(group, groupId, category, minDate, maxDate);
+
   };
 
-  isInvalidQuery = (selectedOptions) => {
+  isValidQuery = (selectedOptions) => {
     const groupQuerySelected = !!_.find(selectedOptions, { group: { type: 'group' } });
     const categoryQuerySelected = !!_.find(selectedOptions, { group: { type: 'category' } });
-    return !(groupQuerySelected && categoryQuerySelected);
+    return groupQuerySelected && categoryQuerySelected;
   };
 
   render() {
@@ -182,8 +189,6 @@ class ReportQueryBuilder extends React.Component {
       selectedOptions,
       minDate,
     } = this.state;
-
-
 
     let groupOptions = reactSelectOptions;
 
@@ -263,7 +268,7 @@ class ReportQueryBuilder extends React.Component {
             </div>
           </div>
           <Error>
-            {this.state.error}
+            {this.state.errorMessage}
           </Error>
           <Button
             primary

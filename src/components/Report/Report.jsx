@@ -1,9 +1,22 @@
+import _ from 'lodash';
+import styled from 'styled-components';
+
 import React from 'react';
 import ReactTable from 'react-table'
-import _ from 'lodash';
 import 'react-table/react-table.css'
-import { ReportSummary } from '../PatternLibrary';
+import { ReportSummary, Button } from '../PatternLibrary';
+import { fonts } from '../PatternLibrary/constants';
 
+
+const Title = styled.span`
+  font-weight: bold;
+  font-size: ${fonts.large};
+`;
+
+const Subheading = styled.span`
+  font-size: ${fonts.medium};
+  opacity: .5;
+`;
 
 class Report extends React.Component {
   formatStudentRowData = (studentAttendanceData) => {
@@ -81,9 +94,22 @@ class Report extends React.Component {
     return [...nameColumns, ...attendanceColumns];
   }
 
+  getReportButtons = () => {
+    if (this.props.displayMode === 'summary') {
+      return null;
+    }
+    const buttons = [(
+      <Button key='back' onClick={this.props.back}>Back</Button>
+    ),]
+    if (!this.props.report.report_id) {
+        buttons.push(<Button key='save' primary onClick={this.props.saveReport}>Save Report</Button>)
+    }
+
+    return buttons;
+  }
   render() {
-    const { displayMode, report, students, selectReport } = this.props;
-    if (_.isEmpty(report.data)) {
+    const { displayMode, report, students, selectReport, deleteReport, show } = this.props;
+    if (_.isEmpty(_.get(report, 'data'))) {
       return null;
     }
     if (displayMode === 'summary') {
@@ -91,19 +117,36 @@ class Report extends React.Component {
         <ReportSummary
           report={report}
           students={students}
-          selectReport={selectReport}>
+          selectReport={selectReport}
+          deleteReport={deleteReport}>
         </ReportSummary>
       );
     }
     const columns = this.buildColumns();
     const studentRowData = this.buildStudentRowData();
+    const { title, subheading } = _.get(this.props, 'report');
     return (
-      <ReactTable
-        data={studentRowData}
-        columns={columns}
-        sortable={false}
-        resizable={false}
-      />
+      <div style={{display: `${show === false ? 'none': 'block'}`}}>
+        <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexShrink: '0',
+            alignItems: 'center',
+          }}>
+          <div>
+            <Title>{title}</Title>&nbsp;--&nbsp;
+            <Subheading>{subheading}</Subheading>
+          </div>
+          {this.getReportButtons()}
+        </div>
+        <ReactTable
+          data={studentRowData}
+          columns={columns}
+          sortable={false}
+          resizable={false}
+          defaultPageSize={10}
+        />
+      </div>
     )
   }
 }

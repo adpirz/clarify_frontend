@@ -53,7 +53,12 @@ class ReportFetcher {
     });
 
     return fetch(reportRequest).then(resp => {
-      return resp.json();
+      if (resp.status === 200) {
+        return resp.json();
+      }
+      else {
+        return {};
+      }
     });
   }
 }

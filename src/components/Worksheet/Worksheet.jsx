@@ -23,8 +23,9 @@ class Worksheet extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
+    const oldWorksheet = this.props.worksheet;
     const worksheet = nextProps.worksheet;
-    if (worksheet) {
+    if (worksheet && _.get(oldWorksheet, 'id') !== worksheet.id) {
       this.getReportDataForWorksheet(worksheet);
     }
   }
@@ -58,7 +59,7 @@ class Worksheet extends React.PureComponent {
         </div>
         );
     } else {
-      const { students } = this.props;
+      const { students, selectReport, deleteReport } = this.props;
       worksheetBody = _.map(reportDataList, (reportDataObject) => {
         return (
           <Report
@@ -66,17 +67,18 @@ class Worksheet extends React.PureComponent {
             students={students}
             report={reportDataObject}
             key={reportDataObject.report_id}
-            selectReport={this.props.selectReport}
+            selectReport={selectReport}
+            deleteReport={deleteReport}
           />
         );
       });
     }
-    const { currentUser } = this.props;
+    const { currentUser, show } = this.props;
 
     return (
-      <div>
+      <div style={{display: `${show === false ? 'none': 'block'}`}}>
         <div>
-          <span style={{fontSize: fonts.fontSizeLarge}}>
+          <span style={{fontSize: fonts.large}}>
             {currentUser ? `${currentUser.first_name} ${currentUser.last_name}'s` : ''}&nbsp;Worksheet
           </span>
           <hr style={{margin: '0', width: '50%'}}/>
