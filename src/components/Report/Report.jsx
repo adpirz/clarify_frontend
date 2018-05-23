@@ -1,9 +1,22 @@
+import _ from 'lodash';
+import styled from 'styled-components';
+
 import React from 'react';
 import ReactTable from 'react-table'
-import _ from 'lodash';
 import 'react-table/react-table.css'
 import { ReportSummary, Button } from '../PatternLibrary';
+import { fonts } from '../PatternLibrary/constants';
 
+
+const Title = styled.span`
+  font-weight: bold;
+  font-size: ${fonts.large};
+`;
+
+const Subheading = styled.span`
+  font-size: ${fonts.medium};
+  opacity: .5;
+`;
 
 class Report extends React.Component {
   formatStudentRowData = (studentAttendanceData) => {
@@ -92,15 +105,7 @@ class Report extends React.Component {
         buttons.push(<Button key='save' primary onClick={this.props.saveReport}>Save Report</Button>)
     }
 
-    return (
-      <div style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          flexShrink: '0'
-        }}>
-        {buttons}
-      </div>
-    );
+    return buttons;
   }
   render() {
     const { displayMode, report, students, selectReport, deleteReport } = this.props;
@@ -119,14 +124,27 @@ class Report extends React.Component {
     }
     const columns = this.buildColumns();
     const studentRowData = this.buildStudentRowData();
+    const { title, subheading } = _.get(this.props, 'report');
     return (
       <div>
-        {this.getReportButtons()}
+        <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexShrink: '0',
+            alignItems: 'center',
+          }}>
+          <div>
+            <Title>{title}</Title>&nbsp;--&nbsp;
+            <Subheading>{subheading}</Subheading>
+          </div>
+          {this.getReportButtons()}
+        </div>
         <ReactTable
           data={studentRowData}
           columns={columns}
           sortable={false}
           resizable={false}
+          defaultPageSize='10'
         />
       </div>
     )

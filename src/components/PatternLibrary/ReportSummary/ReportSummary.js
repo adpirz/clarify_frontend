@@ -1,8 +1,8 @@
 import _ from 'lodash';
-
-import React from 'react';
 import styled from 'styled-components';
 import { lighten, darken } from 'polished';
+
+import React from 'react';
 import colors from '../colors.js';
 import { fonts } from '../constants.js';
 

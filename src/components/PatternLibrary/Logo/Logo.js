@@ -5,8 +5,8 @@ const Logo = styled.div`
   background-repeat: no-repeat;
   background-size: contain;
   display: inline-block;
-  width: 220px;
-  height: 68px;
+  width: 150px;
+  height: 46px;
 `;
 
 export default Logo;

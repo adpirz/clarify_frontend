@@ -229,9 +229,9 @@ class App extends React.Component {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '25px 20px',
+            padding: '10px 20px',
             borderBottom: '1px solid lightgrey',
-            minHeight: '68px',
+            minHeight: '46px',
           }}>
           <Logo alt="Clarify Logo" />
           <div style={{
