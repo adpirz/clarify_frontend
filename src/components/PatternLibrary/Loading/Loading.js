@@ -2,8 +2,8 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
 const LOADING_COLOR = '#2ba04a'
-const LOADING_SIZE = 20
-const LOADING_DURATION = 0.5
+const LOADING_SIZE = 15
+const LOADING_DURATION = 1.3
 
 const loading = keyframes`
   0% {
