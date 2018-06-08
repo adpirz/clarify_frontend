@@ -48,18 +48,18 @@ export class DataProvider extends React.Component {
   }
 
   hydrateUserData = () => {
+    this.setState({isLoading: true});
     return this.getQueryObjects()
     .then(this.getWorksheet)
     .then((resp) => {
       const worksheet = _.head(resp.body.data);
-      this.getReportDataForWorksheet(worksheet).then(() => {
+      this.getReportDataForWorksheet(worksheet).then((resp) => {
         this.setState({isLoading: false});
       });
     })
   }
 
   initializeUser = () => {
-    this.isLoading = true;
     return ApiFetcher.get('user/me').then((resp) => {
       const newState = {
         isLoading: false,
@@ -134,9 +134,8 @@ export class DataProvider extends React.Component {
 
   getReportDataForWorksheet = (worksheet) => {
     if (!worksheet || !worksheet.reports.length) {
-      return Promise.resolve();
+      return Promise.resolve({});
     }
-    this.setState({isLoading: true});
     const reportDataFetchPromises = [];
     _.forEach(worksheet.reports, (report) => {
       reportDataFetchPromises.push(ReportFetcher.get(report.id));
@@ -144,7 +143,6 @@ export class DataProvider extends React.Component {
     return Promise.all(reportDataFetchPromises).then(reportDataList => {
       this.setState({
         reportDataList,
-        isLoading: false,
       });
     })
   }
@@ -182,6 +180,7 @@ export class DataProvider extends React.Component {
   }
 
   deleteReport = (reportId) => {
+    this.setState({isLoading: true});
     return ApiFetcher.delete('report', reportId).then(() => {
       this.setState((prevState) => {
         const newReportDataList = _.reject(prevState.reportDataList, {id : reportId});
@@ -217,7 +216,8 @@ export class DataProvider extends React.Component {
         if (!resp) {
           newState.errors = {...prevState.errors, ...{reportError: "We couldn't find any data for that group. Try a different section or grade level."}};
         } else {
-          newState.reportDataList = [...prevState.reportDataList, resp];
+          const oldReportDataList = prevState.reportDataList || [];
+          newState.reportDataList = [...oldReportDataList, resp];
         }
         return newState;
       });

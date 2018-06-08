@@ -34,7 +34,7 @@ const reactSelectOptions = [
   },
   {
     label: 'Categories',
-    type: 'category',
+    type: 'reportType',
     options: [
       {
         label: 'Attendance',
@@ -124,7 +124,7 @@ class ReportQueryBuilder extends React.Component {
 
   isGroupValue = (type) => type === 'group';
 
-  isCategoryValue = (type) => type === 'category';
+  isReportTypeValue = (type) => type === 'reportType';
 
   optionsGenerator = (dataArray, optionValue) => {
     const targetQueryOptionsGroup = _.find(reactSelectOptions, { value: optionValue });
@@ -177,7 +177,7 @@ class ReportQueryBuilder extends React.Component {
     const { selectedOptions, minDate, maxDate } = this.state;
 
     let group;
-    let category;
+    let reportType;
 
     const momentMin = moment(minDate).format('YYYY-MM-DD');
 
@@ -191,12 +191,12 @@ class ReportQueryBuilder extends React.Component {
         groupId.push(id);
       }
 
-      if (this.isCategoryValue(type)) {
-        category = option.value;
+      if (this.isReportTypeValue(type)) {
+        reportType = option.value;
       }
     });
 
-    let queryString = `group=${group}&group_id=${groupId}&category=${category}&from_date=${momentMin}`;
+    let queryString = `group=${group}&group_id=${groupId}&type=${reportType}&from_date=${momentMin}`;
     if (maxDate) {
       queryString += `&to_date=${moment(maxDate).format('YYYY-MM-DD')}`;
     }
@@ -205,8 +205,8 @@ class ReportQueryBuilder extends React.Component {
 
   isValidQuery = (selectedOptions) => {
     const groupQuerySelected = !!_.find(selectedOptions, { group: { type: 'group' } });
-    const categoryQuerySelected = !!_.find(selectedOptions, { group: { type: 'category' } });
-    return groupQuerySelected && categoryQuerySelected;
+    const reportTypeQuerySelected = !!_.find(selectedOptions, { group: { type: 'reportType' } });
+    return groupQuerySelected && reportTypeQuerySelected;
   };
 
   render() {
@@ -219,24 +219,20 @@ class ReportQueryBuilder extends React.Component {
 
     if (selectedOptions.length) {
       let isGroupSelected = false;
-      let isCategorySelected = false;
+      let isReportTypeSelected = false;
 
       selectedOptions.forEach(option => {
         const { group: { type } } = option;
 
-        if (this.isGroupValue(type)) {
-          isGroupSelected = true;
-        }
+        isGroupSelected = this.isGroupValue(type);
 
-        if (this.isCategoryValue(type)) {
-          isCategorySelected = true;
-        }
+        isReportTypeSelected = this.isReportTypeValue(type);
       });
 
-      if (isCategorySelected && isGroupSelected) {
+      if (isReportTypeSelected && isGroupSelected) {
         groupOptions = [];
       } else if (isGroupSelected) {
-        groupOptions = reactSelectOptions.filter((o) => o.type === 'category');
+        groupOptions = reactSelectOptions.filter((o) => o.type === 'reportType');
       } else {
         groupOptions = reactSelectOptions.filter((o) => o.type === 'group');
       }
