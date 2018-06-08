@@ -83,8 +83,8 @@ class ReportQueryBuilder extends React.Component {
       sites: oldSites,
     } = this.props;
 
-    if ((!oldStudents && newStudents) && (!oldSections && newSections) &&
-        (!oldGradeLevels && newGradeLevels) && (!oldSites && newSites)) {
+    if (!(oldStudents && oldSections && oldGradeLevels && oldSites)
+        && (newStudents && newSections && newGradeLevels && newSites)) {
           this.generateOptions(newStudents, newSections, newGradeLevels, newSites);
         }
   }

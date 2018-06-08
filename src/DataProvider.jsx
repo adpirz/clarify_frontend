@@ -77,7 +77,7 @@ export class DataProvider extends React.Component {
     ApiFetcher.post('session', credentials).then((resp) => {
       this.setState((prevState) => {
         const newState = {isLoading: false};
-        if (resp.status !== 404) {
+        if (resp.status === 200 || resp.status === 201) {
           newState.user = resp.body;
           this.hydrateUserData();
         } else {
@@ -133,6 +133,9 @@ export class DataProvider extends React.Component {
   }
 
   getReportDataForWorksheet = (worksheet) => {
+    if (!worksheet || !worksheet.reports.length) {
+      return Promise.resolve();
+    }
     this.setState({isLoading: true});
     const reportDataFetchPromises = [];
     _.forEach(worksheet.reports, (report) => {

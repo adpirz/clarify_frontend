@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react';
 import styled from 'styled-components';
 import { DataConsumer } from '../../DataProvider';
@@ -47,8 +46,8 @@ class Login extends React.Component {
     const { errors } = this.props;
 
     let errorNode = null;
-    if (errors.length) {
-      errorNode = _.map(errors, (e) => {return e});
+    if (errors.loginError) {
+      errorNode = errors.loginError;
     }
 
     return (
