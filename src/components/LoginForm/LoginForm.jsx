@@ -1,5 +1,7 @@
+import _ from 'lodash';
 import React from 'react';
 import styled from 'styled-components';
+import { DataConsumer } from '../../DataProvider';
 import { Button, Error } from '../PatternLibrary';
 import { TextField } from 'material-ui';
 
@@ -22,7 +24,6 @@ class Login extends React.Component {
     this.state = {
       username: '',
       password: '',
-      error: null,
     };
   }
 
@@ -38,20 +39,16 @@ class Login extends React.Component {
       return null;
     }
 
-    this.props.logUserIn({username, password}).then((resp) => {
-      if (resp.error) {
-        this.setState({error: resp.error});
-      }
-    });
+    this.props.logUserIn({username, password});
   };
 
   render() {
-    const { username, password, error } = this.state;
+    const { username, password } = this.state;
+    const { errors } = this.props;
 
     let errorNode = null;
-    if (error) {
-      errorNode = `There was an error logging in: ${this.state.error}. Shoot an email over to
-        help@clarify.com and we'll take a look.`;
+    if (errors.length) {
+      errorNode = _.map(errors, (e) => {return e});
     }
 
     return (
@@ -105,4 +102,14 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+export default props => (
+  <DataConsumer>
+    {({isLoading, logUserIn, errors}) => (
+      <Login
+        isLoading={isLoading}
+        logUserIn={logUserIn}
+        errors={errors}
+        {...props} />
+    )}
+  </DataConsumer>
+);

@@ -15,7 +15,7 @@ const ErrorDiv = styled.div`
 `;
 
 const Error = ({children}) => {
-  if (!children) {
+  if (!children || !children.length) {
     return null;
   }
   return (

@@ -2,7 +2,7 @@ import Button from './Button/Button.js';
 import Error from './Error/Error.js';
 import Loading from './Loading/Loading.js';
 import Logo from './Logo/Logo.js';
-import ReportSummary from './ReportSummary/ReportSummary';
+import AttendanceReportSummary from './AttendanceReportSummary/AttendanceReportSummary';
 
 
 export {
@@ -10,5 +10,5 @@ export {
   Error,
   Loading,
   Logo,
-  ReportSummary,
+  AttendanceReportSummary,
 };

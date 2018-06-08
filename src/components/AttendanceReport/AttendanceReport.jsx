@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import styled from 'styled-components';
-
+import { DataConsumer } from '../../DataProvider';
 import React from 'react';
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
-import { ReportSummary, Button } from '../PatternLibrary';
+import { AttendanceReportSummary, Button } from '../PatternLibrary';
 import { fonts } from '../PatternLibrary/constants';
 
 
@@ -18,7 +18,7 @@ const Subheading = styled.span`
   opacity: .5;
 `;
 
-class Report extends React.Component {
+class AttendanceReport extends React.Component {
   formatStudentRowData = (studentAttendanceData) => {
     let studentDataRow = {};
     const excludeColumns = _.get(this.props, 'report.exclude_columns');
@@ -94,6 +94,11 @@ class Report extends React.Component {
     return [...nameColumns, ...attendanceColumns];
   }
 
+  saveReport = (e) => {
+    e.preventDefault();
+    this.props.saveReport(this.props.report.query);
+  }
+
   getReportButtons = () => {
     if (this.props.displayMode === 'summary') {
       return null;
@@ -101,32 +106,40 @@ class Report extends React.Component {
     const buttons = [(
       <Button key='back' onClick={this.props.back}>Back</Button>
     ),]
-    if (!this.props.report.report_id) {
-        buttons.push(<Button key='save' primary onClick={this.props.saveReport}>Save Report</Button>)
+    if (!this.props.report.id) {
+        buttons.push(<Button key='save' primary onClick={this.saveReport}>Save Report</Button>)
     }
 
     return buttons;
   }
   render() {
-    const { displayMode, report, students, selectReport, deleteReport, show } = this.props;
+    const {
+      displayMode,
+      report,
+      students,
+      selectReport,
+      deleteReport,
+      saveReport
+    } = this.props;
     if (_.isEmpty(_.get(report, 'data'))) {
       return null;
     }
     if (displayMode === 'summary') {
       return (
-        <ReportSummary
+        <AttendanceReportSummary
           report={report}
           students={students}
           selectReport={selectReport}
-          deleteReport={deleteReport}>
-        </ReportSummary>
+          deleteReport={deleteReport}
+          saveReport={saveReport}
+        />
       );
     }
     const columns = this.buildColumns();
     const studentRowData = this.buildStudentRowData();
     const { title, subheading } = _.get(this.props, 'report');
     return (
-      <div style={{display: `${show === false ? 'none': 'block'}`}}>
+      <div>
         <div style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -151,4 +164,15 @@ class Report extends React.Component {
   }
 }
 
-export default Report;
+export default props => (
+  <DataConsumer>
+    {({saveReport, deleteReport, students}) => (
+      <AttendanceReport
+        saveReport={saveReport}
+        deleteReport={deleteReport}
+        students={students}
+        {...props}
+      />
+    )}
+  </DataConsumer>
+);

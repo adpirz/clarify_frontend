@@ -1,13 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import AppRefetchContainer from './AppRefetchContainer';
+import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import { MuiThemeProvider } from 'material-ui';
+import { DataProvider } from './DataProvider';
 
 ReactDOM.render(
 	<MuiThemeProvider>
-  	<AppRefetchContainer />
-  </MuiThemeProvider>,
+		<DataProvider >
+			<App />
+		</DataProvider>
+	</MuiThemeProvider>,
   document.getElementById('root')
 );
 registerServiceWorker();

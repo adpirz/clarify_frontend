@@ -9,9 +9,15 @@ class ApiFetcher {
 
     return fetch(apiRequest).then(resp => {
       if (resp.status !== 404) {
-        return resp.json();
+        return resp.json().then((body) => ({
+          status: resp.status,
+          body,
+        }));
       } else {
-        return 404;
+        return {
+          status: resp.status,
+          body: null,
+        };
       }
     });
   }
@@ -25,7 +31,17 @@ class ApiFetcher {
     });
 
     return fetch(apiRequest).then(resp => {
-      return resp.json();
+      if (resp.status !== 404 && resp.status !== 400) {
+        return resp.json().then((body) => ({
+          status: resp.status,
+          body,
+        }));
+      } else {
+        return {
+          status: resp.status,
+          body: null,
+        };
+      }
     });
   }
 
@@ -57,7 +73,7 @@ class ReportFetcher {
         return resp.json();
       }
       else {
-        return {};
+        return null;
       }
     });
   }

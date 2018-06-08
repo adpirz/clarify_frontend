@@ -1,6 +1,8 @@
 import _ from 'lodash';
+import moment from 'moment';
 import React from 'react';
 import Select from 'react-select-plus';
+import { DataConsumer } from '../../DataProvider';
 import { Button, Error } from '../PatternLibrary';
 import { DatePicker } from 'material-ui';
 import 'react-select-plus/dist/react-select-plus.css';
@@ -62,14 +64,37 @@ class ReportQueryBuilder extends React.Component {
       sections,
       students,
     } = this.props;
-
-    if (gradeLevels.length && sites.length && sections.length && students.length) {
-      this.clearSelectOptions();
-      this.optionsGenerator(gradeLevels, 'grade_level');
-      this.optionsGenerator(sites, 'site');
-      this.optionsGenerator(sections, 'section');
-      this.optionsGenerator(students, 'student');
+    if (students && sections && gradeLevels && sites) {
+      this.generateOptions(students, sections, gradeLevels, sites);
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      students: newStudents,
+      sections: newSections,
+      gradeLevels: newGradeLevels,
+      sites: newSites,
+    } = nextProps;
+    const {
+      students: oldStudents,
+      sections: oldSections,
+      gradeLevels: oldGradeLevels,
+      sites: oldSites,
+    } = this.props;
+
+    if ((!oldStudents && newStudents) && (!oldSections && newSections) &&
+        (!oldGradeLevels && newGradeLevels) && (!oldSites && newSites)) {
+          this.generateOptions(newStudents, newSections, newGradeLevels, newSites);
+        }
+  }
+
+  generateOptions = (students, sections, gradeLevels, sites) => {
+    this.clearSelectOptions();
+    this.optionsGenerator(students, 'student');
+    this.optionsGenerator(sections, 'section');
+    this.optionsGenerator(gradeLevels, 'grade_level');
+    this.optionsGenerator(sites, 'site');
   }
 
   handleChangeMinDate = (event, date) => {
@@ -149,15 +174,12 @@ class ReportQueryBuilder extends React.Component {
       this.setState({errorMessage: `Try typing "attendance" and a student's name in the search bar.`});
       return;
     }
-    const { submitReportQuery } = this.props;
-    const { selectedOptions } = this.state;
-    let { minDate, maxDate } = this.state;
+    const { selectedOptions, minDate, maxDate } = this.state;
 
     let group;
     let category;
 
-    minDate = minDate.toISOString();
-    maxDate = (maxDate === '') ? '' : maxDate.toISOString();
+    const momentMin = moment(minDate).format('YYYY-MM-DD');
 
     let groupId = [];
 
@@ -174,8 +196,11 @@ class ReportQueryBuilder extends React.Component {
       }
     });
 
-    submitReportQuery(group, groupId, category, minDate, maxDate);
-
+    let queryString = `group=${group}&group_id=${groupId}&category=${category}&from_date=${momentMin}`;
+    if (maxDate) {
+      queryString += `&to_date=${moment(maxDate).format('YYYY-MM-DD')}`;
+    }
+    this.props.submitReportQuery(queryString);
   };
 
   isValidQuery = (selectedOptions) => {
@@ -282,4 +307,17 @@ class ReportQueryBuilder extends React.Component {
   }
 }
 
-export default ReportQueryBuilder;
+export default props => (
+  <DataConsumer>
+    {({students, sections, gradeLevels, sites, submitReportQuery}) => (
+      <ReportQueryBuilder
+        students={students}
+        sections={sections}
+        gradeLevels={gradeLevels}
+        sites={sites}
+        submitReportQuery={submitReportQuery}
+        {...props}
+      />
+    )}
+  </DataConsumer>
+);
