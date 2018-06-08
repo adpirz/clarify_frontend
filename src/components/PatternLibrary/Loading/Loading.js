@@ -3,6 +3,7 @@ import styled, { keyframes } from 'styled-components';
 
 const LOADING_COLOR = '#2ba04a'
 const LOADING_SIZE = 20
+const LOADING_DURATION = 0.5
 
 const loading = keyframes`
   0% {
@@ -24,7 +25,7 @@ function getColor(props) {
 }
 
 const RotateSpin = styled.div`
-  animation: ${loading} 1.1s infinite linear;
+  animation: ${loading} ${LOADING_DURATION}s infinite linear;
   border: 1.1em solid rgba(${getColor(LOADING_COLOR)}, 0.2);
   border-left: 1.1em solid ${LOADING_COLOR};
   border-radius: 50%;
