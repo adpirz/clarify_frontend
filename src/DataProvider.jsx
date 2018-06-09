@@ -201,8 +201,14 @@ export class DataProvider extends React.Component {
       return;
     } else {
       this.submitReportQuery(queryString).then((resp) => {
-        this.setState({
-          selectedReportQuery: queryString,
+        this.setState((prevState) => {
+          const newState = {
+            selectedReportQuery: queryString,
+          };
+          if (!_.get(resp, 'data.length')) {
+            newState.errors = {...prevState.errors, ...{reportError: "We couldn't find any data for that group. Try a different section or grade level."}};
+          }
+          return newState;
         });
       });
     }
@@ -224,9 +230,7 @@ export class DataProvider extends React.Component {
         const newState = {
           isLoadingReport: false,
         };
-        if (!_.get(resp, 'data.length')) {
-          newState.errors = {...prevState.errors, ...{reportError: "We couldn't find any data for that group. Try a different section or grade level."}};
-        } else {
+        if (_.get(resp, 'data.length')) {
           const oldReportDataList = prevState.reportDataList || [];
           newState.reportDataList = [...oldReportDataList, resp];
         }

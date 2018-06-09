@@ -14,7 +14,7 @@ const ReportTitle = styled.h4`
   font-size: ${fonts.large}
 `;
 
-export default ({title, crumbs, popReportLevel}) => {
+export default ({title, crumbs, popReportLevel, deselectReport}) => {
   return (
     <ReportCrumbs>
       <ReportTitle>{title}</ReportTitle>
@@ -27,7 +27,7 @@ export default ({title, crumbs, popReportLevel}) => {
       })}
       {crumbs.length ?
         <Button onClick={popReportLevel} style={{marginLeft: 'auto'}}> Go Back </Button>
-        : null
+        : <Button onClick={deselectReport} style={{marginLeft: 'auto'}}> Return to Worksheet </Button>
       }
     </ReportCrumbs>
   )

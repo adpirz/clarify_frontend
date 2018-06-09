@@ -117,7 +117,7 @@ class ReportCard extends React.Component {
                     {m.measure_label}:
                   </MeasureLabel>
                   <Measure>
-                    {m.measure}
+                    {m.measure === null ? '-' : m.measure}
                   </Measure>
                 </div>
               );

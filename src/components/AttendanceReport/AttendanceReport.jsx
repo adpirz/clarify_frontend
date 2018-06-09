@@ -107,7 +107,7 @@ class AttendanceReport extends React.Component {
       return null;
     }
     const buttons = [(
-      <Button key='back' onClick={this.props.back}>Back</Button>
+      <Button key='back' onClick={this.props.deselectReport}>Back</Button>
     ),]
     if (!this.props.report.id) {
         buttons.push(<Button key='save' primary onClick={this.saveReport}>Save Report</Button>)
@@ -142,12 +142,13 @@ class AttendanceReport extends React.Component {
     const studentRowData = this.buildStudentRowData();
     const { title, subheading } = _.get(this.props, 'report');
     return (
-      <div>
+      <div style={{width: '100%'}}>
         <div style={{
             display: 'flex',
             justifyContent: 'space-between',
             flexShrink: '0',
             alignItems: 'center',
+            margin: '20px 0px',
           }}>
           <div>
             <Title>{title}</Title>&nbsp;--&nbsp;
@@ -169,8 +170,9 @@ class AttendanceReport extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({saveReport, deleteReport, students}) => (
+    {({saveReport, deleteReport, deselectReport, students}) => (
       <AttendanceReport
+        deselectReport={deselectReport}
         saveReport={saveReport}
         deleteReport={deleteReport}
         students={students}

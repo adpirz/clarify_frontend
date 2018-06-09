@@ -128,10 +128,7 @@ class Worksheet extends React.PureComponent {
       const { type } = reportForDisplay;
       if (type === 'attendance') {
         worksheetBody = (
-          <AttendanceReport
-            report={reportForDisplay}
-            back={this.props.deselectReport}
-          />
+          <AttendanceReport report={reportForDisplay} />
         );
       } else if (type === 'grades') {
         worksheetBody = (
@@ -145,7 +142,10 @@ class Worksheet extends React.PureComponent {
       }
     } else {
       worksheetBody = _.map(reportDataList, (reportDataObject) => {
-        const { type, query } = reportDataObject;
+        const { type, query, id, isTopLevelReport } = reportDataObject;
+        if ( !(id || isTopLevelReport)) {
+          return;
+        }
         if (type === 'attendance') {
             return (
               <AttendanceReport
@@ -171,7 +171,7 @@ class Worksheet extends React.PureComponent {
       <div>
         <div>
           <span style={{fontSize: fonts.huge}}>
-            {worksheet.title}
+            {this.props.selectedReportQuery ? null : worksheet.title}
           </span>
           <hr style={{margin: '0', width: '75%'}}/>
         </div>
@@ -195,7 +195,6 @@ export default props => (
       isLoadingReport,
       worksheet,
       selectReport,
-      deselectReport,
       selectedReportQuery,
       submitReportQuery,
       errors,
@@ -206,7 +205,6 @@ export default props => (
         isLoadingReport={isLoadingReport}
         worksheet={worksheet}
         selectReport={selectReport}
-        deselectReport={deselectReport}
         selectedReportQuery={selectedReportQuery}
         submitReportQuery={submitReportQuery}
         reportError={errors.reportError}

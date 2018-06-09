@@ -58,7 +58,7 @@ import _ from 'lodash';
 import React from 'react';
 import { DataConsumer } from '../../DataProvider';
 import { ReportSummaryContainer } from '../PatternLibrary';
-import { ReportCrumbs, ReportCard } from '..';
+import { ReportCrumbs, ReportCardContainer } from '..';
 
 
 class GradeReport extends React.Component {
@@ -82,12 +82,14 @@ class GradeReport extends React.Component {
       pushReportLevel,
       popReportLevel,
       reportCrumbs,
+      deselectReport,
     } = this.props;
 
     const currentReportQuery = _.get(_.last(reportCrumbs), 'query', initialQuery);
     const {
       data: currentReportData,
     } = getReportByQuery(currentReportQuery);
+
     const {
       title: currentReportTitle,
     } = getReportByQuery(initialQuery);
@@ -98,16 +100,12 @@ class GradeReport extends React.Component {
           title={currentReportTitle}
           crumbs={reportCrumbs}
           popReportLevel={popReportLevel}
+          deselectReport={deselectReport}
         />
-        {_.map(currentReportData, (node) => {
-          return (
-            <ReportCard
-              selectCard={pushReportLevel}
-              key={node.id}
-              {...node}
-            />
-          );
-        })}
+        <ReportCardContainer
+          children={currentReportData}
+          pushReportLevel={pushReportLevel}
+        />
       </div>
     );
   }
@@ -115,8 +113,12 @@ class GradeReport extends React.Component {
 
 export default (props) => (
   <DataConsumer>
-    {({getReportByQuery}) => (
-      <GradeReport getReportByQuery={getReportByQuery} {...props} />
+    {({getReportByQuery, deselectReport}) => (
+      <GradeReport
+        getReportByQuery={getReportByQuery}
+        deselectReport={deselectReport}
+        {...props}
+      />
     )}
   </DataConsumer>
 );
