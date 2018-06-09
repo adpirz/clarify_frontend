@@ -100,15 +100,11 @@ class GradeReport extends React.Component {
           popReportLevel={popReportLevel}
         />
         {_.map(currentReportData, (node) => {
-          const { label, id, measures, depth } = node;
           return (
             <ReportCard
               selectCard={pushReportLevel}
-              label={label}
-              id={id}
-              key={id}
-              measures={measures}
-              depth={depth}
+              key={node.id}
+              {...node}
             />
           );
         })}

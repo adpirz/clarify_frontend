@@ -4,6 +4,11 @@ import styled from 'styled-components';
 import { Button } from '../PatternLibrary';
 import { fonts } from '../PatternLibrary/constants';
 
+const ReportCrumbs = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 const ReportTitle = styled.h4`
   display: inline-block;
   font-size: ${fonts.large}
@@ -11,7 +16,7 @@ const ReportTitle = styled.h4`
 
 export default ({title, crumbs, popReportLevel}) => {
   return (
-    <div>
+    <ReportCrumbs>
       <ReportTitle>{title}</ReportTitle>
       {_.map(crumbs, (c) => {
         return (
@@ -20,7 +25,10 @@ export default ({title, crumbs, popReportLevel}) => {
           </span>
         );
       })}
-      {crumbs.length ? <Button onClick={popReportLevel}> Go Back </Button>: null}
-    </div>
+      {crumbs.length ?
+        <Button onClick={popReportLevel} style={{marginLeft: 'auto'}}> Go Back </Button>
+        : null
+      }
+    </ReportCrumbs>
   )
 };

@@ -17,6 +17,10 @@ const colors = {
   greyBackground: '#E5E5E5',
 };
 
+const layout = {
+  reportPadding: '20px',
+};
+
 const effects = {
   boxShadow: '1px 1px 8px 0px rgba(166,166,166,1)',
   boxShadowHover: '3px 1px 8px 2px rgba(166,166,166,1)',
@@ -26,4 +30,5 @@ export {
   fonts,
   colors,
   effects,
+  layout,
 };

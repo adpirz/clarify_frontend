@@ -15,7 +15,7 @@ const CardContainer = styled.div`
   justify-content: space-between;
   padding: 10px 20px;
   box-shadow: ${effects.boxShadow};
-  margin: 20px;
+  margin: 20px 0px;
   cursor: ${({hoverable}) => {return hoverable ? 'pointer' : 'default'}};
 
   &:hover {
@@ -36,14 +36,13 @@ const CardContainer = styled.div`
 
 const CardLabel = styled.h2`
   display: inline-block;
-  width: 30%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
 
 const MeasuresContainer = styled.div`
-  font-size: ${fonts.large};
+  font-size: ${fonts.medium};
   display: flex;
 `;
 
@@ -81,14 +80,34 @@ class ReportCard extends React.Component {
     selectCard(depth, depthId, label);
   }
 
+  getChildLabel = (child) => {
+    if (child === 'student' || child === 'assignment') {
+      return _.capitalize(child) + 's';
+    } else if (child === 'category') {
+      return 'Grading Categories';
+    } else if (child === 'course') {
+      return 'Courses';
+    } else {
+      return null;
+    }
+  }
+
   render() {
-    const { label, measures, depth } = this.props;
+    const { label, measures, depth, children } = this.props;
+    const childLabel = this.getChildLabel(_.get(children, '[0].depth'));
+    let childLabelString = null;
+    if (childLabel) {
+      childLabelString = `(${children.length} ${childLabel})`;
+    }
+
     return (
       <CardContainer
         onClick={this.handleCardSelection}
         hoverable={depth !== 'assignment'}
       >
-        <CardLabel>{label}</CardLabel>
+        <div>
+          <CardLabel>{label} {childLabelString}</CardLabel>
+        </div>
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
           <MeasuresContainer>
             {_.map(measures, (m) => {

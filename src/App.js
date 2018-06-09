@@ -73,7 +73,7 @@ class App extends React.Component {
               paddingLeft: '25px',
             }}>
             {user &&
-              <span>
+              <span style={{marginRight: '15px'}}>
                 <i className="fas fa-user" style={{margin: '0 10px'}}/>
                 User: {user.username}
               </span>
