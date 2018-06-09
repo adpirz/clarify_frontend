@@ -138,7 +138,7 @@ class ReportQueryBuilder extends React.Component {
           name = groupElement.long_name;
           break;
         default:
-          if (!groupElement.currently_enrolled) {
+          if (!groupElement.is_enrolled) {
             return;
           }
           name = `${groupElement.first_name} ${groupElement.last_name}`;

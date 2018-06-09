@@ -4,7 +4,7 @@ import React from 'react';
 import {
   AttendanceReportSummary,
   ReportCardContainer,
-  ReportCrumbs,
+  ReportHeading,
 } from '..'
 
 const RELEVANT_ATTENDANCE_COLUMN_IDS = [4, 10, 11];
@@ -13,29 +13,37 @@ class AttendanceReport extends React.Component {
   getStudentRows = () => {
     const { report: { data }, students} = this.props;
 
-    return _.map(data, (node) => {
+    return _.reduce(data, (activeStudents, node) => {
       const studentForNode = _.find(students, { id: node.student_id });
+      if (!studentForNode.is_enrolled) {
+        return activeStudents;
+      }
+
       const attendanceComposite = _.reduce(node.attendance_data, (result, column) => {
         if (_.includes(RELEVANT_ATTENDANCE_COLUMN_IDS, column.column_code)) {
-          result += column.column_percentage;
+          result += column.percentage;
         }
         return result;
       }, 0);
-      return {
-        label: `${studentForNode.last_name}, ${studentForNode.first_name}`,
-        id: node.student_id,
-        measures: [
-          {
-            measure_label: 'Present or Tardy',
-            measure: attendanceComposite ? attendanceComposite + '%' : '-',
-          },
-          {
-            measure_label: 'Other',
-            measure: attendanceComposite ? 100 - attendanceComposite + '%' : '-',
-          },
-        ]
-      }
-    });
+
+      activeStudents.push(
+        {
+          label: `${studentForNode.last_name}, ${studentForNode.first_name}`,
+          id: node.student_id,
+          measures: [
+            {
+              measure_label: 'Present or Tardy',
+              measure: attendanceComposite ? _.round(attendanceComposite * 100, 2) + '%' : '-',
+            },
+            {
+              measure_label: 'Other',
+              measure: attendanceComposite ? _.round(100 - 100 * attendanceComposite, 2) + '%' : '-',
+            },
+          ]
+        }
+      )
+      return activeStudents;
+    }, []);
   }
 
   saveReport = (e) => {
@@ -67,21 +75,16 @@ class AttendanceReport extends React.Component {
       );
     }
     const {
-      pushReportLevel,
-      popReportLevel,
       deselectReport,
-      reportCrumbs,
     } = this.props;
     const { title, subheading } = report;
     const studentRowData = this.getStudentRows();
 
     return (
       <div style={{width: '100%'}}>
-        <ReportCrumbs title={title} subheading={subheading} crumbs={reportCrumbs} />
+        <ReportHeading title={title} subheading={subheading} />
         <ReportCardContainer
           children={studentRowData}
-          pushReportLevel={pushReportLevel}
-          popReportLevel={reportCrumbs.length ? popReportLevel : null}
           deselectReport={deselectReport}
         />
       </div>

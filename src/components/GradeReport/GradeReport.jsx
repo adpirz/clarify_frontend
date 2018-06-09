@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import { DataConsumer } from '../../DataProvider';
 import { ReportSummaryContainer } from '../PatternLibrary';
-import { ReportCrumbs, ReportCardContainer } from '..';
+import { ReportHeading, ReportCardContainer } from '..';
 
 
 class GradeReport extends React.Component {
@@ -40,7 +40,7 @@ class GradeReport extends React.Component {
 
     return (
       <div style={{width: '100%'}}>
-        <ReportCrumbs title={currentReportTitle} crumbs={reportCrumbs} />
+        <ReportHeading title={currentReportTitle} crumbs={reportCrumbs} />
         <ReportCardContainer
           children={currentReportData}
           pushReportLevel={pushReportLevel}

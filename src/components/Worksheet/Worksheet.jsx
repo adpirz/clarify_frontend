@@ -130,12 +130,7 @@ class Worksheet extends React.PureComponent {
       const { type } = reportForDisplay;
       if (type === 'attendance') {
         worksheetBody = (
-          <AttendanceReport
-            report={reportForDisplay}
-            pushReportLevel={this.handleReportCrumbPush}
-            popReportLevel={this.handleReportCrumbPop}
-            reportCrumbs={this.state.reportCrumbs}
-          />
+          <AttendanceReport report={reportForDisplay} />
         );
       } else if (type === 'grades') {
         worksheetBody = (

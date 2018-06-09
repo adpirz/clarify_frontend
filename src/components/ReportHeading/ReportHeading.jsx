@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { fonts } from '../PatternLibrary/constants';
 
-const ReportCrumbs = styled.div`
+const ReportHeading = styled.div`
   display: flex;
   align-items: center;
 `;
@@ -20,7 +20,7 @@ const Subheading = styled.h5`
 
 export default ({title, crumbs, subheading}) => {
   return (
-    <ReportCrumbs>
+    <ReportHeading>
       <div>
         <ReportTitle>{title}</ReportTitle>
         <Subheading>{subheading || null}</Subheading>
@@ -32,6 +32,6 @@ export default ({title, crumbs, subheading}) => {
           </span>
         );
       })}
-    </ReportCrumbs>
+    </ReportHeading>
   )
 };

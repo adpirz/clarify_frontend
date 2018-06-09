@@ -73,7 +73,7 @@ class ReportCard extends React.Component {
       label,
     } = this.props;
 
-    if (depth === 'assignment') {
+    if (!selectCard) {
       return;
     }
 
@@ -93,7 +93,7 @@ class ReportCard extends React.Component {
   }
 
   render() {
-    const { label, measures, depth, children } = this.props;
+    const { label, measures, children, selectCard } = this.props;
     const childLabel = this.getChildLabel(_.get(children, '[0].depth'));
     let childLabelString = null;
     if (childLabel) {
@@ -103,7 +103,7 @@ class ReportCard extends React.Component {
     return (
       <CardContainer
         onClick={this.handleCardSelection}
-        hoverable={depth !== 'assignment'}
+        hoverable={!!selectCard}
       >
         <div>
           <CardLabel>{label} {childLabelString}</CardLabel>
@@ -123,7 +123,7 @@ class ReportCard extends React.Component {
               );
             })}
           </MeasuresContainer>
-          {depth === 'assignment' ? null : <RightCaret className="fas fa-caret-right" />}
+          {!!selectCard ? <RightCaret className="fas fa-caret-right" /> : null}
         </div>
       </CardContainer>
     );

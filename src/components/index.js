@@ -5,7 +5,7 @@ import AttendanceReportSummary from './AttendanceReportSummary/AttendanceReportS
 import GradeReport from './GradeReport/GradeReport';
 import ReportCard from './ReportCard/ReportCard';
 import ReportCardContainer from './ReportCardContainer/ReportCardContainer';
-import ReportCrumbs from './ReportCrumbs/ReportCrumbs';
+import ReportHeading from './ReportHeading/ReportHeading';
 import Worksheet from './Worksheet/Worksheet';
 
 export {
@@ -14,7 +14,7 @@ export {
   AttendanceReport,
   AttendanceReportSummary,
   GradeReport,
-  ReportCrumbs,
+  ReportHeading,
   ReportCard,
   ReportCardContainer,
   Worksheet,
