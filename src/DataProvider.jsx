@@ -111,7 +111,7 @@ export class DataProvider extends React.Component {
     }));
     promises.push(ApiFetcher.get('grade-level').then((resp) => {
       if (resp.status !== 404) {
-        this.setState({gradeLevels: []});
+        this.setState({gradeLevels: resp.body.data});
       }
     }));
 

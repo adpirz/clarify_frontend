@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
 import styled from 'styled-components';
-import { Button } from '../PatternLibrary';
 import { fonts } from '../PatternLibrary/constants';
 
 const ReportCrumbs = styled.div`
@@ -14,10 +13,18 @@ const ReportTitle = styled.h4`
   font-size: ${fonts.large}
 `;
 
-export default ({title, crumbs, popReportLevel, deselectReport}) => {
+const Subheading = styled.h5`
+  font-size: ${fonts.medium};
+  opacity: .5;
+`;
+
+export default ({title, crumbs, subheading}) => {
   return (
     <ReportCrumbs>
-      <ReportTitle>{title}</ReportTitle>
+      <div>
+        <ReportTitle>{title}</ReportTitle>
+        <Subheading>{subheading || null}</Subheading>
+      </div>
       {_.map(crumbs, (c) => {
         return (
           <span key={c.query}>
@@ -25,10 +32,6 @@ export default ({title, crumbs, popReportLevel, deselectReport}) => {
           </span>
         );
       })}
-      {crumbs.length ?
-        <Button onClick={popReportLevel} style={{marginLeft: 'auto'}}> Go Back </Button>
-        : <Button onClick={deselectReport} style={{marginLeft: 'auto'}}> Return to Worksheet </Button>
-      }
     </ReportCrumbs>
   )
 };

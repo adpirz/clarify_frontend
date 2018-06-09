@@ -8,16 +8,12 @@ import {
   fonts,
 } from '../PatternLibrary/constants';
 
-
 const FROM_DATE_REGEX = /from_date=[0-9]+-[0-9]+-[0-9]+/g;
 const TO_DATE_REGEX = /to_date=[0-9]+-[0-9]+-[0-9]+/g;
 const GROUP_REGEX = /group=[a-z]+/g;
 const GROUP_ID_REGEX = /group_id=[0-9]+/g;
 const COURSE_ID_REGEX = /course_id=[0-9]+/g;
 const CATEGORY_ID_REGEX = /category_id=[0-9]+/g;
-
-
-
 
 class Worksheet extends React.PureComponent {
   constructor(props) {
@@ -26,6 +22,12 @@ class Worksheet extends React.PureComponent {
     this.state = {
       reportCrumbs: [],
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.selectedReportQuery !== nextProps.selectedReportQuery) {
+      this.setState({reportCrumbs: []});
+    }
   }
 
   getLatestQueryParameters = () => {
@@ -128,7 +130,12 @@ class Worksheet extends React.PureComponent {
       const { type } = reportForDisplay;
       if (type === 'attendance') {
         worksheetBody = (
-          <AttendanceReport report={reportForDisplay} />
+          <AttendanceReport
+            report={reportForDisplay}
+            pushReportLevel={this.handleReportCrumbPush}
+            popReportLevel={this.handleReportCrumbPop}
+            reportCrumbs={this.state.reportCrumbs}
+          />
         );
       } else if (type === 'grades') {
         worksheetBody = (
