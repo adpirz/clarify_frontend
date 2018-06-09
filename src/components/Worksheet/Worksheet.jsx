@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
 import { DataConsumer } from '../../DataProvider';
-import { generateReportQuery } from '../../utils';
 import { Loading, Error } from '../PatternLibrary/';
 import { AttendanceReport, GradeReport } from '../';
 import {
@@ -90,9 +89,9 @@ class Worksheet extends React.PureComponent {
       newQueryParameters[`${depth}Id`] = depthId;
     }
 
-    const query = generateReportQuery(newQueryParameters);
+    const query = this.props.generateReportQuery(newQueryParameters);
 
-    const {reportCrumbs} = this.state;
+    const { reportCrumbs } = this.state;
     reportCrumbs.push({label, query});
     this.setState({reportCrumbs});
 
@@ -199,6 +198,7 @@ export default props => (
       selectReport,
       selectedReportQuery,
       submitReportQuery,
+      generateReportQuery,
       errors,
     }) => (
       <Worksheet
@@ -209,6 +209,7 @@ export default props => (
         selectReport={selectReport}
         selectedReportQuery={selectedReportQuery}
         submitReportQuery={submitReportQuery}
+        generateReportQuery={generateReportQuery}
         reportError={errors.reportError}
         {...props}
       />

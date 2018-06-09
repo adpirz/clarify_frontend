@@ -10,12 +10,14 @@ const ReportHeading = styled.div`
 
 const ReportTitle = styled.h4`
   display: inline-block;
-  font-size: ${fonts.large}
+  font-size: ${fonts.large};
+  margin: 0;
 `;
 
 const Subheading = styled.h5`
   font-size: ${fonts.medium};
   opacity: .5;
+  margin: 0;
 `;
 
 export default ({title, crumbs, subheading}) => {

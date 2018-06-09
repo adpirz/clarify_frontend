@@ -103,18 +103,6 @@ class AttendanceReportSummary extends React.PureComponent {
     };
   }
 
-  handleDeleteReport = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    this.props.deleteReport(this.props.report.id);
-  }
-
-  handleSaveReport = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    this.props.saveReport(this.props.report.query);
-  }
-
   getDeleteIcon = () => {
     if (!this.props.report.id) {
       return null;
@@ -124,7 +112,7 @@ class AttendanceReportSummary extends React.PureComponent {
       <ActionIcon
         className="fas fa-times"
         color={colors.warningRed}
-        onClick={this.handleDeleteReport}
+        onClick={this.props.deleteReport}
       />
     );
   }
@@ -138,7 +126,7 @@ class AttendanceReportSummary extends React.PureComponent {
       <ActionIcon
         className="fas fa-save"
         color={colors.primaryGreen}
-        onClick={this.handleSaveReport}
+        onClick={this.props.saveReport}
       />
     );
   }

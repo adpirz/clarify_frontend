@@ -48,7 +48,14 @@ class AttendanceReport extends React.Component {
 
   saveReport = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     this.props.saveReport(this.props.report.query);
+  }
+
+  handleDeleteReport = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    this.props.deleteReport(this.props.report.id);
   }
 
   render() {
@@ -57,8 +64,6 @@ class AttendanceReport extends React.Component {
       report,
       students,
       selectReport,
-      deleteReport,
-      saveReport
     } = this.props;
     if (_.isEmpty(_.get(report, 'data'))) {
       return null;
@@ -69,15 +74,15 @@ class AttendanceReport extends React.Component {
           report={report}
           students={students}
           selectReport={selectReport}
-          deleteReport={deleteReport}
-          saveReport={saveReport}
+          deleteReport={this.deleteReport}
+          saveReport={this.saveReport}
         />
       );
     }
     const {
       deselectReport,
     } = this.props;
-    const { title, subheading } = report;
+    const { title, subheading, id } = report;
     const studentRowData = this.getStudentRows();
 
     return (
@@ -86,6 +91,7 @@ class AttendanceReport extends React.Component {
         <ReportCardContainer
           children={studentRowData}
           deselectReport={deselectReport}
+          saveReport={id ? null : this.saveReport}
         />
       </div>
     )

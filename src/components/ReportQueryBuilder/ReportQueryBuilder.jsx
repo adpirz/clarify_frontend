@@ -2,7 +2,6 @@ import _ from 'lodash';
 import React from 'react';
 import Select from 'react-select-plus';
 
-import { generateReportQuery } from '../../utils';
 import { DataConsumer } from '../../DataProvider';
 import { Button, Error } from '../PatternLibrary';
 import { DatePicker } from 'material-ui';
@@ -201,7 +200,7 @@ class ReportQueryBuilder extends React.Component {
       toDate,
     };
 
-    const queryString = generateReportQuery(reportParameters)
+    const queryString = this.props.generateReportQuery(reportParameters)
     this.props.getNewBaseReport(queryString);
   };
 
@@ -304,12 +303,18 @@ class ReportQueryBuilder extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({students, sections, gradeLevels, getNewBaseReport}) => (
+    {({
+      students,
+      sections,
+      gradeLevels,
+      getNewBaseReport,
+      generateReportQuery}) => (
       <ReportQueryBuilder
         students={students}
         sections={sections}
         gradeLevels={gradeLevels}
         getNewBaseReport={getNewBaseReport}
+        generateReportQuery={generateReportQuery}
         {...props}
       />
     )}
