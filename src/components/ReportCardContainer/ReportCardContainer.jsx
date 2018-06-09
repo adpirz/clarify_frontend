@@ -40,18 +40,24 @@ class ReportCardContainer extends React.Component {
   }
 
   getReportButtons = () => {
-    const { saveReport, popReportLevel, deselectReport } = this.props;
+    const { saveReport, popReportLevel, deselectReport, deleteReport } = this.props;
 
     const buttons = [(
       <Button key='back' onClick={deselectReport} style={{width: 'auto'}}>Back to Worksheet</Button>
     ),]
 
-    if (saveReport) {
-        buttons.push(<Button key='save' primary onClick={saveReport}>Save Report</Button>);
-    }
     if  (popReportLevel) {
       buttons.push(<Button key='pop' onClick={popReportLevel}> Go Back </Button>);
     }
+
+    if (saveReport) {
+        buttons.push(<Button key='save' primary onClick={saveReport}>Save Report</Button>);
+    }
+
+    if  (deleteReport) {
+      buttons.push(<Button key='pop' onClick={deleteReport}> Delete </Button>);
+    }
+
     return buttons;
   }
 

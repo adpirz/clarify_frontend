@@ -6,6 +6,26 @@ import { ReportHeading, ReportCardContainer } from '..';
 
 
 class GradeReport extends React.Component {
+
+  handleSaveReport = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const { reportCrumbs, initialQuery } = this.props;
+    const currentReportQuery = _.get(_.last(reportCrumbs), 'query', initialQuery);
+    this.props.saveReport(currentReportQuery);
+  }
+
+  handleDeleteReport = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const { reportCrumbs, initialQuery, getReportByQuery } = this.props;
+    const currentReportQuery = _.get(_.last(reportCrumbs), 'query', initialQuery);
+    const { id } = getReportByQuery(currentReportQuery);
+    this.props.deleteReport(id);
+  }
+
   render() {
     const {
       initialQuery,
@@ -32,6 +52,7 @@ class GradeReport extends React.Component {
     const currentReportQuery = _.get(_.last(reportCrumbs), 'query', initialQuery);
     const {
       data: currentReportData,
+      id
     } = getReportByQuery(currentReportQuery);
 
     const {
@@ -46,6 +67,8 @@ class GradeReport extends React.Component {
           pushReportLevel={pushReportLevel}
           popReportLevel={reportCrumbs.length ? popReportLevel : null}
           deselectReport={deselectReport}
+          saveReport={id ? null : this.handleSaveReport}
+          deleteReport={id ? this.handleDeleteReport : null}
         />
       </div>
     );
@@ -54,10 +77,12 @@ class GradeReport extends React.Component {
 
 export default (props) => (
   <DataConsumer>
-    {({getReportByQuery, deselectReport}) => (
+    {({getReportByQuery, deselectReport, saveReport, deleteReport}) => (
       <GradeReport
         getReportByQuery={getReportByQuery}
         deselectReport={deselectReport}
+        saveReport={saveReport}
+        deleteReport={deleteReport}
         {...props}
       />
     )}
