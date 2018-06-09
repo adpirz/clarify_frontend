@@ -82,7 +82,7 @@ class Worksheet extends React.PureComponent {
       courseId,
       categoryId,
     }
-    if (!(depth === 'student' && depth === 'assignment')) {
+    if (depth !== 'student') {
       // This means we clicked on a record that represents a course or category.
       // Let's add that to what's already in the query.
       newQueryParameters[`${depth}Id`] = depthId;

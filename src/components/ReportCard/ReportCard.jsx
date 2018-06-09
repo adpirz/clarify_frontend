@@ -16,11 +16,21 @@ const CardContainer = styled.div`
   padding: 10px 20px;
   box-shadow: ${effects.boxShadow};
   margin: 20px;
-  cursor: pointer;
+  cursor: ${({hoverable}) => {return hoverable ? 'pointer' : 'default'}};
 
   &:hover {
-    background: ${darken(.05, colors.white)};
-    box-shadow: ${effects.boxShadowHover};
+    background: ${({hoverable}) => {
+      if (!hoverable) {
+        return;
+      }
+      return darken(.05, colors.white);
+    }};
+    box-shadow: ${({hoverable}) => {
+      if (!hoverable) {
+        return;
+      }
+      return effects.boxShadowHover;
+    }};
   }
 `;
 
@@ -64,14 +74,19 @@ class ReportCard extends React.Component {
       label,
     } = this.props;
 
+    if (depth === 'assignment') {
+      return;
+    }
+
     selectCard(depth, depthId, label);
   }
 
   render() {
-    const { label, measures } = this.props;
+    const { label, measures, depth } = this.props;
     return (
       <CardContainer
         onClick={this.handleCardSelection}
+        hoverable={depth !== 'assignment'}
       >
         <CardLabel>{label}</CardLabel>
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
@@ -89,7 +104,7 @@ class ReportCard extends React.Component {
               );
             })}
           </MeasuresContainer>
-          <RightCaret className="fas fa-caret-right" />
+          {depth === 'assignment' ? null : <RightCaret className="fas fa-caret-right" />}
         </div>
       </CardContainer>
     );
