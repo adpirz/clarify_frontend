@@ -1,8 +1,15 @@
 import _ from 'lodash';
 import React from 'react';
 import { DataConsumer } from './DataProvider';
-import { Button, Logo, Loading, Error } from './components/PatternLibrary';
-import colors from './components/PatternLibrary/colors';
+import {
+  Button,
+  Logo,
+  Loading,
+  Error,
+} from './components/PatternLibrary';
+import {
+  colors,
+} from './components/PatternLibrary/constants';
 import {
   LoginForm,
   ReportQueryBuilder,

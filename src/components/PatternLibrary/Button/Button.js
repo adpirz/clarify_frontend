@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { darken } from 'polished';
-import colors from '../colors.js';
+import { colors } from '../constants';
 
 const Button = styled.button`
   background: ${props => props.primary ? colors.primaryGreen : colors.white};
@@ -11,7 +11,7 @@ const Button = styled.button`
   border-radius: 8px;
   cursor: pointer;
   width: 150px;
-  display: block;
+  display: inline-block;
 
   &:hover {
     background: ${(props) => darken(.1, props.primary ? colors.primaryGreen : colors.white) };

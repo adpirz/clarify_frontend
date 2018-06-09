@@ -3,27 +3,11 @@ import styled from 'styled-components';
 import { lighten, darken } from 'polished';
 
 import React from 'react';
-import colors from '../colors.js';
-import { fonts } from '../constants.js';
-
-const ReportSummaryContainer = styled.div`
-  display: inline-block;
-  border-radius: 10px;
-  box-shadow: 0px -1px 10px 2px rgba(166,166,166,1);
-  padding: 20px;
-  margin: 20px;
-  min-height: 125px;
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 300px;
-  cursor: pointer;
-
-  &:hover {
-    background: ${darken(.1, colors.white)};
-  }
-`;
+import { ReportSummaryContainer } from '../PatternLibrary';
+import {
+  fonts,
+  colors,
+} from '../PatternLibrary/constants';
 
 const Title = styled.span`
   font-weight: bold;

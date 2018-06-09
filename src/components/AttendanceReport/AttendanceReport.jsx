@@ -4,8 +4,11 @@ import { DataConsumer } from '../../DataProvider';
 import React from 'react';
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
-import { AttendanceReportSummary, Button } from '../PatternLibrary';
-import { fonts } from '../PatternLibrary/constants';
+import { Button } from '../PatternLibrary';
+import {
+  fonts,
+} from '../PatternLibrary/constants';
+import { AttendanceReportSummary } from '..'
 
 
 const Title = styled.span`

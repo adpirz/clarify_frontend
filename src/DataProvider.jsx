@@ -12,6 +12,7 @@ export class DataProvider extends React.Component {
     this.state = {
       user: null,
       isLoading: false,
+      isLoadingReport: false,
       errors: {
         queryError: null,
         loginError: null,
@@ -19,7 +20,6 @@ export class DataProvider extends React.Component {
       students: null,
       sections: null,
       gradeLevels: null,
-      sites: null,
       reportDataList: null,
       worksheet: null,
       selectedReportQuery: null,
@@ -31,7 +31,9 @@ export class DataProvider extends React.Component {
       initializeUser: this.initializeUser,
       logUserIn: this.logUserIn,
       logUserOut: this.logUserOut,
+      getNewBaseReport: this.getNewBaseReport,
       submitReportQuery: this.submitReportQuery,
+      getReportByQuery: this.getReportByQuery,
     };
   }
 
@@ -109,12 +111,7 @@ export class DataProvider extends React.Component {
     }));
     promises.push(ApiFetcher.get('grade-level').then((resp) => {
       if (resp.status !== 404) {
-        this.setState({gradeLevels: resp.body.data});
-      }
-    }));
-    promises.push(ApiFetcher.get('site').then((resp) => {
-      if (resp.status !== 404) {
-        this.setState({sites: resp.body.data});
+        this.setState({gradeLevels: []});
       }
     }));
 
@@ -193,8 +190,8 @@ export class DataProvider extends React.Component {
     });
   }
 
-  submitReportQuery = (queryString) => {
-    const existingReport = _.find(this.state.reportDataList, {query: queryString});
+  getNewBaseReport = (queryString) => {
+    const existingReport = this.getReportByQuery(queryString);
     if (existingReport) {
       this.setState((prevState) => {
         return {
@@ -202,18 +199,32 @@ export class DataProvider extends React.Component {
         };
       });
       return;
+    } else {
+      this.submitReportQuery(queryString).then((resp) => {
+        this.setState({
+          selectedReportQuery: queryString,
+        });
+      });
     }
+  }
 
+  submitReportQuery = (queryString) => {
     this.setState({
-      isLoading: true,
+      isLoadingReport: true,
     });
-    ReportFetcher.get(queryString).then((resp) => {
+    const existingReport = this.getReportByQuery(queryString);
+    if (existingReport) {
+      this.setState({
+        isLoadingReport: false,
+      })
+      return existingReport;
+    }
+    return ReportFetcher.get(queryString).then((resp) => {
       this.setState((prevState) => {
         const newState = {
-          isLoading: false,
-          selectedReportQuery: queryString,
+          isLoadingReport: false,
         };
-        if (!resp) {
+        if (!_.get(resp, 'data.length')) {
           newState.errors = {...prevState.errors, ...{reportError: "We couldn't find any data for that group. Try a different section or grade level."}};
         } else {
           const oldReportDataList = prevState.reportDataList || [];
@@ -221,7 +232,15 @@ export class DataProvider extends React.Component {
         }
         return newState;
       });
+      return resp;
     });
+  }
+
+  getReportByQuery = (queryString) => {
+    if (!queryString) {
+      return null;
+    }
+    return _.find(this.state.reportDataList, {query: queryString});
   }
 
   render() {

@@ -1,7 +1,8 @@
 import _ from 'lodash';
-import moment from 'moment';
 import React from 'react';
 import Select from 'react-select-plus';
+
+import { generateReportQuery } from '../../utils';
 import { DataConsumer } from '../../DataProvider';
 import { Button, Error } from '../PatternLibrary';
 import { DatePicker } from 'material-ui';
@@ -21,12 +22,6 @@ const reactSelectOptions = [
     value: 'section',
   },
   {
-    label: 'Sites',
-    options: [],
-    type: 'group',
-    value: 'site',
-  },
-  {
     label: 'Grade Level',
     options: [],
     type: 'group',
@@ -41,6 +36,11 @@ const reactSelectOptions = [
         value: 'attendance',
         id: 999,
       },
+      {
+        label: 'Grades',
+        value: 'grades',
+        id: 998,
+      },
     ],
   },
 ];
@@ -51,21 +51,20 @@ class ReportQueryBuilder extends React.Component {
 
     this.state = {
       selectedOptions: [],
-      minDate: this.getBeginningOfSchoolYear(),
-      maxDate: '',
-      errorMessage: "",
+      fromDate: this.getBeginningOfSchoolYear(),
+      toDate: null,
+      errorMessage: null,
     };
   }
 
   componentWillMount() {
     const {
       gradeLevels,
-      sites,
       sections,
       students,
     } = this.props;
-    if (students && sections && gradeLevels && sites) {
-      this.generateOptions(students, sections, gradeLevels, sites);
+    if (students && sections && gradeLevels) {
+      this.generateOptions(students, sections, gradeLevels);
     }
   }
 
@@ -74,35 +73,32 @@ class ReportQueryBuilder extends React.Component {
       students: newStudents,
       sections: newSections,
       gradeLevels: newGradeLevels,
-      sites: newSites,
     } = nextProps;
     const {
       students: oldStudents,
       sections: oldSections,
       gradeLevels: oldGradeLevels,
-      sites: oldSites,
     } = this.props;
 
-    if (!(oldStudents && oldSections && oldGradeLevels && oldSites)
-        && (newStudents && newSections && newGradeLevels && newSites)) {
-          this.generateOptions(newStudents, newSections, newGradeLevels, newSites);
+    if (!(oldStudents && oldSections && oldGradeLevels)
+        && (newStudents && newSections && newGradeLevels)) {
+          this.generateOptions(newStudents, newSections, newGradeLevels);
         }
   }
 
-  generateOptions = (students, sections, gradeLevels, sites) => {
+  generateOptions = (students, sections, gradeLevels) => {
     this.clearSelectOptions();
     this.optionsGenerator(students, 'student');
     this.optionsGenerator(sections, 'section');
     this.optionsGenerator(gradeLevels, 'grade_level');
-    this.optionsGenerator(sites, 'site');
   }
 
-  handleChangeMinDate = (event, date) => {
-    this.setState({ minDate: date });
+  handleChangeFromDate = (event, date) => {
+    this.setState({ fromDate: date });
   };
 
-  handleChangeMaxDate = (event, date) => {
-    this.setState({ maxDate: date });
+  handleChangeToDate = (event, date) => {
+    this.setState({ toDate: date });
   };
 
   clearSelectOptions = () => {
@@ -126,28 +122,31 @@ class ReportQueryBuilder extends React.Component {
 
   isReportTypeValue = (type) => type === 'reportType';
 
-  optionsGenerator = (dataArray, optionValue) => {
+  optionsGenerator = (groupList, optionValue) => {
     const targetQueryOptionsGroup = _.find(reactSelectOptions, { value: optionValue });
 
-    dataArray.forEach((dataObj) => {
+    groupList.forEach((groupElement) => {
       let name;
       switch (optionValue) {
         case 'section':
-          name = dataObj.section_name;
+          name = groupElement.section_name;
           break;
         case 'site':
-          name = dataObj.site_name;
+          name = groupElement.site_name;
           break;
         case 'grade_level':
-          name = dataObj.long_name;
+          name = groupElement.long_name;
           break;
         default:
-          name = `${dataObj.first_name} ${dataObj.last_name}`;
+          if (!groupElement.currently_enrolled) {
+            return;
+          }
+          name = `${groupElement.first_name} ${groupElement.last_name}`;
       }
       let optionsArray = {
         label: name,
-        value: `${optionValue}_${dataObj.id}`,
-        id: dataObj.id,
+        value: `${optionValue}_${groupElement.id}`,
+        id: groupElement.id,
       }
       if (typeof targetQueryOptionsGroup !== 'undefined') {
         targetQueryOptionsGroup.options.push(optionsArray);
@@ -174,21 +173,19 @@ class ReportQueryBuilder extends React.Component {
       this.setState({errorMessage: `Try typing "attendance" and a student's name in the search bar.`});
       return;
     }
-    const { selectedOptions, minDate, maxDate } = this.state;
+    const { selectedOptions, fromDate, toDate } = this.state;
 
     let group;
     let reportType;
 
-    const momentMin = moment(minDate).format('YYYY-MM-DD');
-
-    let groupId = [];
+    let groupId = '';
 
     selectedOptions.forEach(option => {
       const { id, group: { type, value } } = option;
 
       if (this.isGroupValue(type)) {
         group = value;
-        groupId.push(id);
+        groupId = id;
       }
 
       if (this.isReportTypeValue(type)) {
@@ -196,11 +193,16 @@ class ReportQueryBuilder extends React.Component {
       }
     });
 
-    let queryString = `group=${group}&group_id=${groupId}&type=${reportType}&from_date=${momentMin}`;
-    if (maxDate) {
-      queryString += `&to_date=${moment(maxDate).format('YYYY-MM-DD')}`;
-    }
-    this.props.submitReportQuery(queryString);
+    const reportParameters = {
+      group,
+      groupId,
+      reportType,
+      fromDate,
+      toDate,
+    };
+
+    const queryString = generateReportQuery(reportParameters)
+    this.props.getNewBaseReport(queryString);
   };
 
   isValidQuery = (selectedOptions) => {
@@ -210,10 +212,7 @@ class ReportQueryBuilder extends React.Component {
   };
 
   render() {
-    const {
-      selectedOptions,
-      minDate,
-    } = this.state;
+    const { fromDate, selectedOptions } = this.state;
 
     let groupOptions = reactSelectOptions;
 
@@ -272,15 +271,15 @@ class ReportQueryBuilder extends React.Component {
                 alignItems: 'center',
                 margin: '0 auto'}}>
               <DatePicker
-                onChange={this.handleChangeMinDate}
+                onChange={this.handleChangeFromDate}
                 autoOk
                 floatingLabelText="From Date *"
-                defaultDate={minDate}
+                defaultDate={fromDate}
                 locale="en-US"
                 style={{display: 'inline-block', margin: '0 20px'}}
               />
               <DatePicker
-                onChange={this.handleChangeMaxDate}
+                onChange={this.handleChangeToDate}
                 autoOk
                 floatingLabelText="To Date (empty signifies to-date)"
                 locale="en-US"
@@ -294,7 +293,7 @@ class ReportQueryBuilder extends React.Component {
           <Button
             primary
             onClick={this.submitQuery}
-            style={{width: '250px', margin: '15px auto'}}>
+            style={{width: '250px', margin: '15px auto', display: 'block'}}>
             Search
           </Button>
         </form>
@@ -305,13 +304,12 @@ class ReportQueryBuilder extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({students, sections, gradeLevels, sites, submitReportQuery}) => (
+    {({students, sections, gradeLevels, getNewBaseReport}) => (
       <ReportQueryBuilder
         students={students}
         sections={sections}
         gradeLevels={gradeLevels}
-        sites={sites}
-        submitReportQuery={submitReportQuery}
+        getNewBaseReport={getNewBaseReport}
         {...props}
       />
     )}
