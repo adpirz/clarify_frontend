@@ -6,7 +6,6 @@ import { lighten } from 'polished';
 import { DataConsumer } from '../../DataProvider';
 import { Button, Error } from '../PatternLibrary';
 import { DatePicker } from 'material-ui';
-import { ENGINE_METHOD_DIGESTS } from 'constants';
 
 
 const groupStyles = {
@@ -16,7 +15,8 @@ const groupStyles = {
   justifyContent: 'flex-start',
   fontweight:'bold',
   fontSize: 18,
-  height: '100%'
+  height: '100%',
+  borderBottom: `1px solid ${lighten(0.85, 'black')}`
 };
 const groupBadgeStyles = {
   backgroundColor: lighten(0.65, '#7f600c'),
@@ -145,8 +145,8 @@ class ReportQueryBuilder extends React.Component {
     })
   }
 
-  handleChange = (selectedOptions) => {
-
+  handleChange = (selectedOptions, action) => {
+    debugger
     this.setState((prevState) => {
       const isValidQuery = this.isValidQuery(selectedOptions);
       return {
@@ -156,6 +156,8 @@ class ReportQueryBuilder extends React.Component {
       }
     });
   };
+
+  handleBlur = () => this.setState(()=> ({menuIsOpen: undefined}))
 
   isMenuOpen = isOpen => isOpen ? true : undefined; 
 
@@ -317,6 +319,7 @@ class ReportQueryBuilder extends React.Component {
               options={groupOptions}
               formatGroupLabel={formatGroupLabel}
               menuIsOpen={menuIsOpen}
+              onBlur={this.handleBlur}
               value={selectedOptions}
               styles={styles}
               style={this.state.error ? {border: 'none'} : null}
