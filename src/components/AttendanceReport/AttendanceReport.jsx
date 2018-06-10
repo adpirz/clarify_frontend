@@ -112,11 +112,12 @@ class AttendanceReport extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({saveReport, deleteReport, deselectReport}) => (
+    {({saveReport, deleteReport, deselectReport, students}) => (
       <AttendanceReport
         deselectReport={deselectReport}
         saveReport={saveReport}
         deleteReport={deleteReport}
+        students={students}
         {...props}
       />
     )}
