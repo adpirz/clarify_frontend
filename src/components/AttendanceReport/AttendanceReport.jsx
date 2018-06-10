@@ -85,19 +85,26 @@ class AttendanceReport extends React.Component {
     const { title, subheading, id } = report;
     const studentRowData = this.getStudentRows();
 
+    const buttonStyle = { color: 'black', fontSize: '2em'}
+
     return (
 
-      <Tabs style={{width: '100%'}}>
-        <Tab label="Report">
-          <ReportHeading title={title} subheading={subheading} />
-          <ReportCardContainer
-            children={studentRowData}
-            deselectReport={deselectReport}
-            saveReport={id ? null : this.handleSaveReport}
-            deleteReport={id ? this.handleDeleteReport : null}
-          />
+      <Tabs style={{width: '100%', color:'black'}} 
+        tabItemContainerStyle={{backgroundColor: 'white', color:'black'}}
+        inkBarStyle={{backgroundColor:'#F9bC3C'}}
+      >
+        <Tab label="Report" buttonStyle={buttonStyle}>
+            <div style={{padding:'15px'}}>
+            <ReportHeading title={title} subheading={subheading} />
+            <ReportCardContainer
+              children={studentRowData}
+              deselectReport={deselectReport}
+              saveReport={id ? null : this.handleSaveReport}
+              deleteReport={id ? this.handleDeleteReport : null}
+            />
+            </div>
         </Tab>
-        <Tab label="Snapshot"/>
+        <Tab label="Snapshot" buttonStyle={buttonStyle}/>
       </Tabs>
     )
   }
