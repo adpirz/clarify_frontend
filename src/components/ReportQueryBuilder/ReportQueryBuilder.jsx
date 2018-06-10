@@ -2,13 +2,21 @@ import _ from 'lodash';
 import React from 'react';
 import Select, { components, createFilter } from 'react-select';
 import * as Animated from 'react-select/lib/animated';
+import styled from 'styled-components';
 import { lighten } from 'polished';
 
 import { DataConsumer } from '../../DataProvider';
 import { Button, Error } from '../PatternLibrary';
 import { DatePicker } from 'material-ui';
 
-
+/*
+TODO: The following
+- Style multivalue labels
+- Fix the date picker
+- Make the date picker auto focus when you've selected attendance and have a valid query
+- Activate and deactivate search button when appropriate
+- Clean up buttons
+*/
 const groupStyles = {
   display: 'flex',
   color: '#707070',
@@ -50,20 +58,19 @@ const stringify = option => {
 const Option = (props) => {
   const { data: { tags } } = props
   
-  const footerStyle = {
-    backgroundColor: lighten(0.98, 'black'),
-    color: lighten(0.5, 'black'),
-    fontSize: 12,
-    width: '100%',
-    padding: '5px 15px',
-    boxShadow: `inset 0px 2px 4px 0px ${lighten(0.9, 'black')}`
-  }
-
+  const Footer = styled.div`
+    background-color: ${lighten(0.99, 'black')};
+    color: ${lighten(0.6, 'black')};
+    font-size: 11px;
+    width: 100%;
+    padding: 5px 15px;
+    box-shadow: inset 0px 2px 4px 0px ${lighten(0.9, 'black')};
+  `
 
   return (
   <div>
     <components.Option {...props}/>
-    {tags ? (<div style={footerStyle}>{tags.join(' | ')}</div>) : null }
+    {tags ? (<Footer>{tags.join(' | ')}</Footer>) : null }
   </div>
   )
 }
@@ -318,17 +325,26 @@ class ReportQueryBuilder extends React.Component {
         borderRadius: '6px',
       };
     }
+    const fontSizerMaker = (fontSize) => {
+      return (base, state) => ({...base, fontSize})
+    };
+
+    const fontSizer = fontSizerMaker('1.2em')
 
     const styles = {
       container: (base, state) => ({
         ...base,
         ...borderStyles,
-        width: "30%"
+        width: "100%"
       }),
       menu: (base, state) => ({
         ...base,
         zIndex: 10
-      })
+      }),
+      input: fontSizer,
+      valueContainer: fontSizer,
+      multiValueLabel: fontSizer,
+      multiValue: fontSizer
     }
     return (
       <div style={{backgroundColor: 'white'}}>
