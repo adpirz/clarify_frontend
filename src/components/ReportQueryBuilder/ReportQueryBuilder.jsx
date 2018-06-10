@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
-import Select from 'react-select';
+import Select, { components, createFilter } from 'react-select';
+import * as Animated from 'react-select/lib/animated';
 import { lighten } from 'polished';
 
 import { DataConsumer } from '../../DataProvider';
@@ -40,26 +41,34 @@ const formatGroupLabel = data => (
     }
   </div>
 );
+const stringify = option => {
+  const { data: { tags } } = option;
+  const tagString = tags ? tags.join(' ') : '';
+  return `${option.label} ${option.value} ${tagString}`
+}
+
+const Option = (props) => {
+  const { data: { tags } } = props
+  
+  const footerStyle = {
+    backgroundColor: lighten(0.98, 'black'),
+    color: lighten(0.5, 'black'),
+    fontSize: 12,
+    width: '100%',
+    padding: '5px 15px',
+    boxShadow: `inset 0px 2px 4px 0px ${lighten(0.9, 'black')}`
+  }
+
+
+  return (
+  <div>
+    <components.Option {...props}/>
+    {tags ? (<div style={footerStyle}>{tags.join(' | ')}</div>) : null }
+  </div>
+  )
+}
 
 const reactSelectOptions = [
-  {
-    label: 'Grade Level',
-    options: [],
-    type: 'group',
-    value: 'grade_level',
-  },
-  {
-    label: 'Sections',
-    options: [],
-    type: 'group',
-    value: 'section',
-  },
-  {
-    label: 'Students',
-    options: [],
-    type: 'group',
-    value: 'student',
-  },
   {
     label: 'Categories',
     type: 'reportType',
@@ -78,6 +87,24 @@ const reactSelectOptions = [
       },
     ],
   },
+  {
+    label: 'Grade Level',
+    options: [],
+    type: 'group',
+    value: 'grade_level',
+  },
+  {
+    label: 'Sections',
+    options: [],
+    type: 'group',
+    value: 'section',
+  },
+  {
+    label: 'Students',
+    options: [],
+    type: 'group',
+    value: 'student',
+  }
 ];
 
 class ReportQueryBuilder extends React.Component {
@@ -146,7 +173,6 @@ class ReportQueryBuilder extends React.Component {
   }
 
   handleChange = (selectedOptions, action) => {
-    debugger
     this.setState((prevState) => {
       const isValidQuery = this.isValidQuery(selectedOptions);
       return {
@@ -193,6 +219,8 @@ class ReportQueryBuilder extends React.Component {
         type: 'group',
         group_value: optionValue
       }
+      if(groupElement.tags) optionsArray.tags = groupElement.tags;
+
       if (typeof targetQueryOptionsGroup !== 'undefined') {
         targetQueryOptionsGroup.options.push(optionsArray);
       }
@@ -314,10 +342,12 @@ class ReportQueryBuilder extends React.Component {
             <Select
               isMulti
               backspaceRemovesValue
+              components={{...Animated, Option}}
               placeholder="Start typing the name of a student, section etc..."
               onChange={this.handleChange}
               options={groupOptions}
               formatGroupLabel={formatGroupLabel}
+              filterOption={createFilter({stringify})}
               menuIsOpen={menuIsOpen}
               onBlur={this.handleBlur}
               value={selectedOptions}
