@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import React from 'react';
-import Select from 'react-select-plus';
+import Select from 'react-select';
 
 import { DataConsumer } from '../../DataProvider';
 import { Button, Error } from '../PatternLibrary';
 import { DatePicker } from 'material-ui';
-import 'react-select-plus/dist/react-select-plus.css';
+import 'react-select/dist/react-select.css';
 
 const reactSelectOptions = [
   {
