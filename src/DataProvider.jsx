@@ -345,8 +345,8 @@ export class DataProvider extends React.Component {
 
     const minAttendanceNode = _.minBy(shapedStudentRows, 'attendanceComposite');
     const maxAttendanceNode = _.maxBy(shapedStudentRows, 'attendanceComposite');
-    const minAttendanceStudent = _.find(this.state.students, {id: minAttendanceNode.student_id});
-    const maxAttendanceStudent = _.find(this.state.students, {id: maxAttendanceNode.student_id});
+    const minAttendanceStudent = _.find(this.state.students, {id: minAttendanceNode.studentId});
+    const maxAttendanceStudent = _.find(this.state.students, {id: maxAttendanceNode.studentId});
 
     return {
       count: shapedStudentRows.length,
