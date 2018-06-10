@@ -1,35 +1,42 @@
 import _ from 'lodash';
 import React from 'react';
 import Select from 'react-select';
+import { lighten } from 'polished';
 
 import { DataConsumer } from '../../DataProvider';
 import { Button, Error } from '../PatternLibrary';
 import { DatePicker } from 'material-ui';
-import 'react-select/dist/react-select.css';
 
 
 const groupStyles = {
   display: 'flex',
+  color: '#707070',
   alignItems: 'center',
-  justifyContent: 'space-between',
+  justifyContent: 'flex-start',
+  fontweight:'bold',
+  fontSize: 18,
+  height: '100%'
 };
 const groupBadgeStyles = {
-  backgroundColor: '#EBECF0',
+  backgroundColor: lighten(0.65, '#7f600c'),
   borderRadius: '2em',
-  color: '#172B4D',
-  display: 'inline-block',
+  color: '#7f600c',
+  display: 'inline',
   fontSize: 12,
   fontWeight: 'normal',
   lineHeight: '1',
   minWidth: 1,
   padding: '0.16666666666667em 0.5em',
+  margin: '0 0.8em',
   textAlign: 'center',
 };
 
 const formatGroupLabel = data => (
   <div style={groupStyles}>
     <span>{data.label}</span>
-    <span style={groupBadgeStyles}>{data.options.length}</span>
+    {data.options.length > 1 ? 
+      (<span style={groupBadgeStyles}>{data.options.length}</span>) : null
+    }
   </div>
 );
 
@@ -137,7 +144,11 @@ class ReportQueryBuilder extends React.Component {
   }
 
   handleChange = (selectedOptions) => {
+<<<<<<< HEAD
     
+=======
+    debugger;
+>>>>>>> added actual react select 2.0, started migrating
     this.setState((prevState) => {
       return {
         selectedOptions,
@@ -274,7 +285,18 @@ class ReportQueryBuilder extends React.Component {
         borderRadius: '6px',
       };
     }
-    debugger
+
+    const styles = {
+      container: (base, state) => ({
+        ...base,
+        ...borderStyles,
+        width: "30%"
+      }),
+      menu: (base, state) => ({
+        ...base,
+        zIndex: 10
+      })
+    }
     return (
       <div style={{backgroundColor: 'white'}}>
         <form>
@@ -285,15 +307,15 @@ class ReportQueryBuilder extends React.Component {
               alignItems: 'center',
             }}>
             <Select
-              multi
+              isMulti
+              backspaceRemovesValue
               placeholder="Start typing the name of a student, section etc..."
-              noResultsText="Sorry, your request is invalid"
+              noOptionsMessage="Sorry, your request is invalid"
               onChange={this.handleChange}
               options={groupOptions}
               formatGroupLabel={formatGroupLabel}
               value={selectedOptions}
-              wrapperStyle={{width: "50%", ...borderStyles}}
-              menuContainerStyle={{zIndex: 10}}
+              styles={styles}
               style={this.state.error ? {border: 'none'} : null}
             />
             <div style={{
