@@ -1,9 +1,12 @@
+import moment from 'moment';
 import _ from 'lodash';
 import React from 'react';
 import { ApiFetcher, ReportFetcher } from './fetchModule';
 
 
 const Context = React.createContext();
+
+const IDS_FOR_ATTENDANCE_COMPOSITE = [4, 10, 11];
 
 export class DataProvider extends React.Component {
   constructor(props) {
@@ -12,6 +15,7 @@ export class DataProvider extends React.Component {
     this.state = {
       user: null,
       isLoading: false,
+      isLoadingReport: false,
       errors: {
         queryError: null,
         loginError: null,
@@ -19,7 +23,6 @@ export class DataProvider extends React.Component {
       students: null,
       sections: null,
       gradeLevels: null,
-      sites: null,
       reportDataList: null,
       worksheet: null,
       selectedReportQuery: null,
@@ -31,7 +34,12 @@ export class DataProvider extends React.Component {
       initializeUser: this.initializeUser,
       logUserIn: this.logUserIn,
       logUserOut: this.logUserOut,
+      getNewBaseReport: this.getNewBaseReport,
       submitReportQuery: this.submitReportQuery,
+      getReportByQuery: this.getReportByQuery,
+      generateReportQuery: this.generateReportQuery,
+      summarizeAttendanceReport: this.summarizeAttendanceReport,
+      summarizeGradesReport: this.summarizeGradesReport,
     };
   }
 
@@ -112,11 +120,6 @@ export class DataProvider extends React.Component {
         this.setState({gradeLevels: resp.body.data});
       }
     }));
-    promises.push(ApiFetcher.get('site').then((resp) => {
-      if (resp.status !== 404) {
-        this.setState({sites: resp.body.data});
-      }
-    }));
 
     return Promise.all(promises);
   }
@@ -193,35 +196,203 @@ export class DataProvider extends React.Component {
     });
   }
 
-  submitReportQuery = (queryString) => {
-    const existingReport = _.find(this.state.reportDataList, {query: queryString});
+  getNewBaseReport = (queryString) => {
+    const existingReport = this.getReportByQuery(queryString);
     if (existingReport) {
       this.setState((prevState) => {
         return {
-          errors: {...prevState.errors, ...{queryError: 'You already have a saved report for that query'}},
+          errors: {...prevState.errors, ...{queryError: "You already have a saved report for that query"}},
         };
       });
       return;
+    } else {
+      this.submitReportQuery(queryString).then((resp) => {
+        this.setState((prevState) => {
+          const newState = {
+            selectedReportQuery: queryString,
+          };
+          if (!_.get(resp, 'data.length')) {
+            newState.errors = {...prevState.errors, ...{reportError: "We couldn't find any data for that group. Try a different section or grade level."}};
+          }
+          return newState;
+        });
+      });
     }
+  }
 
+  submitReportQuery = (queryString) => {
     this.setState({
-      isLoading: true,
+      isLoadingReport: true,
     });
-    ReportFetcher.get(queryString).then((resp) => {
+    const existingReport = this.getReportByQuery(queryString);
+    if (existingReport) {
+      this.setState({
+        isLoadingReport: false,
+      })
+      return existingReport;
+    }
+    return ReportFetcher.get(queryString).then((resp) => {
       this.setState((prevState) => {
         const newState = {
-          isLoading: false,
-          selectedReportQuery: queryString,
+          isLoadingReport: false,
         };
-        if (!resp) {
-          newState.errors = {...prevState.errors, ...{reportError: "We couldn't find any data for that group. Try a different section or grade level."}};
-        } else {
+        if (_.get(resp, 'data.length')) {
           const oldReportDataList = prevState.reportDataList || [];
           newState.reportDataList = [...oldReportDataList, resp];
         }
         return newState;
       });
+      return resp;
     });
+  }
+
+  getReportByQuery = (queryString) => {
+    if (!queryString) {
+      return null;
+    }
+    return _.find(this.state.reportDataList, {query: queryString});
+  }
+
+  generateReportQuery = (parameters) => {
+    if (!parameters) {
+      return '';
+    }
+
+    // Reorder with care. See README for details.
+    const PARAMETER_MAPPING = [
+      {
+        jsParameter: 'group',
+        reportParameter: 'group',
+      },
+      {
+        jsParameter: 'groupId',
+        reportParameter: 'group_id',
+      },
+      {
+        jsParameter: 'reportType',
+        reportParameter: 'type',
+      },
+      {
+        jsParameter: 'fromDate',
+        reportParameter: 'from_date',
+      },
+      {
+        jsParameter: 'toDate',
+        reportParameter: 'to_date',
+      },
+      {
+        jsParameter: 'courseId',
+        reportParameter: 'course_id',
+      },
+      {
+        jsParameter: 'categoryId',
+        reportParameter: 'category_id',
+      },
+      {
+        jsParameter: 'assignmentId',
+        reportParameter: 'assignment_id',
+      },
+    ];
+
+    const queryString = _.reduce(PARAMETER_MAPPING, (result, mapping) => {
+      const { jsParameter, reportParameter } = mapping;
+      let parameterValue = _.get(parameters, jsParameter);
+      if (!parameterValue) {
+        return result;
+      }
+
+      if (jsParameter === 'fromDate' || jsParameter === 'toDate') {
+        parameterValue = moment(parameterValue).format('YYYY-MM-DD');
+      }
+
+      return result += `${reportParameter}=${parameterValue}&`;
+    }, '');
+
+    return queryString.substring(0, queryString.length - 1);
+  }
+
+  summarizeAttendanceReport  = (report = null) => {
+    if (!report) {
+      return null;
+    }
+    const { data: reportData } = report;
+
+    if (reportData.length === 1 ) {
+      const attendanceComposite = _.reduce(reportData[0].attendance_data, (result, column) => {
+        if (_.includes(IDS_FOR_ATTENDANCE_COMPOSITE, column.column_code)) {
+          result += column.percentage;
+        }
+        return result;
+      }, 0);
+      return {
+        singleRecordAttendanceComposite: _.round(attendanceComposite * 100, 2),
+        singleRecordAttendanceOther: _.round(100 - attendanceComposite * 100, 2),
+      };
+    }
+
+    const shapedStudentRows = _.map(reportData, (node) => {
+      const attendanceComposite = _.reduce(node.attendance_data, (result, column) => {
+        if (_.includes(IDS_FOR_ATTENDANCE_COMPOSITE, column.column_code)) {
+          result += column.percentage;
+        }
+        return result;
+      }, 0);
+      return {
+        studentId: node.student_id,
+        attendanceComposite: _.round(attendanceComposite * 100, 2),
+      };
+    });
+
+    const minAttendanceNode = _.minBy(shapedStudentRows, 'attendanceComposite');
+    const maxAttendanceNode = _.maxBy(shapedStudentRows, 'attendanceComposite');
+    const minAttendanceStudent = _.find(this.state.students, {id: minAttendanceNode.student_id});
+    const maxAttendanceStudent = _.find(this.state.students, {id: maxAttendanceNode.student_id});
+
+    return {
+      count: shapedStudentRows.length,
+      mean: `${_.meanBy(shapedStudentRows, 'attendanceComposite')}%`,
+      maxAttendanceStudent: `${maxAttendanceStudent.first_name} ${maxAttendanceStudent.last_name}`,
+      highest: `${maxAttendanceNode.attendanceComposite}%`,
+      minAttendanceStudent: `${minAttendanceStudent.first_name} ${minAttendanceStudent.last_name}`,
+      lowest: `${minAttendanceNode.attendanceComposite}%`,
+    };
+  }
+
+  summarizeGradesReport = (report = null) => {
+    if (!report) {
+      return null;
+    }
+    const { data: reportData } = report;
+
+    const getPrimaryMeasureShapeForNode = (node) => {
+      let primaryMeasureValue = null;
+      if (node.measures.length === 1) {
+        primaryMeasureValue = node.measures[0].measure;
+      } else {
+        primaryMeasureValue = _.find(node.measures, 'primary').value;
+      }
+      return {
+        label: node.label,
+        primaryValue: primaryMeasureValue,
+      };
+    }
+    if (reportData.length === 1) {
+      return getPrimaryMeasureShapeForNode(reportData[0]);
+    }
+    const shapedMeasureList = _.map(reportData, getPrimaryMeasureShapeForNode);
+
+    const minMeasureNode = _.minBy(shapedMeasureList, 'primaryValue');
+    const maxMeasureNode = _.maxBy(shapedMeasureList, 'primaryValue');
+
+    return {
+      count: reportData.length,
+      mean: `${_.round(_.meanBy(shapedMeasureList, 'primaryValue'), 2)}%`,
+      maxMeasureNode: maxMeasureNode.label,
+      highest: _.round(maxMeasureNode.primaryValue, 2),
+      minMeasureNode: minMeasureNode.label,
+      lowest: _.round(minMeasureNode.primaryValue, 2),
+    };
+
   }
 
   render() {

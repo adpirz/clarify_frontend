@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import colors from '../colors.js';
-import { fonts } from '../constants.js';
+import {
+  fonts,
+  colors,
+} from '../constants';
 
 const ErrorDiv = styled.div`
   background-color: ${colors.errorOrange};

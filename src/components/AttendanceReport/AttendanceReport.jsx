@@ -1,125 +1,68 @@
 import _ from 'lodash';
-import styled from 'styled-components';
 import { DataConsumer } from '../../DataProvider';
 import React from 'react';
-import ReactTable from 'react-table'
-import 'react-table/react-table.css'
-import { AttendanceReportSummary, Button } from '../PatternLibrary';
-import { fonts } from '../PatternLibrary/constants';
+import {
+  ReportCardContainer,
+  ReportHeading,
+} from '..'
+import AttendanceReportSummary from './AttendanceReportSummary/AttendanceReportSummary';
 
-
-const Title = styled.span`
-  font-weight: bold;
-  font-size: ${fonts.large};
-`;
-
-const Subheading = styled.span`
-  font-size: ${fonts.medium};
-  opacity: .5;
-`;
+const RELEVANT_ATTENDANCE_COLUMN_IDS = [4, 10, 11];
 
 class AttendanceReport extends React.Component {
-  formatStudentRowData = (studentAttendanceData) => {
-    let studentDataRow = {};
-    const excludeColumns = _.get(this.props, 'report.exclude_columns');
-    _.forEach(studentAttendanceData, (studentAttendanceNode) => {
-      if (_.includes(excludeColumns, studentAttendanceNode.column_code)) {
-        return;
-      }
-      const attendanceFlagCount = studentAttendanceNode.count;
-      const attendanceFlagPercentage = studentAttendanceNode.percentage;
-      studentDataRow[studentAttendanceNode.column_code] = {
-          attendanceFlagCount,
-          attendanceFlagPercentage,
-        };
-      }
-    );
-    return studentDataRow;
-  }
+  getStudentRows = () => {
+    const { report: { data }, students} = this.props;
 
-  buildStudentRowData = () => {
-    const { report, students } = this.props;
-    let tableData;
-    if (report.data) {
-      tableData = _.map(report.data, (studentRow) => {
-        const student = _.find(students, { id: studentRow.student_id });
-        const formattedData = this.formatStudentRowData(studentRow.attendance_data);
-        formattedData.firstName = _.get(student, 'first_name') || 'Student';
-        formattedData.lastName = _.get(student, 'last_name') || '';
-        return formattedData;
-      });
-    }
-    return tableData;
-  }
-
-  buildColumns = () => {
-    const { report } = this.props;
-    if (!_.size(report.data)) {
-      return null;
-    }
-    const nameColumns = [{
-      Header: 'First Name',
-      accessor: 'firstName'
-    },
-    {
-      Header: 'Last Name',
-      accessor: 'lastName'
-    }];
-
-    const columns = _.get(this.props, 'report.columns');
-    const excludeColumns = _.get(this.props, 'report.exclude_columns');
-    const attendanceColumns = _.reduce(columns, (accumulator, column) => {
-      if (_.includes(excludeColumns, column.column_code)) {
-        return accumulator;
+    return _.reduce(data, (activeStudents, node) => {
+      const studentForNode = _.find(students, { id: node.student_id });
+      if (!studentForNode.is_enrolled) {
+        return activeStudents;
       }
-      const {label, column_code} = column;
-      accumulator.push({
-        Header: label,
-        accessor: `${column_code}`,
-        Cell: props => {
-          const { attendanceFlagCount, attendanceFlagPercentage } = props.value;
-          let attendanceNode = 0;
-          if (attendanceFlagCount) {
-            attendanceNode = `${attendanceFlagCount} (${_.round(attendanceFlagPercentage * 100, 2)}%)`;
-          }
-          return (
-            <span>
-              {attendanceNode}
-            </span>
-          );
-        },
-      });
-      return accumulator;
+
+      const attendanceComposite = _.reduce(node.attendance_data, (result, column) => {
+        if (_.includes(RELEVANT_ATTENDANCE_COLUMN_IDS, column.column_code)) {
+          result += column.percentage;
+        }
+        return result;
+      }, 0);
+
+      activeStudents.push(
+        {
+          label: `${studentForNode.last_name}, ${studentForNode.first_name}`,
+          id: node.student_id,
+          measures: [
+            {
+              measure_label: 'Present or Tardy',
+              measure: attendanceComposite ? _.round(attendanceComposite * 100, 2) + '%' : '-',
+            },
+            {
+              measure_label: 'Other',
+              measure: attendanceComposite ? _.round(100 - 100 * attendanceComposite, 2) + '%' : '-',
+            },
+          ]
+        }
+      )
+      return activeStudents;
     }, []);
-    return [...nameColumns, ...attendanceColumns];
   }
 
-  saveReport = (e) => {
+  handleSaveReport = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     this.props.saveReport(this.props.report.query);
   }
 
-  getReportButtons = () => {
-    if (this.props.displayMode === 'summary') {
-      return null;
-    }
-    const buttons = [(
-      <Button key='back' onClick={this.props.back}>Back</Button>
-    ),]
-    if (!this.props.report.id) {
-        buttons.push(<Button key='save' primary onClick={this.saveReport}>Save Report</Button>)
-    }
-
-    return buttons;
+  handleDeleteReport = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    this.props.deleteReport(this.props.report.id);
   }
+
   render() {
     const {
       displayMode,
       report,
-      students,
       selectReport,
-      deleteReport,
-      saveReport
     } = this.props;
     if (_.isEmpty(_.get(report, 'data'))) {
       return null;
@@ -128,36 +71,26 @@ class AttendanceReport extends React.Component {
       return (
         <AttendanceReportSummary
           report={report}
-          students={students}
           selectReport={selectReport}
-          deleteReport={deleteReport}
-          saveReport={saveReport}
+          deleteReport={this.handleDeleteReport}
+          saveReport={this.handelSaveReport}
         />
       );
     }
-    const columns = this.buildColumns();
-    const studentRowData = this.buildStudentRowData();
-    const { title, subheading } = _.get(this.props, 'report');
+    const {
+      deselectReport,
+    } = this.props;
+    const { title, subheading, id } = report;
+    const studentRowData = this.getStudentRows();
+
     return (
-      <div>
-        <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            flexShrink: '0',
-            alignItems: 'center',
-          }}>
-          <div>
-            <Title>{title}</Title>&nbsp;--&nbsp;
-            <Subheading>{subheading}</Subheading>
-          </div>
-          {this.getReportButtons()}
-        </div>
-        <ReactTable
-          data={studentRowData}
-          columns={columns}
-          sortable={false}
-          resizable={false}
-          defaultPageSize={10}
+      <div style={{width: '100%'}}>
+        <ReportHeading title={title} subheading={subheading} />
+        <ReportCardContainer
+          children={studentRowData}
+          deselectReport={deselectReport}
+          saveReport={id ? null : this.handleSaveReport}
+          deleteReport={id ? this.handleDeleteReport : null}
         />
       </div>
     )
@@ -166,11 +99,11 @@ class AttendanceReport extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({saveReport, deleteReport, students}) => (
+    {({saveReport, deleteReport, deselectReport}) => (
       <AttendanceReport
+        deselectReport={deselectReport}
         saveReport={saveReport}
         deleteReport={deleteReport}
-        students={students}
         {...props}
       />
     )}
