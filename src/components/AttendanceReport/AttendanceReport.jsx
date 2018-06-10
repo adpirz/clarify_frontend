@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import { DataConsumer } from '../../DataProvider';
 import React from 'react';
+import { Tabs, Tab } from 'material-ui/Tabs';
+
 import {
   ReportCardContainer,
   ReportHeading,
@@ -15,7 +17,7 @@ class AttendanceReport extends React.Component {
 
     return _.reduce(data, (activeStudents, node) => {
       const studentForNode = _.find(students, { id: node.student_id });
-      if (!studentForNode.is_enrolled) {
+      if (!studentForNode || !studentForNode.is_enrolled) {
         return activeStudents;
       }
 
@@ -84,15 +86,19 @@ class AttendanceReport extends React.Component {
     const studentRowData = this.getStudentRows();
 
     return (
-      <div style={{width: '100%'}}>
-        <ReportHeading title={title} subheading={subheading} />
-        <ReportCardContainer
-          children={studentRowData}
-          deselectReport={deselectReport}
-          saveReport={id ? null : this.handleSaveReport}
-          deleteReport={id ? this.handleDeleteReport : null}
-        />
-      </div>
+
+      <Tabs style={{width: '100%'}}>
+        <Tab label="Report">
+          <ReportHeading title={title} subheading={subheading} />
+          <ReportCardContainer
+            children={studentRowData}
+            deselectReport={deselectReport}
+            saveReport={id ? null : this.handleSaveReport}
+            deleteReport={id ? this.handleDeleteReport : null}
+          />
+        </Tab>
+        <Tab label="Snapshot"/>
+      </Tabs>
     )
   }
 }
