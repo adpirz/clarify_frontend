@@ -325,17 +325,31 @@ class ReportQueryBuilder extends React.Component {
         borderRadius: '6px',
       };
     }
+    
+    
+    /*
+      See here: https://deploy-preview-2289--react-select.netlify.com/styles
+
+      Short version: react-select v2.0 takes a singular 'styles' props object
+      that defines styles across different pieces: container, menu, valueContainer,
+      etc. Full list can be found at the link above. Each key on object represents
+      the element to style and takes a function that passes params 'base' and 'state';
+      'base' is a set of default style elements, so you can spread those and change
+      just what you like per element. 
+    */
+   const FONT_SIZE = '1.1em';
+
     const fontSizerMaker = (fontSize) => {
       return (base, state) => ({...base, fontSize})
     };
 
-    const fontSizer = fontSizerMaker('1.2em')
+    const fontSizer = fontSizerMaker(FONT_SIZE)
 
     const styles = {
       container: (base, state) => ({
         ...base,
         ...borderStyles,
-        width: "100%"
+        width: "80%"
       }),
       menu: (base, state) => ({
         ...base,
