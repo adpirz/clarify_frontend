@@ -42,10 +42,10 @@ const formatGroupLabel = data => (
 
 const reactSelectOptions = [
   {
-    label: 'Students',
+    label: 'Grade Level',
     options: [],
     type: 'group',
-    value: 'student',
+    value: 'grade_level',
   },
   {
     label: 'Sections',
@@ -54,10 +54,10 @@ const reactSelectOptions = [
     value: 'section',
   },
   {
-    label: 'Grade Level',
+    label: 'Students',
     options: [],
     type: 'group',
-    value: 'grade_level',
+    value: 'student',
   },
   {
     label: 'Categories',
@@ -144,11 +144,7 @@ class ReportQueryBuilder extends React.Component {
   }
 
   handleChange = (selectedOptions) => {
-<<<<<<< HEAD
-    
-=======
-    debugger;
->>>>>>> added actual react select 2.0, started migrating
+
     this.setState((prevState) => {
       return {
         selectedOptions,
@@ -157,7 +153,7 @@ class ReportQueryBuilder extends React.Component {
     });
   };
 
-  isGroupValue = (type) => ['student', 'grade_level', 'section'].indexOf(type) > -1;
+  isGroupValue = (type) => type === 'group';
 
   isReportTypeValue = (type) => type === 'reportType';
 
@@ -186,7 +182,8 @@ class ReportQueryBuilder extends React.Component {
         label: name,
         value: `${optionValue}_${groupElement.id}`,
         id: groupElement.id,
-        type: optionValue
+        type: 'group',
+        group_value: optionValue
       }
       if (typeof targetQueryOptionsGroup !== 'undefined') {
         targetQueryOptionsGroup.options.push(optionsArray);
@@ -221,10 +218,10 @@ class ReportQueryBuilder extends React.Component {
     let groupId = '';
 
     selectedOptions.forEach(option => {
-      const { id, group: { type, value } } = option;
+      const { id, type, group_value } = option;
 
       if (this.isGroupValue(type)) {
-        group = value;
+        group = group_value;
         groupId = id;
       }
 
@@ -246,8 +243,8 @@ class ReportQueryBuilder extends React.Component {
   };
 
   isValidQuery = (selectedOptions) => {
-    const groupQuerySelected = !!_.find(selectedOptions, { group: { type: 'group' } });
-    const reportTypeQuerySelected = !!_.find(selectedOptions, { group: { type: 'reportType' } });
+    const groupQuerySelected = !!_.find(selectedOptions, { type: 'group' });
+    const reportTypeQuerySelected = !!_.find(selectedOptions, { type: 'reportType' });
     return groupQuerySelected && reportTypeQuerySelected;
   };
 
@@ -310,7 +307,6 @@ class ReportQueryBuilder extends React.Component {
               isMulti
               backspaceRemovesValue
               placeholder="Start typing the name of a student, section etc..."
-              noOptionsMessage="Sorry, your request is invalid"
               onChange={this.handleChange}
               options={groupOptions}
               formatGroupLabel={formatGroupLabel}
