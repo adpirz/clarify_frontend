@@ -54,6 +54,14 @@ class AttendanceReport extends React.Component {
     this.props.saveReport(this.props.report.query);
   }
 
+  getSnapshotRows = studentRowData => _.sortBy(studentRowData, [(r) => {
+    let resultMeasure;
+    _.forEach(r.measures, (m) => {
+      if(!resultMeasure && m.measure_label === 'Present or Tardy') resultMeasure = m.measure;
+    })
+    return parseFloat(resultMeasure.slice(0,-1))
+  }]).slice(0,5)
+
   handleDeleteReport = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -104,7 +112,14 @@ class AttendanceReport extends React.Component {
             />
             </div>
         </Tab>
-        <Tab label="Snapshot" buttonStyle={buttonStyle}/>
+        <Tab label="Snapshot" buttonStyle={buttonStyle}>
+          <ReportCardContainer
+              children={this.getSnapshotRows(studentRowData)}
+              deselectReport={deselectReport}
+              saveReport={id ? null : this.handleSaveReport}
+              deleteReport={id ? this.handleDeleteReport : null}
+            />
+        </Tab>
       </Tabs>
     )
   }
