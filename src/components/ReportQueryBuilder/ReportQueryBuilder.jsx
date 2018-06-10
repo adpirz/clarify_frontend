@@ -325,6 +325,7 @@ class ReportQueryBuilder extends React.Component {
         borderRadius: '6px',
       };
     }
+<<<<<<< HEAD
     
     
     /*
@@ -339,17 +340,27 @@ class ReportQueryBuilder extends React.Component {
     */
    const FONT_SIZE = '1.1em';
 
+=======
+>>>>>>> 2faefe57914bc1bb7537dc3b2c59477fcc27e95b
     const fontSizerMaker = (fontSize) => {
       return (base, state) => ({...base, fontSize})
     };
 
+<<<<<<< HEAD
     const fontSizer = fontSizerMaker(FONT_SIZE)
+=======
+    const fontSizer = fontSizerMaker('1.2em')
+>>>>>>> 2faefe57914bc1bb7537dc3b2c59477fcc27e95b
 
     const styles = {
       container: (base, state) => ({
         ...base,
         ...borderStyles,
+<<<<<<< HEAD
         width: "80%"
+=======
+        width: "100%"
+>>>>>>> 2faefe57914bc1bb7537dc3b2c59477fcc27e95b
       }),
       menu: (base, state) => ({
         ...base,
