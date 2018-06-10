@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import React from 'react';
 import { DataConsumer } from '../../DataProvider';
-import { ReportSummaryContainer } from '../PatternLibrary';
-import { ReportHeading, ReportCardContainer } from '..';
+import { ReportHeading, ReportCardContainer } from '../';
+import GradeReportSummary from './GradeReportSummary/GradeReportSummary';
 
 
 class GradeReport extends React.Component {
@@ -30,14 +30,19 @@ class GradeReport extends React.Component {
     const {
       initialQuery,
       displayMode,
+      selectReport,
+      getReportByQuery,
     } = this.props;
 
     if (displayMode === 'summary') {
-      const handleSelectReport = () => {
-        this.props.selectReport(initialQuery);
-      };
+      const report = getReportByQuery(initialQuery);
       return (
-        <ReportSummaryContainer onClick={handleSelectReport}> DISPLAY MODE!</ReportSummaryContainer>
+        <GradeReportSummary
+          selectReport={selectReport}
+          report={report}
+          deleteReport={this.handleDeleteReport}
+          saveReport={this.handelSaveReport}
+        />
       )
     }
 
@@ -46,7 +51,6 @@ class GradeReport extends React.Component {
       popReportLevel,
       reportCrumbs,
       deselectReport,
-      getReportByQuery,
     } = this.props;
 
     const currentReportQuery = _.get(_.last(reportCrumbs), 'query', initialQuery);

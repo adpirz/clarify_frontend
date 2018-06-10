@@ -2,10 +2,10 @@ import _ from 'lodash';
 import { DataConsumer } from '../../DataProvider';
 import React from 'react';
 import {
-  AttendanceReportSummary,
   ReportCardContainer,
   ReportHeading,
 } from '..'
+import AttendanceReportSummary from './AttendanceReportSummary/AttendanceReportSummary';
 
 const RELEVANT_ATTENDANCE_COLUMN_IDS = [4, 10, 11];
 
@@ -62,7 +62,6 @@ class AttendanceReport extends React.Component {
     const {
       displayMode,
       report,
-      students,
       selectReport,
     } = this.props;
     if (_.isEmpty(_.get(report, 'data'))) {
@@ -72,7 +71,6 @@ class AttendanceReport extends React.Component {
       return (
         <AttendanceReportSummary
           report={report}
-          students={students}
           selectReport={selectReport}
           deleteReport={this.handleDeleteReport}
           saveReport={this.handelSaveReport}
@@ -101,12 +99,11 @@ class AttendanceReport extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({saveReport, deleteReport, deselectReport, students}) => (
+    {({saveReport, deleteReport, deselectReport}) => (
       <AttendanceReport
         deselectReport={deselectReport}
         saveReport={saveReport}
         deleteReport={deleteReport}
-        students={students}
         {...props}
       />
     )}

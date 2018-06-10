@@ -25,7 +25,7 @@ Because of this we need a reliable way to generate the same string for a given s
 -`?group_id=8221&group=student&type=grades&from_date=2017-08-01`
 will be seen as different, even when we have their report in the browser cache, in the database, in reporting, etc.
 
-For this purpose, the frontend uses a function in the utils.js file to deterministically generate a report query based on query parameters passed to that function. It is important that that function be kept up to date with the same function being used in the backend (as yet, none...). Eventually this could be broken out into its own service that the FE and BE could consume independently but that seems like crazy overkill right now. For now, just be aware.
+For this purpose, the frontend uses a function on the dataProvider to deterministically generate a report query based on query parameters passed to that function. It is important that that function be kept up to date with the same function being used in the backend (as yet, none...). Eventually this could be broken out into its own service that the FE and BE could consume independently but that seems like crazy overkill right now. For now, just be aware.
 
 
 

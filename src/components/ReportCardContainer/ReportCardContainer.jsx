@@ -90,7 +90,7 @@ class ReportCardContainer extends React.Component {
         {_.map(filteredChildren, (child) => {
           return (
             <ReportCard
-              selectCard={pushReportLevel}
+              selectCard={child.children ? pushReportLevel : null}
               key={child.id}
               {...child}
             />

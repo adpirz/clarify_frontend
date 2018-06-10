@@ -6,6 +6,8 @@ import { ApiFetcher, ReportFetcher } from './fetchModule';
 
 const Context = React.createContext();
 
+const IDS_FOR_ATTENDANCE_COMPOSITE = [4, 10, 11];
+
 export class DataProvider extends React.Component {
   constructor(props) {
     super(props);
@@ -36,6 +38,8 @@ export class DataProvider extends React.Component {
       submitReportQuery: this.submitReportQuery,
       getReportByQuery: this.getReportByQuery,
       generateReportQuery: this.generateReportQuery,
+      summarizeAttendanceReport: this.summarizeAttendanceReport,
+      summarizeGradesReport: this.summarizeGradesReport,
     };
   }
 
@@ -197,7 +201,7 @@ export class DataProvider extends React.Component {
     if (existingReport) {
       this.setState((prevState) => {
         return {
-          errors: {...prevState.errors, ...{queryError: 'You already have a saved report for that query'}},
+          errors: {...prevState.errors, ...{queryError: "You already have a saved report for that query"}},
         };
       });
       return;
@@ -305,6 +309,90 @@ export class DataProvider extends React.Component {
     }, '');
 
     return queryString.substring(0, queryString.length - 1);
+  }
+
+  summarizeAttendanceReport  = (report = null) => {
+    if (!report) {
+      return null;
+    }
+    const { data: reportData } = report;
+
+    if (reportData.length === 1 ) {
+      const attendanceComposite = _.reduce(reportData[0].attendance_data, (result, column) => {
+        if (_.includes(IDS_FOR_ATTENDANCE_COMPOSITE, column.column_code)) {
+          result += column.percentage;
+        }
+        return result;
+      }, 0);
+      return {
+        singleRecordAttendanceComposite: _.round(attendanceComposite * 100, 2),
+        singleRecordAttendanceOther: _.round(100 - attendanceComposite * 100, 2),
+      };
+    }
+
+    const shapedStudentRows = _.map(reportData, (node) => {
+      const attendanceComposite = _.reduce(node.attendance_data, (result, column) => {
+        if (_.includes(IDS_FOR_ATTENDANCE_COMPOSITE, column.column_code)) {
+          result += column.percentage;
+        }
+        return result;
+      }, 0);
+      return {
+        studentId: node.student_id,
+        attendanceComposite: _.round(attendanceComposite * 100, 2),
+      };
+    });
+
+    const minAttendanceNode = _.minBy(shapedStudentRows, 'attendanceComposite');
+    const maxAttendanceNode = _.maxBy(shapedStudentRows, 'attendanceComposite');
+    const minAttendanceStudent = _.find(this.state.students, {id: minAttendanceNode.student_id});
+    const maxAttendanceStudent = _.find(this.state.students, {id: maxAttendanceNode.student_id});
+
+    return {
+      count: shapedStudentRows.length,
+      mean: `${_.meanBy(shapedStudentRows, 'attendanceComposite')}%`,
+      maxAttendanceStudent: `${maxAttendanceStudent.first_name} ${maxAttendanceStudent.last_name}`,
+      highest: `${maxAttendanceNode.attendanceComposite}%`,
+      minAttendanceStudent: `${minAttendanceStudent.first_name} ${minAttendanceStudent.last_name}`,
+      lowest: `${minAttendanceNode.attendanceComposite}%`,
+    };
+  }
+
+  summarizeGradesReport = (report = null) => {
+    if (!report) {
+      return null;
+    }
+    const { data: reportData } = report;
+
+    const getPrimaryMeasureShapeForNode = (node) => {
+      let primaryMeasureValue = null;
+      if (node.measures.length === 1) {
+        primaryMeasureValue = node.measures[0].measure;
+      } else {
+        primaryMeasureValue = _.find(node.measures, 'primary').value;
+      }
+      return {
+        label: node.label,
+        primaryValue: primaryMeasureValue,
+      };
+    }
+    if (reportData.length === 1) {
+      return getPrimaryMeasureShapeForNode(reportData[0]);
+    }
+    const shapedMeasureList = _.map(reportData, getPrimaryMeasureShapeForNode);
+
+    const minMeasureNode = _.minBy(shapedMeasureList, 'primaryValue');
+    const maxMeasureNode = _.maxBy(shapedMeasureList, 'primaryValue');
+
+    return {
+      count: reportData.length,
+      mean: `${_.round(_.meanBy(shapedMeasureList, 'primaryValue'), 2)}%`,
+      maxMeasureNode: maxMeasureNode.label,
+      highest: _.round(maxMeasureNode.primaryValue, 2),
+      minMeasureNode: minMeasureNode.label,
+      lowest: _.round(minMeasureNode.primaryValue, 2),
+    };
+
   }
 
   render() {

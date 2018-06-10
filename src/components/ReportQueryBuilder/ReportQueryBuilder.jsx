@@ -308,13 +308,16 @@ export default props => (
       sections,
       gradeLevels,
       getNewBaseReport,
-      generateReportQuery}) => (
+      generateReportQuery,
+      queryError,
+    }) => (
       <ReportQueryBuilder
         students={students}
         sections={sections}
         gradeLevels={gradeLevels}
         getNewBaseReport={getNewBaseReport}
         generateReportQuery={generateReportQuery}
+        queryError={queryError}
         {...props}
       />
     )}
