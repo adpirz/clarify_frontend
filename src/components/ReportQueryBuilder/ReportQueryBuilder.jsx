@@ -7,6 +7,32 @@ import { Button, Error } from '../PatternLibrary';
 import { DatePicker } from 'material-ui';
 import 'react-select/dist/react-select.css';
 
+
+const groupStyles = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+};
+const groupBadgeStyles = {
+  backgroundColor: '#EBECF0',
+  borderRadius: '2em',
+  color: '#172B4D',
+  display: 'inline-block',
+  fontSize: 12,
+  fontWeight: 'normal',
+  lineHeight: '1',
+  minWidth: 1,
+  padding: '0.16666666666667em 0.5em',
+  textAlign: 'center',
+};
+
+const formatGroupLabel = data => (
+  <div style={groupStyles}>
+    <span>{data.label}</span>
+    <span style={groupBadgeStyles}>{data.options.length}</span>
+  </div>
+);
+
 const reactSelectOptions = [
   {
     label: 'Students',
@@ -248,7 +274,7 @@ class ReportQueryBuilder extends React.Component {
         borderRadius: '6px',
       };
     }
-
+    debugger
     return (
       <div style={{backgroundColor: 'white'}}>
         <form>
@@ -264,6 +290,7 @@ class ReportQueryBuilder extends React.Component {
               noResultsText="Sorry, your request is invalid"
               onChange={this.handleChange}
               options={groupOptions}
+              formatGroupLabel={formatGroupLabel}
               value={selectedOptions}
               wrapperStyle={{width: "50%", ...borderStyles}}
               menuContainerStyle={{zIndex: 10}}
