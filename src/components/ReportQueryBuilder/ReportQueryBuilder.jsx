@@ -6,6 +6,7 @@ import { lighten } from 'polished';
 import { DataConsumer } from '../../DataProvider';
 import { Button, Error } from '../PatternLibrary';
 import { DatePicker } from 'material-ui';
+import { ENGINE_METHOD_DIGESTS } from 'constants';
 
 
 const groupStyles = {
@@ -88,6 +89,7 @@ class ReportQueryBuilder extends React.Component {
       fromDate: this.getBeginningOfSchoolYear(),
       toDate: null,
       errorMessage: null,
+      menuIsOpen: undefined,
     };
   }
 
@@ -146,12 +148,16 @@ class ReportQueryBuilder extends React.Component {
   handleChange = (selectedOptions) => {
 
     this.setState((prevState) => {
+      const isValidQuery = this.isValidQuery(selectedOptions);
       return {
         selectedOptions,
-        errorMessage: this.isValidQuery(selectedOptions) ? "" : prevState.error,
+        errorMessage: isValidQuery ? "" : prevState.error,
+        menuIsOpen: isValidQuery ? undefined : true,
       }
     });
   };
+
+  isMenuOpen = isOpen => isOpen ? true : undefined; 
 
   isGroupValue = (type) => type === 'group';
 
@@ -249,7 +255,7 @@ class ReportQueryBuilder extends React.Component {
   };
 
   render() {
-    const { fromDate, selectedOptions } = this.state;
+    const { fromDate, selectedOptions, menuIsOpen } = this.state;
 
     let groupOptions = reactSelectOptions;
 
@@ -310,6 +316,7 @@ class ReportQueryBuilder extends React.Component {
               onChange={this.handleChange}
               options={groupOptions}
               formatGroupLabel={formatGroupLabel}
+              menuIsOpen={menuIsOpen}
               value={selectedOptions}
               styles={styles}
               style={this.state.error ? {border: 'none'} : null}
