@@ -33,11 +33,13 @@ const reactSelectOptions = [
       {
         label: 'Attendance',
         value: 'attendance',
+        type: 'reportType',
         id: 999,
       },
       {
         label: 'Grades',
         value: 'grades',
+        type: 'reportType',
         id: 998,
       },
     ],
@@ -109,6 +111,7 @@ class ReportQueryBuilder extends React.Component {
   }
 
   handleChange = (selectedOptions) => {
+    
     this.setState((prevState) => {
       return {
         selectedOptions,
@@ -117,7 +120,7 @@ class ReportQueryBuilder extends React.Component {
     });
   };
 
-  isGroupValue = (type) => type === 'group';
+  isGroupValue = (type) => ['student', 'grade_level', 'section'].indexOf(type) > -1;
 
   isReportTypeValue = (type) => type === 'reportType';
 
@@ -146,6 +149,7 @@ class ReportQueryBuilder extends React.Component {
         label: name,
         value: `${optionValue}_${groupElement.id}`,
         id: groupElement.id,
+        type: optionValue
       }
       if (typeof targetQueryOptionsGroup !== 'undefined') {
         targetQueryOptionsGroup.options.push(optionsArray);
@@ -220,11 +224,11 @@ class ReportQueryBuilder extends React.Component {
       let isReportTypeSelected = false;
 
       selectedOptions.forEach(option => {
-        const { group: { type } } = option;
+        const { type } = option;
 
-        isGroupSelected = this.isGroupValue(type);
+        if(!isGroupSelected) isGroupSelected = this.isGroupValue(type);
+        if(!isReportTypeSelected) isReportTypeSelected = this.isReportTypeValue(type);
 
-        isReportTypeSelected = this.isReportTypeValue(type);
       });
 
       if (isReportTypeSelected && isGroupSelected) {
@@ -235,6 +239,7 @@ class ReportQueryBuilder extends React.Component {
         groupOptions = reactSelectOptions.filter((o) => o.type === 'group');
       }
     }
+
 
     let borderStyles = null;
     if (this.state.error) {
