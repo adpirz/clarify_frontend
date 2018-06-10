@@ -44,7 +44,7 @@ const groupBadgeStyles = {
 const formatGroupLabel = data => (
   <div style={groupStyles}>
     <span>{data.label}</span>
-    {data.options.length > 1 ? 
+    {data.options.length > 1 ?
       (<span style={groupBadgeStyles}>{data.options.length}</span>) : null
     }
   </div>
@@ -57,7 +57,7 @@ const stringify = option => {
 
 const Option = (props) => {
   const { data: { tags } } = props
-  
+
   const Footer = styled.div`
     background-color: ${lighten(0.99, 'black')};
     color: ${lighten(0.6, 'black')};
@@ -192,7 +192,7 @@ class ReportQueryBuilder extends React.Component {
 
   handleBlur = () => this.setState(()=> ({menuIsOpen: undefined}))
 
-  isMenuOpen = isOpen => isOpen ? true : undefined; 
+  isMenuOpen = isOpen => isOpen ? true : undefined;
 
   isGroupValue = (type) => type === 'group';
 
@@ -325,9 +325,7 @@ class ReportQueryBuilder extends React.Component {
         borderRadius: '6px',
       };
     }
-<<<<<<< HEAD
-    
-    
+
     /*
       See here: https://deploy-preview-2289--react-select.netlify.com/styles
 
@@ -336,31 +334,21 @@ class ReportQueryBuilder extends React.Component {
       etc. Full list can be found at the link above. Each key on object represents
       the element to style and takes a function that passes params 'base' and 'state';
       'base' is a set of default style elements, so you can spread those and change
-      just what you like per element. 
+      just what you like per element.
     */
    const FONT_SIZE = '1.1em';
 
-=======
->>>>>>> 2faefe57914bc1bb7537dc3b2c59477fcc27e95b
     const fontSizerMaker = (fontSize) => {
       return (base, state) => ({...base, fontSize})
     };
 
-<<<<<<< HEAD
     const fontSizer = fontSizerMaker(FONT_SIZE)
-=======
-    const fontSizer = fontSizerMaker('1.2em')
->>>>>>> 2faefe57914bc1bb7537dc3b2c59477fcc27e95b
 
     const styles = {
       container: (base, state) => ({
         ...base,
         ...borderStyles,
-<<<<<<< HEAD
         width: "80%"
-=======
-        width: "100%"
->>>>>>> 2faefe57914bc1bb7537dc3b2c59477fcc27e95b
       }),
       menu: (base, state) => ({
         ...base,
