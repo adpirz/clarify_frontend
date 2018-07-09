@@ -105,9 +105,8 @@ class AttendanceReportSummary extends React.PureComponent {
         <SummaryTable>
           <tbody>
             <tr><SummaryCell>Students:</SummaryCell><SummaryCell>{summaryData.count}</SummaryCell></tr>
-            <tr><SummaryCell>Mean:</SummaryCell><SummaryCell>{summaryData.mean}</SummaryCell></tr>
-            <tr><SummaryCell>Highest:</SummaryCell><SummaryCell>{summaryData.maxAttendanceStudent} ({summaryData.highest})</SummaryCell></tr>
-            <tr><SummaryCell>Lowest:</SummaryCell><SummaryCell>{summaryData.minAttendanceStudent} ({summaryData.lowest})</SummaryCell></tr>
+            <tr><SummaryCell>Highest:</SummaryCell><SummaryCell>{summaryData.maxAttendanceStudent}</SummaryCell></tr>
+            <tr><SummaryCell>Lowest:</SummaryCell><SummaryCell>{summaryData.minAttendanceStudent}</SummaryCell></tr>
           </tbody>
         </SummaryTable>
       );
