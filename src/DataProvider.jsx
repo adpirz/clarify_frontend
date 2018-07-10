@@ -369,7 +369,7 @@ export class DataProvider extends React.Component {
       if (node.measures.length === 1) {
         primaryMeasureValue = node.measures[0].measure;
       } else {
-        primaryMeasureValue = _.find(node.measures, 'primary').value;
+        primaryMeasureValue = _.find(node.measures, 'primary').measure;
       }
       return {
         label: node.label,
