@@ -26,9 +26,19 @@ const SummaryCell = styled.td`
   padding: 10px;
 `;
 
+const individualDataMargin = "20px";
+
+const IndividualDatalabel = styled.div`
+  margin: ${individualDataMargin} auto;
+  font-size: ${fonts.medium};
+  color: ${lighten(0.6, 'black')};
+  text-align: center;
+`
+
 const IndividualData = styled.div`
-  margin: 0 auto;
+  margin: ${individualDataMargin} auto;
   font-size: ${fonts.huge};
+  text-align: center;
 `;
 
 const Footer = styled.div`
@@ -87,6 +97,7 @@ class AttendanceReportSummary extends React.PureComponent {
       />
     );
   }
+  formatTitle = title => title.split(":").map((text, i) => (<div>{text}{i === 0 ? ":" : null}</div>))
 
   render() {
     const { report } = this.props;
@@ -96,8 +107,8 @@ class AttendanceReportSummary extends React.PureComponent {
     if (summaryData.singleRecordAttendanceComposite) {
       reportNodes = (
         <div>
-          <IndividualData>{summaryData.singleRecordAttendanceComposite}</IndividualData>
-          <IndividualData>{summaryData.singleRecordAttendanceOther}</IndividualData>
+          <IndividualData>{summaryData.singleRecordAttendanceComposite}%</IndividualData>
+          <IndividualDatalabel>{summaryData.singleRecordAttendanceCompositeLabel}</IndividualDatalabel>
         </div>
       );
     } else {
@@ -118,7 +129,7 @@ class AttendanceReportSummary extends React.PureComponent {
         >
         {this.getDeleteIcon()}
         {this.getSaveIcon()}
-        <Title>{title}</Title>
+        <Title>{this.formatTitle(title)}</Title>
         {reportNodes}
         <Footer>{subheading}</Footer>
       </ReportSummaryContainer>

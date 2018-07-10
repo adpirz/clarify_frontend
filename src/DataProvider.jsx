@@ -7,6 +7,7 @@ import { ApiFetcher, ReportFetcher } from './fetchModule';
 const Context = React.createContext();
 
 const IDS_FOR_ATTENDANCE_COMPOSITE = [4, 10, 11];
+const ATTENDANCE_COMPOSITE_LABEL = "PRESENT";
 
 export class DataProvider extends React.Component {
   constructor(props) {
@@ -326,7 +327,9 @@ export class DataProvider extends React.Component {
       }, 0);
       return {
         singleRecordAttendanceComposite: _.round(attendanceComposite * 100, 2),
+        singleRecordAttendanceCompositeLabel: ATTENDANCE_COMPOSITE_LABEL,
         singleRecordAttendanceOther: _.round(100 - attendanceComposite * 100, 2),
+        singleRecordAttendanceOtherLabel: "OTHER"
       };
     }
 
