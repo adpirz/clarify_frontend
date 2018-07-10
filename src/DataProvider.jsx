@@ -327,9 +327,7 @@ export class DataProvider extends React.Component {
       }, 0);
       return {
         singleRecordAttendanceComposite: _.round(attendanceComposite * 100, 2),
-        singleRecordAttendanceCompositeLabel: ATTENDANCE_COMPOSITE_LABEL,
-        singleRecordAttendanceOther: _.round(100 - attendanceComposite * 100, 2),
-        singleRecordAttendanceOtherLabel: "OTHER"
+        singleRecordAttendanceCompositeLabel: ATTENDANCE_COMPOSITE_LABEL
       };
     }
 
