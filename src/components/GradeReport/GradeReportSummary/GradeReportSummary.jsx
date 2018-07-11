@@ -102,9 +102,8 @@ class GradeReportSummary extends React.PureComponent {
         <SummaryTable>
           <tbody>
             <tr><SummaryCell>Count:</SummaryCell><SummaryCell>{summaryData.count}</SummaryCell></tr>
-            <tr><SummaryCell>Mean:</SummaryCell><SummaryCell>{summaryData.mean}</SummaryCell></tr>
-            <tr><SummaryCell>Highest:</SummaryCell><SummaryCell>{summaryData.maxMeasureNode} ({summaryData.highest})</SummaryCell></tr>
-            <tr><SummaryCell>Lowest:</SummaryCell><SummaryCell>{summaryData.minMeasureNode} ({summaryData.lowest})</SummaryCell></tr>
+            <tr><SummaryCell>Highest:</SummaryCell><SummaryCell>{summaryData.maxMeasureNode}</SummaryCell></tr>
+            <tr><SummaryCell>Lowest:</SummaryCell><SummaryCell>{summaryData.minMeasureNode}</SummaryCell></tr>
           </tbody>
         </SummaryTable>
       );
