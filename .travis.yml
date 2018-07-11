@@ -17,6 +17,8 @@ jobs:
       deploy:
         provider: s3
         bucket: clarify.school
+        on:
+          branch: feature/fix-FE-deploy
         local_dir: build
         region: us-west-1
         skip_cleanup: true
@@ -29,6 +31,8 @@ jobs:
       env:
         - REACT_APP_BASE_URL=https://demo.api.clarify.school/
       deploy:
+        on:
+          branch: feature/fix-FE-deploy
         provider: s3
         bucket: demo.clarify.school
         local_dir: build
