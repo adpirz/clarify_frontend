@@ -18,8 +18,6 @@ jobs:
     deploy:
       provider: s3
       bucket: clarify.school
-      on:
-        branch: feature/fix-FE-deploy
       local_dir: build
       region: us-west-1
       skip_cleanup: true
@@ -34,8 +32,6 @@ jobs:
     - REACT_APP_BASE_URL=https://demo.api.clarify.school/
     - secure: HbLYt6rveiteYyIK8eHpa7tc0e+bSmPzYl+crN+c8oO0I5uNToIGlL5bxedm3gTFHoIKlCMYkgVTz+V6GNiQmOH6bZrhkGRbhJHy5rWEOqV3sOFKnfKUgrouc7acit+33i76YkV17UHG9+lm+Rot/afpHGWuLASJSX2CuEUo8y1lOsvL4xhBpngad11ztJk9IO7tzxJLyD2oV99YSzhpZN47xsDTBdzUXV/BcwakdAwQAfzT0bzKVvofofGwvtY2QmqABVMbam/bmQjbHleSMidNwEkUF/TEo+GbzRggNK3W3fY5MiC2LQUorh++UaGVTXS2QGaVqdvew2iV90Txnu3PmfeiCam6adlqwPFSl7i31etefLA9yrJ+3Dp0RAntpUfdp9dQgGfra0KNUZxq5Bt9Jcqi1NthnXp6708ykinL8qqbuMwzT9yA1ZafKe5gPk7wpgSxkQJp908WOKbR+SddrFRZffP54tTHqeHkKPiv5Wj1lElbmhMr1l5jqUk2F0wSIGVMU3wFGYCEq9iwmdqWVWnZISxEzLQemWy9njNFHj12ujNEldiBQEBBh9p3he25wPXm2VrqubcUgDgqrkaJwKec2ypUHUvyTG5OXPIgj0o2+h0Nq6PlpJ1DpRhlsz3CdBADIrwR5aLwT7hCEOllNmVdQdpwYDJSD6sFysY=
     deploy:
-      on:
-        branch: feature/fix-FE-deploy
       provider: s3
       bucket: demo.clarify.school
       local_dir: build
