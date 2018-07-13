@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import React from 'react';
-import Modal from 'material-ui/Modal';
+import Modal from '@material-ui/core/Modal';
 import { DataConsumer } from '../../DataProvider';
 import { Loading, Error } from '../PatternLibrary/';
-import { AttendanceReport, GradeReport } from '../';
+import { AttendanceReport, GradeReport, ShareReportForm } from '../';
 import {
   fonts,
 } from '../PatternLibrary/constants';
@@ -20,6 +20,7 @@ class Worksheet extends React.PureComponent {
     this.state = {
       reportCrumbs: [],
       showShareReportModal: false,
+
     };
   }
 
@@ -193,7 +194,7 @@ class Worksheet extends React.PureComponent {
           open={this.state.showShareReportModal}
           onClose={this.toggleShareReportModal}
           onEscapeKeyDown={this.toggleShareReportModal}>
-          <h1> HELLO WORLD </h1>
+          <ShareReportForm text="BLOOOOP" />
         </Modal>
       </div>
     );

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import styled from 'styled-components';
 import React from 'react';
-import TextField from 'material-ui/TextField';
+import TextField from '@material-ui/core/TextField';
 import { fonts } from '../PatternLibrary/constants';
 import { ReportCard } from '..';
 
@@ -34,7 +34,7 @@ class ReportCardContainer extends React.Component {
     return (
       <div>
         <span>Search: </span>
-        <TextField hintText="Type to filter" onChange={this.handleFilter} />
+        <TextField placeholder="Type to filter" onChange={this.handleFilter} />
       </div>
     )
   }

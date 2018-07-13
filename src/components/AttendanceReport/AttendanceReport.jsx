@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import { DataConsumer } from '../../DataProvider';
 import React from 'react';
-import { Tabs, Tab } from 'material-ui/Tabs';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
 import {
   ReportCardContainer,
@@ -12,6 +13,14 @@ import AttendanceReportSummary from './AttendanceReportSummary/AttendanceReportS
 const RELEVANT_ATTENDANCE_COLUMN_IDS = [4, 10, 11];
 
 class AttendanceReport extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      tabIndex: 0,
+    };
+  }
+
   getStudentRows = () => {
     const { report: { data }, students} = this.props;
 
@@ -75,6 +84,28 @@ class AttendanceReport extends React.Component {
     this.props.handleShareClick(this.props.report.query);
   }
 
+  handleTabChange = (e) => {
+    if (this.state.tabIndex === 0) {
+      this.setState({tabIndex: 1});
+    } else {
+      this.setState({tabIndex: 0});
+    }
+  }
+
+  getTabContents = () => {
+    const studentRowData = this.getStudentRows();
+
+    if (this.state.tabIndex === 0) {
+      return (
+        <ReportCardContainer children={this.getSnapshotRows(studentRowData)} />
+      );
+    } else {
+      return (
+        <ReportCardContainer children={studentRowData} />
+      );
+    }
+  }
+
   render() {
     const {
       displayMode,
@@ -99,9 +130,6 @@ class AttendanceReport extends React.Component {
       deselectReport,
     } = this.props;
     const { title, subheading, id } = report;
-    const studentRowData = this.getStudentRows();
-
-    const tabStyle = { color: 'black', fontSize: '2em'}
 
     return (
       <div style={{width: '100%'}}>
@@ -113,19 +141,19 @@ class AttendanceReport extends React.Component {
           handleSaveClick={!id ? this.handleSaveClick : null}
           handleShareClick={this.handleShareClick}
         />
-        <Tabs style={{width: '100%', color:'black'}}
-          tabItemContainerStyle={{backgroundColor: 'white', color:'black'}}
-          inkBarStyle={{backgroundColor:'#F9bC3C'}}
-        >
-          <Tab label="Report" buttonStyle={tabStyle}>
-              <div style={{padding:'15px'}}>
-              <ReportCardContainer children={studentRowData} />
-              </div>
-          </Tab>
-          <Tab label="Snapshot" buttonStyle={tabStyle}>
-            <ReportCardContainer children={this.getSnapshotRows(studentRowData)} />
-          </Tab>
+        <Tabs
+          value={this.state.tabIndex}
+          style={{color:'black'}}
+          onChange={this.handleTabChange}
+          indicatorColor="primary"
+          centered={true}
+          >
+          <Tab label="Report" />
+          <Tab label="Snapshot" />
         </Tabs>
+        <div style={{padding:'15px'}}>
+          {this.getTabContents()}
+        </div>
         </div>
 
     )
