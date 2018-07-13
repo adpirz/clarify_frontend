@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import Modal from 'material-ui/Modal';
 import { DataConsumer } from '../../DataProvider';
 import { Loading, Error } from '../PatternLibrary/';
 import { AttendanceReport, GradeReport } from '../';
@@ -18,6 +19,7 @@ class Worksheet extends React.PureComponent {
 
     this.state = {
       reportCrumbs: [],
+      showShareReportModal: false,
     };
   }
 
@@ -66,7 +68,7 @@ class Worksheet extends React.PureComponent {
       reportType: 'grades',
       group: 'student',
       // We always want a studentId for crumb reports so we can pull it off of
-      // the record that was just selected, or the previous reports'
+      // the record that was just selected, or the previous report's
       groupId: depth === 'student' ? depthId : groupId,
       courseId,
       categoryId,
@@ -86,6 +88,14 @@ class Worksheet extends React.PureComponent {
     this.props.submitReportQuery(query);
   }
 
+  toggleShareReportModal = (reportId) => {
+    this.setState((prevState) => {
+      return {
+        showShareReportModal: !prevState.showShareReportModal,
+      };
+    });
+  }
+
   render() {
     const {
       reportDataList,
@@ -94,7 +104,9 @@ class Worksheet extends React.PureComponent {
       selectedReportQuery,
       reportError,
     } = this.props;
+
     let worksheetBody = null;
+
     if (isLoadingReport || !worksheet) {
       return <Loading />;
     } else if (reportError) {
@@ -117,7 +129,10 @@ class Worksheet extends React.PureComponent {
       const { type } = reportForDisplay;
       if (type === 'attendance') {
         worksheetBody = (
-          <AttendanceReport report={reportForDisplay} />
+          <AttendanceReport
+            report={reportForDisplay}
+            handleShareClick={this.toggleShareReportModal}
+          />
         );
       } else if (type === 'grades') {
         worksheetBody = (
@@ -126,6 +141,7 @@ class Worksheet extends React.PureComponent {
             pushReportLevel={this.handleReportCrumbPush}
             popReportLevel={this.handleReportCrumbPop}
             reportCrumbs={this.state.reportCrumbs}
+            handleShareClick={this.toggleShareReportModal}
           />
         );
       }
@@ -142,6 +158,7 @@ class Worksheet extends React.PureComponent {
                 report={reportDataObject}
                 key={reportDataObject.query}
                 selectReport={this.props.selectReport}
+                handleShareReportClick={this.toggleShareReportModal}
               />
             );
           } else if (type === 'grades') {
@@ -151,6 +168,7 @@ class Worksheet extends React.PureComponent {
                 displayMode="summary"
                 key={reportDataObject.query}
                 selectReport={this.props.selectReport}
+                handleShareReportClick={this.toggleShareReportModal}
               />
             );
           }
@@ -171,6 +189,12 @@ class Worksheet extends React.PureComponent {
             flexWrap: 'wrap'}}>
           {worksheetBody}
         </div>
+        <Modal
+          open={this.state.showShareReportModal}
+          onClose={this.toggleShareReportModal}
+          onEscapeKeyDown={this.toggleShareReportModal}>
+          <h1> HELLO WORLD </h1>
+        </Modal>
       </div>
     );
   }

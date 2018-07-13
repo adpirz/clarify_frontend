@@ -48,12 +48,6 @@ class AttendanceReport extends React.Component {
     }, []);
   }
 
-  handleSaveReport = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    this.props.saveReport(this.props.report.query);
-  }
-
   getSnapshotRows = studentRowData => _.sortBy(studentRowData, [(r) => {
     let resultMeasure;
     _.forEach(r.measures, (m) => {
@@ -62,10 +56,23 @@ class AttendanceReport extends React.Component {
     return parseFloat(resultMeasure.slice(0,-1))
   }]).slice(0,5)
 
-  handleDeleteReport = (e) => {
+  handleDeleteClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
     this.props.deleteReport(this.props.report.id);
+  }
+
+  handleSaveClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    this.props.saveReport(this.props.report.query);
+  }
+
+  handleShareClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    this.props.handleShareClick(this.props.report.query);
   }
 
   render() {
@@ -82,8 +89,9 @@ class AttendanceReport extends React.Component {
         <AttendanceReportSummary
           report={report}
           selectReport={selectReport}
-          deleteReport={this.handleDeleteReport}
-          saveReport={this.handelSaveReport}
+          handleDeleteClick={this.handleDeleteClick}
+          handleSaveClick={this.handleSaveClick}
+          handleShareClick={this.handleShareClick}
         />
       );
     }
@@ -93,34 +101,33 @@ class AttendanceReport extends React.Component {
     const { title, subheading, id } = report;
     const studentRowData = this.getStudentRows();
 
-    const buttonStyle = { color: 'black', fontSize: '2em'}
+    const tabStyle = { color: 'black', fontSize: '2em'}
 
     return (
+      <div style={{width: '100%'}}>
+        <ReportHeading
+          title={title}
+          subheading={subheading}
+          deselectReport={deselectReport}
+          handleDeleteClick={!!id ? this.handleDeleteClick : null}
+          handleSaveClick={!id ? this.handleSaveClick : null}
+          handleShareClick={this.handleShareClick}
+        />
+        <Tabs style={{width: '100%', color:'black'}}
+          tabItemContainerStyle={{backgroundColor: 'white', color:'black'}}
+          inkBarStyle={{backgroundColor:'#F9bC3C'}}
+        >
+          <Tab label="Report" buttonStyle={tabStyle}>
+              <div style={{padding:'15px'}}>
+              <ReportCardContainer children={studentRowData} />
+              </div>
+          </Tab>
+          <Tab label="Snapshot" buttonStyle={tabStyle}>
+            <ReportCardContainer children={this.getSnapshotRows(studentRowData)} />
+          </Tab>
+        </Tabs>
+        </div>
 
-      <Tabs style={{width: '100%', color:'black'}} 
-        tabItemContainerStyle={{backgroundColor: 'white', color:'black'}}
-        inkBarStyle={{backgroundColor:'#F9bC3C'}}
-      >
-        <Tab label="Report" buttonStyle={buttonStyle}>
-            <div style={{padding:'15px'}}>
-            <ReportHeading title={title} subheading={subheading} />
-            <ReportCardContainer
-              children={studentRowData}
-              deselectReport={deselectReport}
-              saveReport={id ? null : this.handleSaveReport}
-              deleteReport={id ? this.handleDeleteReport : null}
-            />
-            </div>
-        </Tab>
-        <Tab label="Snapshot" buttonStyle={buttonStyle}>
-          <ReportCardContainer
-              children={this.getSnapshotRows(studentRowData)}
-              deselectReport={deselectReport}
-              saveReport={id ? null : this.handleSaveReport}
-              deleteReport={id ? this.handleDeleteReport : null}
-            />
-        </Tab>
-      </Tabs>
     )
   }
 }

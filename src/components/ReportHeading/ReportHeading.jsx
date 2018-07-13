@@ -1,12 +1,8 @@
 import _ from 'lodash';
 import React from 'react';
 import styled from 'styled-components';
+import { ReportActions, Button } from '../PatternLibrary'
 import { fonts } from '../PatternLibrary/constants';
-
-const ReportHeading = styled.div`
-  display: flex;
-  align-items: center;
-`;
 
 const ReportTitle = styled.h4`
   display: inline-block;
@@ -20,13 +16,29 @@ const Subheading = styled.h5`
   margin: 0;
 `;
 
-export default ({title, crumbs, subheading}) => {
+export default ({
+  title,
+  crumbs,
+  subheading,
+  deselectReport,
+  handleSaveClick,
+  handleDeleteClick,
+  handleShareClick,
+}) => {
   return (
-    <ReportHeading>
+    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+      <Button onClick={deselectReport} style={{display: 'inline-block'}}>
+        <i className="fas fa-share" style={{transform: "scaleX(-1)"}} />
+      </Button>
       <div>
         <ReportTitle>{title}</ReportTitle>
         <Subheading>{subheading || null}</Subheading>
       </div>
+      <ReportActions
+        handleDeleteClick={handleDeleteClick}
+        handleSaveClick={handleSaveClick}
+        handleShareClick={handleShareClick}
+      />
       {_.map(crumbs, (c) => {
         return (
           <span key={c.query}>
@@ -34,6 +46,6 @@ export default ({title, crumbs, subheading}) => {
           </span>
         );
       })}
-    </ReportHeading>
+    </div>
   )
 };

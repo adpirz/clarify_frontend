@@ -1,19 +1,21 @@
 import styled from 'styled-components';
-import { lighten, darken } from 'polished';
-
+import { lighten } from 'polished';
+import _ from 'lodash';
 import React from 'react';
+
 import { DataConsumer } from '../../../DataProvider';
-import { ReportSummaryContainer } from '../../PatternLibrary';
+import {
+  ReportSummaryContainer,
+  ReportActions,
+} from '../../PatternLibrary';
 import {
   fonts,
-  colors,
 } from '../../PatternLibrary/constants';
 
 const Title = styled.span`
   font-weight: bold;
   font-size: 1.2em;
   padding-bottom: 3px;
-  width: 80%;
 `;
 
 const SummaryTable = styled.table`
@@ -51,51 +53,18 @@ const Footer = styled.div`
   text-align:right;
 `
 
-const ActionIcon = styled.i`
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  color: ${(props) => {return props.color}};
-  font-size: ${fonts.large};
-  cursor: pointer;
-  &:hover {
-    color: ${(props) => {return darken(.1, props.color)}};
-  }
-`;
-
 class AttendanceReportSummary extends React.PureComponent {
   handleSelectReport = (e) => {
     e.preventDefault();
     this.props.selectReport(this.props.report.query);
   }
 
-  getDeleteIcon = () => {
-    const { report: { id }, deleteReport } = this.props;
-    if (!id) {
-      return null;
-    }
-
-    return (
-      <ActionIcon
-        className="fas fa-times"
-        color={colors.warningRed}
-        onClick={deleteReport}
-      />
-    );
-  }
-
-  getSaveIcon = () => {
-    if (this.props.report.id) {
-      return null;
-    }
-
-    return (
-      <ActionIcon
-        className="fas fa-save"
-        color={colors.primaryGreen}
-        onClick={this.props.saveReport}
-      />
-    );
+  formatTitle = title => {
+    return title.split(":").map((text, i) => {
+      return (
+        <span key={text}>{text}{i === 0 ? ":" : null}</span>
+      )
+    });
   }
   formatTitle = title => title.split(":").map((text, i) => (<div>{text}{i === 0 ? ":" : null}</div>))
 
@@ -127,8 +96,11 @@ class AttendanceReportSummary extends React.PureComponent {
       <ReportSummaryContainer
         onClick={this.handleSelectReport}
         >
-        {this.getDeleteIcon()}
-        {this.getSaveIcon()}
+        <ReportActions
+          handleDeleteClick={!!_.get(this.props.report, 'id') ? this.props.handleDeleteClick : null}
+          handleSaveClick={!_.get(this.props.report, 'id') ? this.props.handleSaveClick : null}
+          handleShareClick={this.props.handleShareClick}
+        />
         <Title>{this.formatTitle(title)}</Title>
         {reportNodes}
         <Footer>{subheading}</Footer>
