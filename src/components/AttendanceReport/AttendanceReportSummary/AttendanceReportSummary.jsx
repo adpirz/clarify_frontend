@@ -66,7 +66,6 @@ class AttendanceReportSummary extends React.PureComponent {
       )
     });
   }
-  formatTitle = title => title.split(":").map((text, i) => (<div>{text}{i === 0 ? ":" : null}</div>))
 
   render() {
     const { report } = this.props;
