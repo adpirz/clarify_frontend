@@ -8,15 +8,15 @@ class ApiFetcher {
     });
 
     return fetch(apiRequest).then(resp => {
-      if (resp.status !== 404) {
+      if (resp.status !== 404 && resp.status !== 400 && resp.status !== 500) {
         return resp.json().then((body) => ({
           status: resp.status,
-          body,
+          data: body.data,
         }));
       } else {
         return {
           status: resp.status,
-          body: null,
+          data: null,
         };
       }
     });
@@ -34,12 +34,12 @@ class ApiFetcher {
       if (resp.status !== 404 && resp.status !== 400) {
         return resp.json().then((body) => ({
           status: resp.status,
-          body,
+          data: body.data,
         }));
       } else {
         return {
           status: resp.status,
-          body: null,
+          data: null,
         };
       }
     });

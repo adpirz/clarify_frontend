@@ -119,14 +119,13 @@ class Worksheet extends React.PureComponent {
     const {
       reportDataList,
       isLoadingReport,
-      worksheet,
       selectedReportQuery,
       reportError,
     } = this.props;
 
     let worksheetBody = null;
 
-    if (isLoadingReport || !worksheet) {
+    if (isLoadingReport) {
       return <Loading />;
     } else if (reportError) {
       worksheetBody = (
@@ -135,14 +134,14 @@ class Worksheet extends React.PureComponent {
         </Error>
       )
     } else if (_.isEmpty(reportDataList)) {
-        worksheetBody = (
-          <div>
-            <p>
-              No Reports saved at the moment. Try typing a student or class name in the
-              search bar <span role="img" aria-label="pointing up to search bar">☝️</span>
-            </p>
+      worksheetBody = (
+        <div>
+          <p>
+            No Reports saved at the moment. Try typing a student or class name in the
+            search bar <span role="img" aria-label="pointing up to search bar">☝️</span>
+          </p>
         </div>
-        );
+      );
     } else if (selectedReportQuery) {
       const reportForDisplay = _.find(reportDataList, {query: selectedReportQuery});
       const { type } = reportForDisplay;
@@ -164,40 +163,42 @@ class Worksheet extends React.PureComponent {
           />
         );
       }
-    } else {
+    }
+    else {
       worksheetBody = _.map(reportDataList, (reportDataObject) => {
         const { type, query, id, isTopLevelReport } = reportDataObject;
         if ( !(id || isTopLevelReport)) {
           return;
         }
         if (type === 'attendance') {
-            return (
-              <AttendanceReport
-                displayMode="summary"
-                report={reportDataObject}
-                key={reportDataObject.query}
-                selectReport={this.props.selectReport}
-                handleShareReportClick={this.toggleShareReportModal}
-              />
-            );
-          } else if (type === 'grades') {
-            return (
-              <GradeReport
-                initialQuery={query}
-                displayMode="summary"
-                key={reportDataObject.query}
-                selectReport={this.props.selectReport}
-                handleShareReportClick={this.toggleShareReportModal}
-              />
-            );
-          }
-        });
-      }
+          return (
+            <AttendanceReport
+              displayMode="summary"
+              report={reportDataObject}
+              key={reportDataObject.query}
+              selectReport={this.props.selectReport}
+              handleShareReportClick={this.toggleShareReportModal}
+            />
+          );
+        } else if (type === 'grades') {
+          return (
+            <GradeReport
+              initialQuery={query}
+              displayMode="summary"
+              key={reportDataObject.query}
+              selectReport={this.props.selectReport}
+              handleShareReportClick={this.toggleShareReportModal}
+            />
+          );
+        }
+      });
+    }
+    const { first_name, last_name } = this.props.user;
     return (
       <div>
         <div>
           <span style={{fontSize: fonts.huge}}>
-            {this.props.selectedReportQuery ? null : worksheet.title}
+            {this.props.selectedReportQuery ? null : `${first_name} ${last_name}'s Worksheet`}
           </span>
           <hr style={{margin: '0', width: '75%'}}/>
         </div>
@@ -228,7 +229,6 @@ export default props => (
       user,
       reportDataList,
       isLoadingReport,
-      worksheet,
       selectReport,
       selectedReportQuery,
       submitReportQuery,
@@ -242,7 +242,6 @@ export default props => (
         getStaff={getStaff}
         reportDataList={reportDataList}
         isLoadingReport={isLoadingReport}
-        worksheet={worksheet}
         selectReport={selectReport}
         selectedReportQuery={selectedReportQuery}
         submitReportQuery={submitReportQuery}

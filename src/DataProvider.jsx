@@ -24,12 +24,10 @@ export class DataProvider extends React.Component {
       sections: null,
       gradeLevels: null,
       reportDataList: null,
-      worksheet: null,
       selectedReportQuery: null,
       staff: [],
       selectReport: this.selectReport,
       deselectReport: this.deselectReport,
-      getReportDataForWorksheet: this.getReportDataForWorksheet,
       saveReport: this.saveReport,
       deleteReport: this.deleteReport,
       initializeUser: this.initializeUser,
@@ -60,11 +58,8 @@ export class DataProvider extends React.Component {
 
   hydrateUserData = () => {
     this.setState({isLoading: true});
-    return this.getQueryObjects()
-    .then(this.getWorksheet)
-    .then((resp) => {
-      const worksheet = _.head(resp.body.data);
-      this.getReportDataForWorksheet(worksheet).then((resp) => {
+    return this.getQueryObjects().then(() => {
+      this.getUserReports().then(() => {
         this.setState({isLoading: false});
       });
     })
@@ -75,8 +70,8 @@ export class DataProvider extends React.Component {
       const newState = {
         isLoading: false,
       };
-      if (resp.status !== 404) {
-        newState.user = resp.body;
+      if (resp.data) {
+        newState.user = resp.data;
       }
         this.setState(newState);
         return resp;
@@ -88,8 +83,8 @@ export class DataProvider extends React.Component {
     ApiFetcher.post('session', credentials).then((resp) => {
       this.setState((prevState) => {
         const newState = {isLoading: false};
-        if (resp.status === 200 || resp.status === 201) {
-          newState.user = resp.body;
+        if (resp.data) {
+          newState.user = resp.data;
           this.hydrateUserData();
         } else {
           newState.errors = {...prevState.errors, ...{loginError: `There was an error with your username and password.
@@ -110,40 +105,34 @@ export class DataProvider extends React.Component {
     const promises = [];
     promises.push(ApiFetcher.get('student').then((resp) => {
       if (resp.status !== 404) {
-        this.setState({students: resp.body.data});
+        this.setState({students: resp.data});
       }
     }));
     promises.push(ApiFetcher.get('section').then((resp) => {
       if (resp.status !== 404) {
-        this.setState({sections: resp.body.data});
+        this.setState({sections: resp.data});
       }
     }));
     promises.push(ApiFetcher.get('grade-level').then((resp) => {
       if (resp.status !== 404) {
-        this.setState({gradeLevels: resp.body.data});
+        this.setState({gradeLevels: resp.data});
       }
     }));
 
     return Promise.all(promises);
   }
 
-  getWorksheet = () => {
-    return ApiFetcher.get('worksheet').then((resp) => {
-      if (resp.body) {
-        this.setState({
-          worksheet: _.head(resp.body.data) || {},
-        });
+  getUserReports = () => {
+    return ApiFetcher.get('report').then((reportsResponse) => {
+      if (reportsResponse.data) {
+        return this.fetchDataForReports(reportsResponse.data);
       }
-      return resp;
-    });
+    })
   }
 
-  getReportDataForWorksheet = (worksheet) => {
-    if (!worksheet || !worksheet.reports.length) {
-      return Promise.resolve({});
-    }
+  fetchDataForReports = (reports) => {
     const reportDataFetchPromises = [];
-    _.forEach(worksheet.reports, (report) => {
+    _.forEach(reports, (report) => {
       reportDataFetchPromises.push(ReportFetcher.get(report.id));
     });
     return Promise.all(reportDataFetchPromises).then(reportDataList => {
@@ -164,22 +153,19 @@ export class DataProvider extends React.Component {
   saveReport = (query) => {
     this.setState({isLoading: true});
     ApiFetcher.post('report', {query}).then((resp) => {
-      const newReport = _.get(resp, 'body.data');
+      const newReport = _.get(resp, 'data');
       if (newReport) {
-        ApiFetcher.post('worksheet-membership', {report_id: newReport.id}).then((resp) => {
-          ReportFetcher.get(newReport.id)
-          .then((newReportData) => {
-            this.setState((prevState) => {
-              const newReportDataList = _.map(prevState.reportDataList, (rd) => {
-                return rd.query === newReportData.query ? newReportData : rd;
-              });
-              return {
-                reportDataList: newReportDataList,
-                selectedReportQuery: null,
-                isLoading: false,
-              }
+        ReportFetcher.get(newReport.id).then((newReportData) => {
+          this.setState((prevState) => {
+            const newReportDataList = _.map(prevState.reportDataList, (rd) => {
+              return rd.query === newReportData.query ? newReportData : rd;
             });
-          })
+            return {
+              reportDataList: newReportDataList,
+              selectedReportQuery: null,
+              isLoading: false,
+            }
+          });
         })
       }
     });
@@ -387,7 +373,7 @@ export class DataProvider extends React.Component {
 
   getStaff = () => {
     return ApiFetcher.get('staff').then((resp) => {
-        this.setState({staff: resp.body.data});
+        this.setState({staff: resp.data});
     });
   }
 
@@ -411,7 +397,7 @@ export class DataProvider extends React.Component {
         if (reportRequest.status === 201) {
           sharePromises.push(ApiFetcher.post('report-share', {
             parent_report_id: _.get(source_report, '[0].id'),
-            child_report_id: reportRequest.body.data.id,
+            child_report_id: reportRequest.data.id,
           }))
         }
       });
