@@ -149,7 +149,7 @@ class Worksheet extends React.PureComponent {
         worksheetBody = (
           <AttendanceReport
             report={reportForDisplay}
-            handleShareClick={this.toggleShareReportModal}
+            showShareReportModal={this.toggleShareReportModal}
           />
         );
       } else if (type === 'grades') {
@@ -159,7 +159,7 @@ class Worksheet extends React.PureComponent {
             pushReportLevel={this.handleReportCrumbPush}
             popReportLevel={this.handleReportCrumbPop}
             reportCrumbs={this.state.reportCrumbs}
-            handleShareClick={this.toggleShareReportModal}
+            showShareReportModal={this.toggleShareReportModal}
           />
         );
       }
@@ -177,7 +177,7 @@ class Worksheet extends React.PureComponent {
               report={reportDataObject}
               key={reportDataObject.query}
               selectReport={this.props.selectReport}
-              handleShareReportClick={this.toggleShareReportModal}
+              showShareReportModal={this.toggleShareReportModal}
             />
           );
         } else if (type === 'grades') {
@@ -187,7 +187,7 @@ class Worksheet extends React.PureComponent {
               displayMode="summary"
               key={reportDataObject.query}
               selectReport={this.props.selectReport}
-              handleShareReportClick={this.toggleShareReportModal}
+              showShareReportModal={this.toggleShareReportModal}
             />
           );
         }

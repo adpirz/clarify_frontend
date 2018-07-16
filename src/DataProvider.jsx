@@ -391,7 +391,7 @@ export class DataProvider extends React.Component {
     // relationship.
     const source_report = _.filter(this.state.reportDataList, {query});
 
-    Promise.all(reportPromises).then((reports) => {
+    return Promise.all(reportPromises).then((reports) => {
       const sharePromises = []
       _.forEach(reports, (reportRequest) => {
         if (reportRequest.status === 201) {

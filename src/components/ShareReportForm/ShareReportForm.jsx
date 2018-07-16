@@ -63,6 +63,6 @@ class ShareReportForm extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({staff, shareReport}) => (<ShareReportForm staff={staff} shareReport={shareReport} {...props} />)}
+    {({staff}) => (<ShareReportForm staff={staff} {...props} />)}
   </DataConsumer>
 )

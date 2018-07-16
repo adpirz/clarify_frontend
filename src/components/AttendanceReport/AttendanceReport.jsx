@@ -81,7 +81,7 @@ class AttendanceReport extends React.Component {
     e.preventDefault();
     e.stopPropagation();
 
-    this.props.handleShareClick(this.props.report.query);
+    this.props.showShareReportModal(this.props.report.query);
   }
 
   handleTabChange = (e) => {

@@ -31,7 +31,7 @@ class ApiFetcher {
     });
 
     return fetch(apiRequest).then(resp => {
-      if (resp.status !== 404 && resp.status !== 400) {
+      if (resp.status !== 404 && resp.status !== 400 && resp.status !== 500) {
         return resp.json().then((body) => ({
           status: resp.status,
           data: body.data,

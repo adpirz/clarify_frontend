@@ -31,7 +31,9 @@ class GradeReport extends React.Component {
     e.preventDefault();
     e.stopPropagation();
 
-    this.props.handleShareClick(this.props.report.query);
+    const { reportCrumbs, initialQuery } = this.props;
+    const currentReportQuery = _.get(_.last(reportCrumbs), 'query', initialQuery);
+    this.props.showShareReportModal(currentReportQuery);
   }
 
   render() {
@@ -78,7 +80,7 @@ class GradeReport extends React.Component {
           title={currentReportTitle}
           crumbs={reportCrumbs}
           deselectReport={deselectReport}
-          handleDeleteClick={!!id ? this.handleDeleteClick : null}
+          handleDeleteClick={id ? this.handleDeleteClick : null}
           handleSaveClick={!id ? this.handleSaveClick : null}
           handleShareClick={this.handleShareClick}
         />
