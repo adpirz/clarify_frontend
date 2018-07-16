@@ -40,7 +40,7 @@ class ReportCardContainer extends React.Component {
   }
 
   renderCardsOrEmptyState = (filteredChildren) => {
-    const { pushReportLevel } = this.props;
+    const { handlePushReportLevel } = this.props;
     if (!filteredChildren.length) {
       return (
         <EmptyState>
@@ -56,7 +56,7 @@ class ReportCardContainer extends React.Component {
         {_.map(filteredChildren, (child) => {
           return (
             <ReportCard
-              selectCard={child.children ? pushReportLevel : null}
+              selectCard={child.children ? handlePushReportLevel : null}
               key={child.id}
               {...child}
             />

@@ -29,14 +29,28 @@ const propTypes = {
   handleSaveClick: PropTypes.func,
   handleShareClick: PropTypes.func,
   handleDeleteClick: PropTypes.func,
+  handlePopReportLevel: PropTypes.func,
 };
 
 const ReportActions = ({
   handleSaveClick,
   handleShareClick,
-  handleDeleteClick
+  handleDeleteClick,
+  handlePopReportLevel,
 }) => {
   const actions = [];
+
+  if (handlePopReportLevel) {
+    actions.push((
+      <ActionIcon
+        key="pop"
+        className="fas fa-share"
+        color={colors.black}
+        style={{transform: "scaleX(-1)"}}
+        onClick={handlePopReportLevel}
+      />
+    ));
+  }
 
   if (handleSaveClick) {
     actions.push((
@@ -46,7 +60,7 @@ const ReportActions = ({
         color={colors.primaryGreen}
         onClick={handleSaveClick}
       />
-    ))
+    ));
   }
 
   if (handleShareClick) {
@@ -57,7 +71,7 @@ const ReportActions = ({
         color={colors.mainTheme}
         onClick={handleShareClick}
       />
-    ))
+    ));
   }
 
   if (handleDeleteClick) {
@@ -68,8 +82,9 @@ const ReportActions = ({
         color={colors.warningRed}
         onClick={handleDeleteClick}
       />
-    ))
+    ));
   }
+
   return (
     <ActionIconContainer>
       {actions}

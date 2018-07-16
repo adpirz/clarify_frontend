@@ -58,8 +58,8 @@ class GradeReport extends React.Component {
     }
 
     const {
-      pushReportLevel,
-      popReportLevel,
+      handlePushReportLevel,
+      handlePopReportLevel,
       reportCrumbs,
       deselectReport,
     } = this.props;
@@ -83,14 +83,11 @@ class GradeReport extends React.Component {
           handleDeleteClick={id ? this.handleDeleteClick : null}
           handleSaveClick={!id ? this.handleSaveClick : null}
           handleShareClick={this.handleShareClick}
+          handlePopReportLevel={reportCrumbs.length ? handlePopReportLevel : null}
         />
         <ReportCardContainer
+          handlePushReportLevel={handlePushReportLevel}
           children={currentReportData}
-          pushReportLevel={pushReportLevel}
-          popReportLevel={reportCrumbs.length ? popReportLevel : null}
-          deselectReport={deselectReport}
-          saveReport={id ? null : this.handleSaveReport}
-          deleteReport={id ? this.handleDeleteReport : null}
         />
       </div>
     );

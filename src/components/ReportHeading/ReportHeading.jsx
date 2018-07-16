@@ -24,28 +24,30 @@ export default ({
   handleSaveClick,
   handleDeleteClick,
   handleShareClick,
+  handlePopReportLevel,
 }) => {
   return (
-    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
       <Button onClick={deselectReport} style={{display: 'inline-block'}}>
-        <i className="fas fa-share" style={{transform: "scaleX(-1)"}} />
+        Back to worksheet
       </Button>
       <div>
         <ReportTitle>{title}</ReportTitle>
         <Subheading>{subheading || null}</Subheading>
+        {_.map(crumbs, (c) => {
+          return (
+            <span key={c.query}>
+              &nbsp;>&nbsp;{c.label}
+            </span>
+          );
+        })}
       </div>
       <ReportActions
         handleDeleteClick={handleDeleteClick}
         handleSaveClick={handleSaveClick}
         handleShareClick={handleShareClick}
+        handlePopReportLevel={handlePopReportLevel}
       />
-      {_.map(crumbs, (c) => {
-        return (
-          <span key={c.query}>
-            > {c.label}
-          </span>
-        );
-      })}
     </div>
   )
 };

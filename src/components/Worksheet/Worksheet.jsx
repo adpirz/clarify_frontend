@@ -156,8 +156,8 @@ class Worksheet extends React.PureComponent {
         worksheetBody = (
           <GradeReport
             initialQuery={selectedReportQuery}
-            pushReportLevel={this.handleReportCrumbPush}
-            popReportLevel={this.handleReportCrumbPop}
+            handlePushReportLevel={this.handleReportCrumbPush}
+            handlePopReportLevel={this.handleReportCrumbPop}
             reportCrumbs={this.state.reportCrumbs}
             showShareReportModal={this.toggleShareReportModal}
           />
@@ -200,7 +200,6 @@ class Worksheet extends React.PureComponent {
           <span style={{fontSize: fonts.huge}}>
             {this.props.selectedReportQuery ? null : `${first_name} ${last_name}'s Worksheet`}
           </span>
-          <hr style={{margin: '0', width: '75%'}}/>
         </div>
         <div style={{
             display: 'flex',
