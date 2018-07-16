@@ -12,8 +12,6 @@ import { DatePicker } from 'material-ui';
 /*
 TODO: The following
 - Style multivalue labels
-- Fix the date picker
-- Make the date picker auto focus when you've selected attendance and have a valid query
 - Activate and deactivate search button when appropriate
 - Clean up buttons
 */
@@ -120,8 +118,6 @@ class ReportQueryBuilder extends React.Component {
 
     this.state = {
       selectedOptions: [],
-      fromDate: this.getBeginningOfSchoolYear(),
-      toDate: null,
       errorMessage: null,
       menuIsOpen: undefined,
     };
@@ -162,14 +158,6 @@ class ReportQueryBuilder extends React.Component {
     this.optionsGenerator(sections, 'section');
     this.optionsGenerator(gradeLevels, 'grade_level');
   }
-
-  handleChangeFromDate = (event, date) => {
-    this.setState({ fromDate: date });
-  };
-
-  handleChangeToDate = (event, date) => {
-    this.setState({ toDate: date });
-  };
 
   clearSelectOptions = () => {
     _.map(reactSelectOptions, (optionGroup) => {
@@ -234,26 +222,13 @@ class ReportQueryBuilder extends React.Component {
     });
   }
 
-  // If it's before January 1, get august 1 of that year.
-  // If it's after January 1, get august 1 of the previous year.
-  getBeginningOfSchoolYear = () => {
-    const currentDate = new Date();
-    // 0 == January and 7 == august
-    if (0 < currentDate.month < 7) {
-      // The beginning of the school year is the previous calendar years august 1st
-      return new Date(currentDate.getFullYear() - 1, 7);
-    } else {
-      return new Date(currentDate.getFullYear(), 7);
-    }
-  }
-
   submitQuery = (e) => {
     e.preventDefault();
     if(!this.isValidQuery(this.state.selectedOptions)) {
       this.setState({errorMessage: `Try typing "attendance" and a student's name in the search bar.`});
       return;
     }
-    const { selectedOptions, fromDate, toDate } = this.state;
+    const { selectedOptions } = this.state;
 
     let group;
     let reportType;
@@ -277,8 +252,6 @@ class ReportQueryBuilder extends React.Component {
       group,
       groupId,
       reportType,
-      fromDate,
-      toDate,
     };
 
     const queryString = this.props.generateReportQuery(reportParameters)
@@ -292,7 +265,7 @@ class ReportQueryBuilder extends React.Component {
   };
 
   render() {
-    const { fromDate, selectedOptions, menuIsOpen } = this.state;
+    const { selectedOptions, menuIsOpen } = this.state;
 
     let groupOptions = reactSelectOptions;
 
@@ -383,27 +356,6 @@ class ReportQueryBuilder extends React.Component {
               styles={styles}
               style={this.state.error ? {border: 'none'} : null}
             />
-            <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                margin: '0 auto'}}>
-              <DatePicker
-                onChange={this.handleChangeFromDate}
-                autoOk
-                floatingLabelText="From Date *"
-                defaultDate={fromDate}
-                locale="en-US"
-                style={{display: 'inline-block', margin: '0 20px'}}
-              />
-              <DatePicker
-                onChange={this.handleChangeToDate}
-                autoOk
-                floatingLabelText="To Date (empty signifies to-date)"
-                locale="en-US"
-                style={{display: 'inline-block', margin: '0 20px'}}
-              />
-            </div>
           </div>
           <Error>
             {this.state.errorMessage}

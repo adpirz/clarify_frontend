@@ -7,8 +7,6 @@ import {
   fonts,
 } from '../PatternLibrary/constants';
 
-const FROM_DATE_REGEX = /from_date=[0-9]+-[0-9]+-[0-9]+/g;
-const TO_DATE_REGEX = /to_date=[0-9]+-[0-9]+-[0-9]+/g;
 const GROUP_REGEX = /group=[a-z]+/g;
 const GROUP_ID_REGEX = /group_id=[0-9]+/g;
 const COURSE_ID_REGEX = /course_id=[0-9]+/g;
@@ -33,20 +31,12 @@ class Worksheet extends React.PureComponent {
     const { selectedReportQuery } = this.props;
     const mostRecentQuery = _.get(_.last(this.state.reportCrumbs), 'query', selectedReportQuery);
 
-    const fromDateMatch = mostRecentQuery.match(FROM_DATE_REGEX);
-    const toDateMatch = mostRecentQuery.match(TO_DATE_REGEX);
     const groupMatch = mostRecentQuery.match(GROUP_REGEX);
     const groupIdMatch = mostRecentQuery.match(GROUP_ID_REGEX);
     const courseIdMatch = mostRecentQuery.match(COURSE_ID_REGEX);
     const categoryIdMatch = mostRecentQuery.match(CATEGORY_ID_REGEX);
 
     const initialParameters = {};
-    if (fromDateMatch) {
-      initialParameters.fromDate = fromDateMatch[0].split('=')[1];
-    }
-    if (toDateMatch) {
-      initialParameters.toDate = toDateMatch[0].split('=')[1];
-    }
     if (groupMatch) {
       initialParameters.group = groupMatch[0].split('=')[1];
     }
@@ -71,10 +61,8 @@ class Worksheet extends React.PureComponent {
   }
 
   handleReportCrumbPush = (depth, depthId, label) => {
-    const { fromDate, toDate, groupId, courseId, categoryId } = this.getLatestQueryParameters();
+    const { groupId, courseId, categoryId } = this.getLatestQueryParameters();
     const newQueryParameters = {
-      fromDate: fromDate,
-      toDate: toDate,
       reportType: 'grades',
       group: 'student',
       // We always want a studentId for crumb reports so we can pull it off of
