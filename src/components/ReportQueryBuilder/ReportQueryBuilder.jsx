@@ -166,7 +166,7 @@ class ReportQueryBuilder extends React.Component {
     })
   }
 
-  handleChange = (selectedOptions, action) => {
+  handleChange = (selectedOptions) => {
     this.setState((prevState) => {
       const isValidQuery = this.isValidQuery(selectedOptions);
       return {

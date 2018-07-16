@@ -20,7 +20,7 @@ class Worksheet extends React.PureComponent {
     this.state = {
       reportCrumbs: [],
       showShareReportModal: false,
-
+      parentReportQuery: '',
     };
   }
 
@@ -89,12 +89,30 @@ class Worksheet extends React.PureComponent {
     this.props.submitReportQuery(query);
   }
 
-  toggleShareReportModal = (reportId) => {
-    this.setState((prevState) => {
-      return {
-        showShareReportModal: !prevState.showShareReportModal,
-      };
-    });
+  handleShareReportClick = (targetStaff) => {
+    this.props.shareReport(this.state.parentReportQuery, targetStaff)
+    .then(() => {
+      this.setState({
+        showShareReportModal: false,
+        parentReportQuery: '',
+      });
+    })
+  }
+
+  toggleShareReportModal = (parentReportQuery) => {
+    if (!this.state.showShareReportModal) {
+      this.props.getStaff().then(() => {
+        this.setState({
+          showShareReportModal: true,
+          parentReportQuery,
+        });
+      })
+    } else {
+      this.setState({
+        showShareReportModal: false,
+        parentReportQuery: '',
+      });
+    }
   }
 
   render() {
@@ -194,7 +212,10 @@ class Worksheet extends React.PureComponent {
           open={this.state.showShareReportModal}
           onClose={this.toggleShareReportModal}
           onEscapeKeyDown={this.toggleShareReportModal}>
-          <ShareReportForm text="BLOOOOP" />
+          <ShareReportForm
+            shareReport={this.handleShareReportClick}
+            closeModal={this.toggleShareReportModal}
+          />
         </Modal>
       </div>
     );
@@ -213,9 +234,12 @@ export default props => (
       submitReportQuery,
       generateReportQuery,
       errors,
+      getStaff,
+      shareReport,
     }) => (
       <Worksheet
         user={user}
+        getStaff={getStaff}
         reportDataList={reportDataList}
         isLoadingReport={isLoadingReport}
         worksheet={worksheet}
@@ -224,6 +248,7 @@ export default props => (
         submitReportQuery={submitReportQuery}
         generateReportQuery={generateReportQuery}
         reportError={errors.reportError}
+        shareReport={shareReport}
         {...props}
       />
     )}

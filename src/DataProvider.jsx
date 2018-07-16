@@ -26,6 +26,7 @@ export class DataProvider extends React.Component {
       reportDataList: null,
       worksheet: null,
       selectedReportQuery: null,
+      staff: [],
       selectReport: this.selectReport,
       deselectReport: this.deselectReport,
       getReportDataForWorksheet: this.getReportDataForWorksheet,
@@ -38,6 +39,8 @@ export class DataProvider extends React.Component {
       submitReportQuery: this.submitReportQuery,
       getReportByQuery: this.getReportByQuery,
       generateReportQuery: this.generateReportQuery,
+      getStaff: this.getStaff,
+      shareReport: this.shareReport,
       summarizeAttendanceReport: this.summarizeAttendanceReport,
       summarizeGradesReport: this.summarizeGradesReport,
     };
@@ -380,7 +383,45 @@ export class DataProvider extends React.Component {
       minMeasureNode: minMeasureNode.label,
       lowest: _.round(minMeasureNode.primaryValue, 2),
     };
+  }
 
+  getStaff = () => {
+    return ApiFetcher.get('staff').then((resp) => {
+        this.setState({staff: resp.body.data});
+    });
+  }
+
+  shareReport = (query, target_staff) => {
+    const reportPromises = [];
+    // Line up report creation for each of the target staff memebrs
+    _.forEach(target_staff, (s) => {
+      reportPromises.push(ApiFetcher.post('report', {
+        query,
+        staff_id_for_report: s.value,
+      }));
+    })
+
+    // Once all the reports are created for the target staff, create the share
+    // relationship.
+    const source_report = _.filter(this.state.reportDataList, {query});
+
+    Promise.all(reportPromises).then((reports) => {
+      const sharePromises = []
+      _.forEach(reports, (reportRequest) => {
+        if (reportRequest.status === 201) {
+          sharePromises.push(ApiFetcher.post('report-share', {
+            parent_report_id: _.get(source_report, '[0].id'),
+            child_report_id: reportRequest.body.data.id,
+          }))
+        }
+      });
+
+      if (source_report.length) {
+        Promise.all(sharePromises).then(() => {
+          source_report[0].shared_with = _.map(target_staff, 'label');
+        });
+      }
+    })
   }
 
   render() {
