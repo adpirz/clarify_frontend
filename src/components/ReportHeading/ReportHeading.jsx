@@ -31,9 +31,9 @@ export default ({
       <Button onClick={deselectReport} style={{display: 'inline-block'}}>
         Back to worksheet
       </Button>
-      <div>
+      <div style={{flexGrow:"1", textAlign:"center"}}>
         <ReportTitle>{title}</ReportTitle>
-        <Subheading>{subheading || null}</Subheading>
+        {subheading ? <Subheading>{subheading}</Subheading> : null}
         {_.map(crumbs, (c) => {
           return (
             <span key={c.query}>
