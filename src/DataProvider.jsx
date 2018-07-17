@@ -1,4 +1,3 @@
-import moment from 'moment';
 import _ from 'lodash';
 import React from 'react';
 import { ApiFetcher, ReportFetcher } from './fetchModule';
@@ -274,14 +273,6 @@ export class DataProvider extends React.Component {
         reportParameter: 'type',
       },
       {
-        jsParameter: 'fromDate',
-        reportParameter: 'from_date',
-      },
-      {
-        jsParameter: 'toDate',
-        reportParameter: 'to_date',
-      },
-      {
         jsParameter: 'courseId',
         reportParameter: 'course_id',
       },
@@ -300,10 +291,6 @@ export class DataProvider extends React.Component {
       let parameterValue = _.get(parameters, jsParameter);
       if (!parameterValue) {
         return result;
-      }
-
-      if (jsParameter === 'fromDate' || jsParameter === 'toDate') {
-        parameterValue = moment(parameterValue).format('YYYY-MM-DD');
       }
 
       return result += `${reportParameter}=${parameterValue}&`;

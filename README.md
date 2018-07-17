@@ -21,8 +21,8 @@ Resist the urge to push directly to the `master` branch. For most organization m
 A report's query is often used as an identifier in place of a report_id since we can have a report response without having saved it. That, and report_query's are unique to a user, so a user should never have conflicts within their list of reports.
 
 Because of this we need a reliable way to generate the same string for a given set of query parameters. If we just throw them together in any order, then reports that look like
--`?group=student&group_id=8221&type=grades&from_date=2017-08-01`
--`?group_id=8221&group=student&type=grades&from_date=2017-08-01`
+-`?group=student&group_id=8221&type=grades`
+-`?group_id=8221&group=student&type=grades`
 will be seen as different, even when we have their report in the browser cache, in the database, in reporting, etc.
 
 For this purpose, the frontend uses a function on the dataProvider to deterministically generate a report query based on query parameters passed to that function. It is important that that function be kept up to date with the same function being used in the backend (as yet, none...). Eventually this could be broken out into its own service that the FE and BE could consume independently but that seems like crazy overkill right now. For now, just be aware.
