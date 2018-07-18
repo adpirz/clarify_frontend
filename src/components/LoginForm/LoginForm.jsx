@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { DataConsumer } from '../../DataProvider';
 import { Button, Error } from '../PatternLibrary';
-import { TextField } from 'material-ui';
+import TextField from '@material-ui/core/TextField';
 
 const textFieldStyle = {
   height: '50px',
@@ -57,15 +57,9 @@ class Login extends React.Component {
         <div >
           <div>
             <TextField
-              hintText={
-                <div>
-                  <i className="fas fa-user" />
-                  &nbsp;E-mail address
-                </div>
-              }
+              placeholder="E-mail Address"
               type="text"
               required
-              fullWidth
               name="username"
               value={username}
               onChange={this.handleInputChange}
@@ -74,12 +68,7 @@ class Login extends React.Component {
           </div>
           <div>
             <TextField
-              hintText={
-                <div>
-                  <i className="fas fa-lock" />
-                  &nbsp;Password
-                </div>
-              }
+              placeholder="Password"
               type="password"
               required
               fullWidth

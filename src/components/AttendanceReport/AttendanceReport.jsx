@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import { DataConsumer } from '../../DataProvider';
 import React from 'react';
-import { Tabs, Tab } from 'material-ui/Tabs';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
 import {
   ReportCardContainer,
@@ -12,6 +13,14 @@ import AttendanceReportSummary from './AttendanceReportSummary/AttendanceReportS
 const RELEVANT_ATTENDANCE_COLUMN_IDS = [4, 10, 11];
 
 class AttendanceReport extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      tabIndex: 0,
+    };
+  }
+
   getStudentRows = () => {
     const { report: { data }, students} = this.props;
 
@@ -48,12 +57,6 @@ class AttendanceReport extends React.Component {
     }, []);
   }
 
-  handleSaveReport = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    this.props.saveReport(this.props.report.query);
-  }
-
   getSnapshotRows = studentRowData => _.sortBy(studentRowData, [(r) => {
     let resultMeasure;
     _.forEach(r.measures, (m) => {
@@ -62,10 +65,45 @@ class AttendanceReport extends React.Component {
     return parseFloat(resultMeasure.slice(0,-1))
   }]).slice(0,5)
 
-  handleDeleteReport = (e) => {
+  handleDeleteClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
     this.props.deleteReport(this.props.report.id);
+  }
+
+  handleSaveClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    this.props.saveReport(this.props.report.query);
+  }
+
+  handleShareClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    this.props.showShareReportModal(this.props.report.query);
+  }
+
+  handleTabChange = (e) => {
+    if (this.state.tabIndex === 0) {
+      this.setState({tabIndex: 1});
+    } else {
+      this.setState({tabIndex: 0});
+    }
+  }
+
+  getTabContents = () => {
+    const studentRowData = this.getStudentRows();
+
+    if (this.state.tabIndex === 0) {
+      return (
+        <ReportCardContainer children={this.getSnapshotRows(studentRowData)} />
+      );
+    } else {
+      return (
+        <ReportCardContainer children={studentRowData} />
+      );
+    }
   }
 
   render() {
@@ -82,8 +120,9 @@ class AttendanceReport extends React.Component {
         <AttendanceReportSummary
           report={report}
           selectReport={selectReport}
-          deleteReport={this.handleDeleteReport}
-          saveReport={this.handelSaveReport}
+          handleDeleteClick={this.handleDeleteClick}
+          handleSaveClick={this.handleSaveClick}
+          handleShareClick={this.handleShareClick}
         />
       );
     }
@@ -91,36 +130,32 @@ class AttendanceReport extends React.Component {
       deselectReport,
     } = this.props;
     const { title, subheading, id } = report;
-    const studentRowData = this.getStudentRows();
-
-    const buttonStyle = { color: 'black', fontSize: '2em'}
 
     return (
+      <div style={{width: '100%'}}>
+        <ReportHeading
+          title={title}
+          subheading={subheading}
+          deselectReport={deselectReport}
+          handleDeleteClick={!!id ? this.handleDeleteClick : null}
+          handleSaveClick={!id ? this.handleSaveClick : null}
+          handleShareClick={this.handleShareClick}
+        />
+        <Tabs
+          value={this.state.tabIndex}
+          style={{color:'black'}}
+          onChange={this.handleTabChange}
+          indicatorColor="primary"
+          centered={true}
+          >
+          <Tab label="Report" />
+          <Tab label="Snapshot" />
+        </Tabs>
+        <div style={{padding:'15px'}}>
+          {this.getTabContents()}
+        </div>
+        </div>
 
-      <Tabs style={{width: '100%', color:'black'}} 
-        tabItemContainerStyle={{backgroundColor: 'white', color:'black'}}
-        inkBarStyle={{backgroundColor:'#F9bC3C'}}
-      >
-        <Tab label="Report" buttonStyle={buttonStyle}>
-            <div style={{padding:'15px'}}>
-            <ReportHeading title={title} subheading={subheading} />
-            <ReportCardContainer
-              children={studentRowData}
-              deselectReport={deselectReport}
-              saveReport={id ? null : this.handleSaveReport}
-              deleteReport={id ? this.handleDeleteReport : null}
-            />
-            </div>
-        </Tab>
-        <Tab label="Snapshot" buttonStyle={buttonStyle}>
-          <ReportCardContainer
-              children={this.getSnapshotRows(studentRowData)}
-              deselectReport={deselectReport}
-              saveReport={id ? null : this.handleSaveReport}
-              deleteReport={id ? this.handleDeleteReport : null}
-            />
-        </Tab>
-      </Tabs>
     )
   }
 }

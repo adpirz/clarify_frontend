@@ -7,7 +7,6 @@ import { lighten } from 'polished';
 
 import { DataConsumer } from '../../DataProvider';
 import { Button, Error } from '../PatternLibrary';
-import { DatePicker } from 'material-ui';
 
 /*
 TODO: The following
@@ -167,7 +166,7 @@ class ReportQueryBuilder extends React.Component {
     })
   }
 
-  handleChange = (selectedOptions, action) => {
+  handleChange = (selectedOptions) => {
     this.setState((prevState) => {
       const isValidQuery = this.isValidQuery(selectedOptions);
       return {
@@ -337,7 +336,7 @@ class ReportQueryBuilder extends React.Component {
         <form>
           <div style={{
               display: 'flex',
-              margin: '0 25px',
+              margin: '20px 25px',
               justifyContent: 'center',
               alignItems: 'center',
             }}>

@@ -1,12 +1,8 @@
 import _ from 'lodash';
 import React from 'react';
 import styled from 'styled-components';
+import { ReportActions, Button } from '../PatternLibrary'
 import { fonts } from '../PatternLibrary/constants';
-
-const ReportHeading = styled.div`
-  display: flex;
-  align-items: center;
-`;
 
 const ReportTitle = styled.h4`
   display: inline-block;
@@ -20,20 +16,38 @@ const Subheading = styled.h5`
   margin: 0;
 `;
 
-export default ({title, crumbs, subheading}) => {
+export default ({
+  title,
+  crumbs,
+  subheading,
+  deselectReport,
+  handleSaveClick,
+  handleDeleteClick,
+  handleShareClick,
+  handlePopReportLevel,
+}) => {
   return (
-    <ReportHeading>
-      <div>
+    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
+      <Button onClick={deselectReport} style={{display: 'inline-block'}}>
+        Back to worksheet
+      </Button>
+      <div style={{flexGrow:"1", textAlign:"center"}}>
         <ReportTitle>{title}</ReportTitle>
-        <Subheading>{subheading || null}</Subheading>
+        {subheading ? <Subheading>{subheading}</Subheading> : null}
+        {_.map(crumbs, (c) => {
+          return (
+            <span key={c.query}>
+              &nbsp;>&nbsp;{c.label}
+            </span>
+          );
+        })}
       </div>
-      {_.map(crumbs, (c) => {
-        return (
-          <span key={c.query}>
-            > {c.label}
-          </span>
-        );
-      })}
-    </ReportHeading>
+      <ReportActions
+        handleDeleteClick={handleDeleteClick}
+        handleSaveClick={handleSaveClick}
+        handleShareClick={handleShareClick}
+        handlePopReportLevel={handlePopReportLevel}
+      />
+    </div>
   )
 };

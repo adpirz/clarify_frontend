@@ -7,7 +7,7 @@ import GradeReportSummary from './GradeReportSummary/GradeReportSummary';
 
 class GradeReport extends React.Component {
 
-  handleSaveReport = (e) => {
+  handleSaveClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -16,14 +16,24 @@ class GradeReport extends React.Component {
     this.props.saveReport(currentReportQuery);
   }
 
-  handleDeleteReport = (e) => {
+  handleDeleteClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
     const { reportCrumbs, initialQuery, getReportByQuery } = this.props;
     const currentReportQuery = _.get(_.last(reportCrumbs), 'query', initialQuery);
     const { id } = getReportByQuery(currentReportQuery);
+
     this.props.deleteReport(id);
+  }
+
+  handleShareClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const { reportCrumbs, initialQuery } = this.props;
+    const currentReportQuery = _.get(_.last(reportCrumbs), 'query', initialQuery);
+    this.props.showShareReportModal(currentReportQuery);
   }
 
   render() {
@@ -40,15 +50,16 @@ class GradeReport extends React.Component {
         <GradeReportSummary
           selectReport={selectReport}
           report={report}
-          deleteReport={this.handleDeleteReport}
-          saveReport={this.handelSaveReport}
+          handleDeleteClick={this.handleDeleteClick}
+          handleSaveClick={this.handleSaveClick}
+          handleShareClick={this.handleShareClick}
         />
       )
     }
 
     const {
-      pushReportLevel,
-      popReportLevel,
+      handlePushReportLevel,
+      handlePopReportLevel,
       reportCrumbs,
       deselectReport,
     } = this.props;
@@ -65,14 +76,18 @@ class GradeReport extends React.Component {
 
     return (
       <div style={{width: '100%'}}>
-        <ReportHeading title={currentReportTitle} crumbs={reportCrumbs} />
-        <ReportCardContainer
-          children={currentReportData}
-          pushReportLevel={pushReportLevel}
-          popReportLevel={reportCrumbs.length ? popReportLevel : null}
+        <ReportHeading
+          title={currentReportTitle}
+          crumbs={reportCrumbs}
           deselectReport={deselectReport}
-          saveReport={id ? null : this.handleSaveReport}
-          deleteReport={id ? this.handleDeleteReport : null}
+          handleDeleteClick={id ? this.handleDeleteClick : null}
+          handleSaveClick={!id ? this.handleSaveClick : null}
+          handleShareClick={this.handleShareClick}
+          handlePopReportLevel={reportCrumbs.length ? handlePopReportLevel : null}
+        />
+        <ReportCardContainer
+          handlePushReportLevel={handlePushReportLevel}
+          children={currentReportData}
         />
       </div>
     );

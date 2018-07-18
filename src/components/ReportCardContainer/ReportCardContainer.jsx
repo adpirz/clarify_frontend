@@ -1,22 +1,10 @@
 import _ from 'lodash';
 import styled from 'styled-components';
 import React from 'react';
-import TextField from 'material-ui/TextField';
-import { Button } from '../PatternLibrary';
+import TextField from '@material-ui/core/TextField';
 import { fonts } from '../PatternLibrary/constants';
 import { ReportCard } from '..';
 
-
-const ButtonWrapper = styled.div`
-  display: inline-flex;
-  justify-content: flex-end;
-  flex-grow: 1;
-  align-items: center;
-
-  button {
-    margin: 0 15px;
-  }
-`;
 
 const EmptyState = styled.div`
   display: flex;
@@ -39,28 +27,6 @@ class ReportCardContainer extends React.Component {
     this.setState({filter: newValue});
   }
 
-  getReportButtons = () => {
-    const { saveReport, popReportLevel, deselectReport, deleteReport } = this.props;
-
-    const buttons = [(
-      <Button key='back' onClick={deselectReport} style={{width: 'auto'}}>Back to Worksheet</Button>
-    ),]
-
-    if  (popReportLevel) {
-      buttons.push(<Button key='pop' onClick={popReportLevel}> Go Back </Button>);
-    }
-
-    if (saveReport) {
-        buttons.push(<Button key='save' primary onClick={saveReport}>Save Report</Button>);
-    }
-
-    if  (deleteReport) {
-      buttons.push(<Button key='pop' onClick={deleteReport}> Delete </Button>);
-    }
-
-    return buttons;
-  }
-
   renderFilterNode = () => {
     if (this.props.children.length < 10 ) {
       return null;
@@ -68,13 +34,13 @@ class ReportCardContainer extends React.Component {
     return (
       <div>
         <span>Search: </span>
-        <TextField hintText="Type to filter" onChange={this.handleFilter} />
+        <TextField placeholder="Type to filter" onChange={this.handleFilter} />
       </div>
     )
   }
 
   renderCardsOrEmptyState = (filteredChildren) => {
-    const { pushReportLevel } = this.props;
+    const { handlePushReportLevel } = this.props;
     if (!filteredChildren.length) {
       return (
         <EmptyState>
@@ -90,7 +56,7 @@ class ReportCardContainer extends React.Component {
         {_.map(filteredChildren, (child) => {
           return (
             <ReportCard
-              selectCard={child.children ? pushReportLevel : null}
+              selectCard={child.children ? handlePushReportLevel : null}
               key={child.id}
               {...child}
             />
@@ -111,9 +77,6 @@ class ReportCardContainer extends React.Component {
       <div>
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
           {this.renderFilterNode()}
-          <ButtonWrapper>
-            {this.getReportButtons()}
-          </ButtonWrapper>
         </div>
         {this.renderCardsOrEmptyState(filteredChildren)}
       </div>

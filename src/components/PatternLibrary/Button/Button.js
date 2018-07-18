@@ -9,7 +9,7 @@ const Button = styled.button`
   border: 2px solid ${colors.black};
   border-radius: 8px;
   cursor: pointer;
-  width: 150px;
+  min-width: 150px;
   display: inline-block;
 
   &:hover {
