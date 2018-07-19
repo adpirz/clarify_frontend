@@ -89,8 +89,8 @@ class Worksheet extends React.PureComponent {
     this.props.submitReportQuery(query);
   }
 
-  handleShareReportClick = (targetStaff) => {
-    this.props.shareReport(this.state.parentReportQuery, targetStaff)
+  handleShareReportClick = (targetStaff, note) => {
+    this.props.shareReport(this.state.parentReportQuery, targetStaff, note)
     .then(() => {
       this.setState({
         showShareReportModal: false,

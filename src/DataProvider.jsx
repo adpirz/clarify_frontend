@@ -377,7 +377,7 @@ export class DataProvider extends React.Component {
     });
   }
 
-  shareReport = (query, target_staff) => {
+  shareReport = (query, target_staff, note) => {
     const reportPromises = [];
     // Line up report creation for each of the target staff memebrs
     _.forEach(target_staff, (s) => {
@@ -398,6 +398,7 @@ export class DataProvider extends React.Component {
           sharePromises.push(ApiFetcher.post('report-share', {
             parent_report_id: _.get(source_report, '[0].id'),
             child_report_id: reportRequest.data.id,
+            note,
           }))
         }
       });
