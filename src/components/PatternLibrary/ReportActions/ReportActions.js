@@ -21,7 +21,7 @@ const ActionIcon = styled.i`
 `;
 
 const ActionIconContainer = styled.div`
-  display: flex;
+  display: inline-flex;
   justify-content: flex-end;
 `;
 

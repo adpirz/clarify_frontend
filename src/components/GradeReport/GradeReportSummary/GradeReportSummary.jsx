@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { lighten } from 'polished';
-import _ from 'lodash';
 import React from 'react';
 
 import { DataConsumer } from '../../../DataProvider';
@@ -47,14 +46,28 @@ const Footer = styled.div`
 class GradeReportSummary extends React.PureComponent {
   handleSelectReport = (e) => {
     e.preventDefault();
-    this.props.selectReport(this.props.report.query);
+    this.props.selectReport(this.props.reportData.query);
   }
 
   render() {
-    const { report, summarizeGradesReport } = this.props;
-    const { subheading, title } = report;
+    const { reportData, summarizeGradesReport, getReportById } = this.props;
+    const { title, id: reportId } = reportData;
+    const { shared_by, shared_with } = getReportById(reportId);
+
+    let footerNodes = [];
+    if (shared_by) {
+      footerNodes.push(<span key="shared_by">Shared by: {shared_by.staff}</span>)
+    }
+    if (shared_with && shared_with.length) {
+      footerNodes.push((
+        <span key="shared_with">
+          Shared with {shared_with.length} educator{shared_with.length > 1 ? 's' : null}
+        </span>
+      ));
+    }
+
     let reportNodes = null;
-    const summaryData = summarizeGradesReport(report);
+    const summaryData = summarizeGradesReport(reportData);
     if (!summaryData.count) {
       reportNodes = (
         <IndividualData>{summaryData.value}</IndividualData>
@@ -70,19 +83,18 @@ class GradeReportSummary extends React.PureComponent {
         </SummaryTable>
       );
     }
-
     return (
       <ReportSummaryContainer
         onClick={this.handleSelectReport}
         >
         <ReportActions
-          handleDeleteClick={!!_.get(this.props.report, 'id') ? this.props.handleDeleteClick : null}
-          handleSaveClick={!_.get(this.props.report, 'id') ? this.props.handleSaveClick : null}
+          handleDeleteClick={!!reportId ? this.props.handleDeleteClick : null}
+          handleSaveClick={!reportId ? this.props.handleSaveClick : null}
           handleShareClick={this.props.handleShareClick}
         />
         <Title>{title}</Title>
         {reportNodes}
-        <Footer>{subheading}</Footer>
+        {footerNodes.length ? <Footer>{footerNodes}</Footer> : null }
       </ReportSummaryContainer>
     )
   }
@@ -90,8 +102,12 @@ class GradeReportSummary extends React.PureComponent {
 
 export default props => (
   <DataConsumer>
-    {({summarizeGradesReport}) => (
-      <GradeReportSummary summarizeGradesReport={summarizeGradesReport} {...props}/>
+    {({summarizeGradesReport, getReportById}) => (
+      <GradeReportSummary
+        summarizeGradesReport={summarizeGradesReport}
+        getReportById={getReportById}
+        {...props}
+      />
     )}
   </DataConsumer>
 );

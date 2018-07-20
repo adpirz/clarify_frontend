@@ -54,7 +54,7 @@ class ShareReportForm extends React.Component {
           options={_.map(this.props.staff, (s) => {
             return {
               value: s.id,
-              label: `${s.first_name} ${s.last_name}`,
+              label: s.name,
             };
           })}
           value={this.state.selectedStaff}
