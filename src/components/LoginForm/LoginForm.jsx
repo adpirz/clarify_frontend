@@ -82,7 +82,7 @@ class Login extends React.Component {
               <Button primary> Login </Button>
             </div>
             <div style={{textAlign: "center", marginTop:"1em" }}>
-              <GoogleLogin clientId="913281239" />
+              <GoogleLogin clientId="729776830467-i92lfrj8sdj1ospq4rn349dvsu0jbjgi.apps.googleusercontent.com" />
             </div>
           </div>
           <Error>{errorNode}</Error>

@@ -1,7 +1,14 @@
 import React from "react";
-import { DataConsumer } from "../../DataProvider";
+import PropTypes from "prop-types";
 
 class GoogleLogin extends React.Component {
+
+  propTypes: {
+    clientId: PropTypes.string.isRequired,
+    onSuccess: PropTypes.func.isRequired,
+    onFailure: PropTypes.func.isRequired
+  }
+
   constructor(props) {
     super(props);
     this.signIn = this.signIn.bind(this);
@@ -46,7 +53,7 @@ class GoogleLogin extends React.Component {
         width: 150,
         height: 40,
         longtitle: false,
-        theme: "light",
+        theme: "dark",
         onsuccess: this.handleSigninSuccess,
         onfailure: onFailure
       });
@@ -88,7 +95,7 @@ class GoogleLogin extends React.Component {
 
   render() {
     return <div
-      style={{ display: 'inline-block' }}
+      style={{ display: 'inline-block', borderRadius: '8px' }}
       id="google-login-div"/>;
   }
 }
