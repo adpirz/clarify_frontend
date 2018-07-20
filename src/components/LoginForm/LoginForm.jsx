@@ -1,19 +1,20 @@
-import React from 'react';
-import styled from 'styled-components';
-import { DataConsumer } from '../../DataProvider';
-import { Button, Error } from '../PatternLibrary';
-import TextField from '@material-ui/core/TextField';
+import React from "react";
+import styled from "styled-components";
+import { DataConsumer } from "../../DataProvider";
+import { Button, Error } from "../PatternLibrary";
+import TextField from "@material-ui/core/TextField";
+import GoogleLogin from "../GoogleLogin/GoogleLogin";
 
 const textFieldStyle = {
-  height: '50px',
-  fontSize: '20px',
+  height: "50px",
+  fontSize: "20px"
 };
 
 const LoginForm = styled.form`
-  border: 5px solid rgba(0, 0, 0, .2);
+  border: 5px solid rgba(0, 0, 0, 0.2);
   width: 400px;
   padding: 15px;
-  margin: 25vh auto;
+  margin-bottom: 10px;
 `;
 
 class Login extends React.Component {
@@ -21,24 +22,24 @@ class Login extends React.Component {
     super(props);
 
     this.state = {
-      username: '',
-      password: '',
+      username: "",
+      password: ""
     };
   }
 
-  handleInputChange = (e) => {
+  handleInputChange = e => {
     const { name, value } = e.target;
     this.setState({ [name]: value });
   };
 
-  logUserIn = (e) => {
+  logUserIn = e => {
     e.preventDefault();
     const { username, password } = this.state;
     if (!username || !password) {
       return null;
     }
 
-    this.props.logUserIn({username, password});
+    this.props.logUserIn({ username, password });
   };
 
   render() {
@@ -51,53 +52,50 @@ class Login extends React.Component {
     }
 
     return (
-      <LoginForm
-        onSubmit={this.logUserIn}
-      >
-        <div >
+      <div style={{ margin: "25vh auto" }}>
+        <LoginForm onSubmit={this.logUserIn}>
           <div>
-            <TextField
-              placeholder="E-mail Address"
-              type="text"
-              required
-              name="username"
-              value={username}
-              onChange={this.handleInputChange}
-              style={textFieldStyle}
-            />
+            <div>
+              <TextField
+                placeholder="E-mail Address"
+                type="text"
+                required
+                name="username"
+                value={username}
+                onChange={this.handleInputChange}
+                style={textFieldStyle}
+              />
+            </div>
+            <div>
+              <TextField
+                placeholder="Password"
+                type="password"
+                required
+                fullWidth
+                name="password"
+                value={password}
+                onChange={this.handleInputChange}
+                style={textFieldStyle}
+              />
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <Button primary> Login </Button>
+            </div>
+            <div style={{textAlign: "center", marginTop:"1em" }}>
+              <GoogleLogin clientId="913281239" />
+            </div>
           </div>
-          <div>
-            <TextField
-              placeholder="Password"
-              type="password"
-              required
-              fullWidth
-              name="password"
-              value={password}
-              onChange={this.handleInputChange}
-              style={textFieldStyle}
-            />
-          </div>
-          <div style={{textAlign: 'center'}}>
-            <Button primary> Login </Button>
-          </div>
-        </div>
-        <Error>
-          {errorNode}
-        </Error>
-      </LoginForm>
+          <Error>{errorNode}</Error>
+        </LoginForm>
+      </div>
     );
   }
 }
 
 export default props => (
   <DataConsumer>
-    {({isLoading, logUserIn, errors}) => (
-      <Login
-        isLoading={isLoading}
-        logUserIn={logUserIn}
-        errors={errors}
-        {...props} />
+    {({ isLoading, logUserIn, errors }) => (
+      <Login isLoading={isLoading} logUserIn={logUserIn} errors={errors} {...props} />
     )}
   </DataConsumer>
 );
