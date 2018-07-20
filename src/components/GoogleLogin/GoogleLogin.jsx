@@ -48,13 +48,13 @@ class GoogleLogin extends React.Component {
       });
       console.log(document.getElementById('google-login-div'));
       window.gapi.signin2.render('google-login-div', {
-        clientId:'1991832938',
+        clientId: clientId,
         scope: "email",
         width: 150,
         height: 40,
         longtitle: false,
         theme: "dark",
-        onsuccess: this.handleSigninSuccess,
+        onsuccess: (res) => this.handleSigninSuccess(res, this.props.onSuccess),
         onfailure: onFailure
       });
       console.log('fire')
@@ -72,7 +72,8 @@ class GoogleLogin extends React.Component {
     };
     auth2.signIn(options).then(res => this.handleSigninSuccess(res), err => onFailure(err));
   }
-  handleSigninSuccess(res) {
+
+  handleSigninSuccess(res, successCallback) {
     /*
           offer renamed response keys to names that match use
         */
@@ -90,7 +91,7 @@ class GoogleLogin extends React.Component {
       givenName: basicProfile.getGivenName(),
       familyName: basicProfile.getFamilyName()
     };
-    this.props.onSuccess(res);
+    successCallback? successCallback(res) : this.props.onSuccess(res);
   }
 
   render() {

@@ -32,15 +32,11 @@ class Login extends React.Component {
     this.setState({ [name]: value });
   };
 
-  logUserIn = e => {
-    e.preventDefault();
-    const { username, password } = this.state;
-    if (!username || !password) {
-      return null;
-    }
-
-    this.props.logUserIn({ username, password });
-  };
+  googleLogin = googleUser => {
+    debugger;
+    const googleIdToken = googleUser.tokenId;
+    this.props.logUserIn(googleIdToken, true)
+  }
 
   render() {
     const { username, password } = this.state;
@@ -81,8 +77,12 @@ class Login extends React.Component {
             <div style={{ textAlign: "center" }}>
               <Button primary> Login </Button>
             </div>
-            <div style={{textAlign: "center", marginTop:"1em" }}>
-              <GoogleLogin clientId="729776830467-i92lfrj8sdj1ospq4rn349dvsu0jbjgi.apps.googleusercontent.com" />
+            <div style={{ textAlign: "center", marginTop: "1em" }}>
+              <GoogleLogin
+              clientId="729776830467-i92lfrj8sdj1ospq4rn349dvsu0jbjgi.apps.googleusercontent.com"
+              onSuccess={this.googleLogin}
+              onFailure={err => console.log(err)}
+              />
             </div>
           </div>
           <Error>{errorNode}</Error>
