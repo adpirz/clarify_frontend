@@ -24,8 +24,10 @@ export default ({
 
   let shareByNode = null;
   let shareWithNode = null;
+  let report = null;
   if (reportId) {
-    const { shared_by, shared_with } = getReportById(reportId);
+    report = getReportById(reportId);
+    const { shared_by, shared_with } = report;
 
     if (shared_by) {
       shareByNode = <span key="share_by">Shared by: {shared_by.staff}</span>;
@@ -62,6 +64,7 @@ export default ({
         {shareByNode ? <div>({shareByNode})</div> : null}
       </div>
       <ReportActions
+        report={report}
         handleDeleteClick={handleDeleteClick}
         handleSaveClick={handleSaveClick}
         handleShareClick={handleShareClick}
