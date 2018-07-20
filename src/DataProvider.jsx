@@ -78,9 +78,11 @@ export class DataProvider extends React.Component {
     })
   }
 
-  logUserIn = (credentials) => {
+  logUserIn = (credentials, is_google = false) => {
     this.setState({isLoading: true});
-    ApiFetcher.post('session', credentials).then((resp) => {
+    let payload;
+    payload = is_google ? {'is_google': true, 'google_token': credentials } : credentials
+    ApiFetcher.post('session', payload).then((resp) => {
       this.setState((prevState) => {
         const newState = {isLoading: false};
         if (resp.data) {
