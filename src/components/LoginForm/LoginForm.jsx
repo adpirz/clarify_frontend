@@ -5,7 +5,6 @@ import GoogleAuth from "../GoogleAuth/GoogleAuth";
 
 class Login extends React.Component {
   googleLogin = googleUser => {
-    debugger;
     const googleIdToken = googleUser.tokenId;
     this.props.logUserIn(googleIdToken, true)
   }
@@ -28,7 +27,6 @@ class Login extends React.Component {
           <GoogleAuth
           clientId="729776830467-i92lfrj8sdj1ospq4rn349dvsu0jbjgi.apps.googleusercontent.com"
           onSuccess={this.googleLogin}
-          type={errorNode ? 'logout' : 'login'}
           onFailure={err => console.log(err)}
           />
         </div>
