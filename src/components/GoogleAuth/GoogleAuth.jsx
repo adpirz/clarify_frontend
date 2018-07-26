@@ -1,12 +1,15 @@
 import React from "react";
+import { Button } from "../PatternLibrary";
 import PropTypes from "prop-types";
 
-class GoogleLogin extends React.Component {
+class GoogleAuth extends React.Component {
 
   propTypes: {
     clientId: PropTypes.string.isRequired,
-    onSuccess: PropTypes.func.isRequired,
-    onFailure: PropTypes.func.isRequired
+    onLoginSuccess: PropTypes.func,
+    onLoginFailure: PropTypes.func,
+    onLogoutSuccess: PropTypes.func,
+    type: PropTypes.string.isRequired,
   }
 
   constructor(props) {
@@ -73,6 +76,13 @@ class GoogleLogin extends React.Component {
     auth2.signIn(options).then(res => this.handleSigninSuccess(res), err => onFailure(err));
   }
 
+  signOut() {
+    const auth2 = window.gapi.auth2.getAuthInstance();
+    if (auth2 != null) {
+      auth2.signOut().then(this.props.onLogoutSuccess);
+    }
+  }
+
   handleSigninSuccess(res, successCallback) {
     /*
           offer renamed response keys to names that match use
@@ -91,14 +101,26 @@ class GoogleLogin extends React.Component {
       givenName: basicProfile.getGivenName(),
       familyName: basicProfile.getFamilyName()
     };
-    successCallback? successCallback(res) : this.props.onSuccess(res);
+    successCallback ? successCallback(res) : this.props.onSuccess(res);
   }
 
   render() {
-    return <div
-      style={{ display: 'inline-block', borderRadius: '8px' }}
-      id="google-login-div"/>;
+    let authNode = (
+      <div
+        style={{ display: 'inline-block', borderRadius: '8px' }}
+        id="google-login-div"
+      />
+    );
+    if (this.props.type === 'logout') {
+      authNode = (
+        <Button onClick={this.signout} style={{ display: 'inline-block', borderRadius: '8px' }}>
+        Sign Out
+        </Button>
+      );
+    }
+
+    return authNode;
   }
 }
 
-export default GoogleLogin;
+export default GoogleAuth;

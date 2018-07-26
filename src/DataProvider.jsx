@@ -88,6 +88,8 @@ export class DataProvider extends React.Component {
         if (resp.data) {
           newState.user = resp.data;
           this.hydrateUserData();
+        } else if (resp.error){
+          newState.errors = {...prevState.errors, ...{loginError: resp.error}};
         } else {
           newState.errors = {...prevState.errors, ...{loginError: `There was an error with your username and password.
             Shoot an email over to help@clarify.com and we'll take a look.`}}

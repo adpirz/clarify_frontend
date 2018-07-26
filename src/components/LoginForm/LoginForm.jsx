@@ -1,37 +1,9 @@
 import React from "react";
-import styled from "styled-components";
 import { DataConsumer } from "../../DataProvider";
-import { Button, Error } from "../PatternLibrary";
-import TextField from "@material-ui/core/TextField";
-import GoogleLogin from "../GoogleLogin/GoogleLogin";
-
-const textFieldStyle = {
-  height: "50px",
-  fontSize: "20px"
-};
-
-const LoginForm = styled.form`
-  border: 5px solid rgba(0, 0, 0, 0.2);
-  width: 400px;
-  padding: 15px;
-  margin-bottom: 10px;
-`;
+import { Error } from "../PatternLibrary";
+import GoogleAuth from "../GoogleAuth/GoogleAuth";
 
 class Login extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      username: "",
-      password: ""
-    };
-  }
-
-  handleInputChange = e => {
-    const { name, value } = e.target;
-    this.setState({ [name]: value });
-  };
-
   googleLogin = googleUser => {
     debugger;
     const googleIdToken = googleUser.tokenId;
@@ -39,7 +11,6 @@ class Login extends React.Component {
   }
 
   render() {
-    const { username, password } = this.state;
     const { errors } = this.props;
 
     let errorNode = null;
@@ -49,44 +20,19 @@ class Login extends React.Component {
 
     return (
       <div style={{ margin: "25vh auto" }}>
-        <LoginForm onSubmit={this.logUserIn}>
-          <div>
-            <div>
-              <TextField
-                placeholder="E-mail Address"
-                type="text"
-                required
-                name="username"
-                value={username}
-                onChange={this.handleInputChange}
-                style={textFieldStyle}
-              />
-            </div>
-            <div>
-              <TextField
-                placeholder="Password"
-                type="password"
-                required
-                fullWidth
-                name="password"
-                value={password}
-                onChange={this.handleInputChange}
-                style={textFieldStyle}
-              />
-            </div>
-            <div style={{ textAlign: "center" }}>
-              <Button primary> Login </Button>
-            </div>
-            <div style={{ textAlign: "center", marginTop: "1em" }}>
-              <GoogleLogin
-              clientId="729776830467-i92lfrj8sdj1ospq4rn349dvsu0jbjgi.apps.googleusercontent.com"
-              onSuccess={this.googleLogin}
-              onFailure={err => console.log(err)}
-              />
-            </div>
-          </div>
-          <Error>{errorNode}</Error>
-        </LoginForm>
+        <div style={{ margin: '0 auto', textAlign: 'center' }}>
+          <p>
+            Go ahead and log in with the Google account you usually use at school. <br />
+            This is likely also your Illuminate email/username
+          </p>
+          <GoogleAuth
+          clientId="729776830467-i92lfrj8sdj1ospq4rn349dvsu0jbjgi.apps.googleusercontent.com"
+          onSuccess={this.googleLogin}
+          type={errorNode ? 'logout' : 'login'}
+          onFailure={err => console.log(err)}
+          />
+        </div>
+        <Error>{errorNode}</Error>
       </div>
     );
   }

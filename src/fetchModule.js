@@ -37,10 +37,11 @@ class ApiFetcher {
           data: body.data,
         }));
       } else {
-        return {
+        return resp.json().then((body) => ({
           status: resp.status,
+          error: body.error,
           data: null,
-        };
+        }));
       }
     });
   }
