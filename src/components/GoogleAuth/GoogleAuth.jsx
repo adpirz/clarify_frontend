@@ -3,14 +3,13 @@ import { Button } from "../PatternLibrary";
 import PropTypes from "prop-types";
 
 class GoogleAuth extends React.Component {
-
   propTypes: {
     clientId: PropTypes.string.isRequired,
     onLoginSuccess: PropTypes.func,
     onLoginFailure: PropTypes.func,
     onLogoutSuccess: PropTypes.func,
-    type: PropTypes.string.isRequired,
-  }
+    type: PropTypes.string.isRequired
+  };
 
   constructor(props) {
     super(props);
@@ -25,7 +24,7 @@ class GoogleAuth extends React.Component {
       let js = element;
       js = document.createElement(script);
       js.id = id;
-      js.src = 'https://apis.google.com/js/client:platform.js';
+      js.src = "https://apis.google.com/js/client:platform.js";
       if (fjs && fjs.parentNode) {
         fjs.parentNode.insertBefore(js, fjs);
       } else {
@@ -39,28 +38,23 @@ class GoogleAuth extends React.Component {
 
       window.gapi.load("auth2", () => {
         if (!window.gapi.auth2.getAuthInstance()) {
-          window.gapi.auth2.init(params).then(
-            res => {
-              if (res.isSignedIn.get()) {
-                this.handleSigninSuccess(res.currentUser.get());
-              }
-            },
-            err => onFailure(err)
-          );
+          window.gapi.auth2.init(params).then(() => {
+            window.gapi.signin2.render("google-login-div", {
+              clientId: clientId,
+              scope: "email",
+              width: 150,
+              height: 40,
+              longtitle: false,
+              theme: "dark",
+              onsuccess: res => this.handleSigninSuccess(res, this.props.onSuccess),
+              onfailure: onFailure
+            });
+          });
         }
       });
-      console.log(document.getElementById('google-login-div'));
-      window.gapi.signin2.render('google-login-div', {
-        clientId: clientId,
-        scope: "email",
-        width: 150,
-        height: 40,
-        longtitle: false,
-        theme: "dark",
-        onsuccess: (res) => this.handleSigninSuccess(res, this.props.onSuccess),
-        onfailure: onFailure
-      });
-      console.log('fire')
+      console.log(document.getElementById("google-login-div"));
+
+      console.log("fire");
     });
   }
 
@@ -106,15 +100,12 @@ class GoogleAuth extends React.Component {
 
   render() {
     let authNode = (
-      <div
-        style={{ display: 'inline-block', borderRadius: '8px' }}
-        id="google-login-div"
-      />
+      <div style={{ display: "inline-block", borderRadius: "8px" }} id="google-login-div" />
     );
-    if (this.props.type === 'logout') {
+    if (this.props.type === "logout") {
       authNode = (
-        <Button onClick={this.signout} style={{ display: 'inline-block', borderRadius: '8px' }}>
-        Sign Out
+        <Button onClick={this.signout} style={{ display: "inline-block", borderRadius: "8px" }}>
+          Sign Out
         </Button>
       );
     }
