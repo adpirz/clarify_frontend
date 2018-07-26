@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import styled from 'styled-components';
 import { lighten } from 'polished';
 import React from 'react';
@@ -6,17 +5,10 @@ import React from 'react';
 import { DataConsumer } from '../../../DataProvider';
 import {
   ReportSummaryContainer,
-  ReportActions,
 } from '../../PatternLibrary';
 import {
   fonts,
 } from '../../PatternLibrary/constants';
-
-const Title = styled.span`
-  font-weight: bold;
-  font-size: 1.2em;
-  padding-bottom: 3px;
-`;
 
 const SummaryTable = styled.table`
   margin: 20px auto;
@@ -43,16 +35,6 @@ const IndividualData = styled.div`
   text-align: center;
 `;
 
-const Footer = styled.div`
-  padding: 5px;
-  font-size: 0.8em;
-  font-style: italic;
-  margin-top: 15px;
-  color: ${lighten(.6, 'black')};
-  border-top: 1px solid ${lighten(.8, 'black')};
-  text-align: center;
-`
-
 class AttendanceReportSummary extends React.PureComponent {
   handleSelectReport = (e) => {
     e.preventDefault();
@@ -69,29 +51,8 @@ class AttendanceReportSummary extends React.PureComponent {
 
   render() {
     const { reportData, getReportById } = this.props;
-    const { title, id: report_id } = reportData;
-    const { shared_by, shared_with } = getReportById(report_id);
-
-    let shareByNode = null;
-    let shareWithNode = null;
-    if (shared_by) {
-      shareByNode = (
-        <span  style={{opacity: '.5'}} key="share_by">
-          Shared by: {shared_by.staff}
-        </span>
-      );
-    }
-    if (shared_with && shared_with.length) {
-      const sharedWithNames = _.map(shared_with, 'staff').join(', ');
-      shareWithNode = (
-        <span
-          title={sharedWithNames}
-          style={{opacity: '.5'}}
-          key="share_with">
-          Shared with {shared_with.length} educator{shared_with.length > 1 ? 's' : null}
-        </span>
-      );
-    }
+    const { id: reportId } = reportData;
+    const report = getReportById(reportId);
 
     let reportNodes = null;
     const summaryData = this.props.summarizeAttendanceReport(reportData);
@@ -116,16 +77,14 @@ class AttendanceReportSummary extends React.PureComponent {
 
     return (
       <ReportSummaryContainer
-        onClick={this.handleSelectReport}
+        handleSelectReport={this.handleSelectReport}
+        handleDeleteClick={!!reportId ? this.props.handleDeleteClick : null}
+        handleSaveClick={!reportId ? this.props.handleSaveClick : null}
+        handleShareClick={this.props.handleShareClick}
+        report={report}
+        reportData={reportData}
         >
-        <ReportActions
-          handleDeleteClick={!!report_id ? this.props.handleDeleteClick : null}
-          handleSaveClick={!report_id ? this.props.handleSaveClick : null}
-          handleShareClick={this.props.handleShareClick}
-        />
-        <Title>{this.formatTitle(title)}</Title>
         {reportNodes}
-        {shareWithNode || shareByNode ? <Footer>{shareByNode} <br /> {shareWithNode}</Footer> : null }
       </ReportSummaryContainer>
     )
   }
