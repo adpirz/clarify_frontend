@@ -1,11 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+const GAPI_CLIENT_ID = process.env.GAPI_CLIENT_ID;
+
 class GoogleAuth extends React.Component {
-  propTypes: {
-    clientId: PropTypes.string.isRequired,
+  propTypes = {
     onLoginSuccess: PropTypes.func,
-    onLoginFailure: PropTypes.func,
+    onLoginFailure: PropTypes.func
   };
 
   constructor(props) {
@@ -14,7 +15,7 @@ class GoogleAuth extends React.Component {
   }
 
   componentDidMount() {
-    const { clientId, onFailure } = this.props;
+    const { onFailure } = this.props;
     ((document, script, id, callback) => {
       const element = document.getElementsByTagName(script)[0];
       const fjs = element;
@@ -29,15 +30,11 @@ class GoogleAuth extends React.Component {
       }
       js.onload = callback;
     })(document, "script", "google-login", () => {
-      const params = {
-        client_id: clientId
-      };
-
       window.gapi.load("auth2", () => {
         if (!window.gapi.auth2.getAuthInstance()) {
-          window.gapi.auth2.init(params).then(() => {
+          window.gapi.auth2.init({ clientId: GAPI_CLIENT_ID }).then(() => {
             window.gapi.signin2.render("google-login-div", {
-              clientId: clientId,
+              clientId: GAPI_CLIENT_ID,
               scope: "email",
               width: 150,
               height: 40,
@@ -89,9 +86,7 @@ class GoogleAuth extends React.Component {
   }
 
   render() {
-    return (
-      <div style={{ display: "inline-block", borderRadius: "8px" }} id="google-login-div" />
-    );
+    return <div style={{ display: "inline-block", borderRadius: "8px" }} id="google-login-div" />;
   }
 }
 
