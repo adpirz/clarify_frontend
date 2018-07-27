@@ -59,7 +59,6 @@ export class DataProvider extends React.Component {
   }
 
   hydrateUserData = () => {
-    this.setState({isLoading: true});
     return this.getQueryObjects().then(() => {
       this.getUserReports().then(() => {
         this.setState({isLoading: false});
@@ -84,7 +83,7 @@ export class DataProvider extends React.Component {
     this.setState({isLoading: true});
     const payload = {'google_token': googleIdToken };
     ApiFetcher.post('session', payload).then((resp) => {
-        const newState = {isLoading: false};
+        const newState = {};
         if (resp.data) {
           newState.user = resp.data;
           this.hydrateUserData();
@@ -93,6 +92,7 @@ export class DataProvider extends React.Component {
             text: "We couldn't find a Clarify user for that email. Are you sure you're using your Alpha email?",
           }
           newState.errors = {...this.state.errors, loginError};
+          newState.isLoading = false;
         } else {
           const loginError = {
             text: "There was a problem at Google's end 🤔. Shoot an email over to help@clarify.com and we'll take a look.",
@@ -100,6 +100,7 @@ export class DataProvider extends React.Component {
           newState.errors = {
             ...this.state.errors,
             loginError,
+            isLoading: false,
           }
         }
         this.setState(newState);
