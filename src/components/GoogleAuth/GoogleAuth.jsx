@@ -1,10 +1,25 @@
 import React from "react";
 import PropTypes from "prop-types";
+import styled from "styled-components";
+import { lighten } from "polished";
 
-const GAPI_CLIENT_ID = process.env.GAPI_CLIENT_ID;
+const GAPI_CLIENT_ID = process.env.REACT_APP_GAPI_CLIENT_ID;
+
+const GoogleLoginPlaceholder = styled.div`
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  font-weight: 400;
+  width: 150px;
+  height: 40px;
+  background: none;
+  color: ${lighten(0.5, "black")};
+  font-size: 0.7em;
+`;
 
 class GoogleAuth extends React.Component {
-  propTypes = {
+  static propTypes = {
     onLoginSuccess: PropTypes.func,
     onLoginFailure: PropTypes.func
   };
@@ -46,9 +61,6 @@ class GoogleAuth extends React.Component {
           });
         }
       });
-      console.log(document.getElementById("google-login-div"));
-
-      console.log("fire");
     });
   }
 
@@ -86,7 +98,12 @@ class GoogleAuth extends React.Component {
   }
 
   render() {
-    return <div style={{ display: "inline-block", borderRadius: "8px" }} id="google-login-div" />;
+    return (
+      <GoogleLoginPlaceholder
+        style={{ display: "inline-block", borderRadius: "8px" }}
+        id="google-login-div"
+      />
+    );
   }
 }
 

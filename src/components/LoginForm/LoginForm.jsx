@@ -2,34 +2,121 @@ import React from "react";
 import { DataConsumer } from "../../DataProvider";
 import { Error } from "../PatternLibrary";
 import GoogleAuth from "../GoogleAuth/GoogleAuth";
+import styled from "styled-components";
+import { lighten, desaturate } from "polished";
+import { Button } from "@material-ui/core";
+
+const LoginFormContainer = styled.div`
+  width: 400px;
+  height: 300px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, ${lighten(0.6, "gray")} 70%, ${lighten(0.47, "gray")});
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px 3px ${lighten(0.35, "gray")};
+  padding: 0 0 20px;
+`;
+
+const LoginHelperText = styled.div`
+  color: ${lighten(0.7, "black")};
+  font-size: 0.75em;
+  margin: auto 0 0;
+  text-align: center;
+  line-height: 1.42em;
+`;
+
+const LoginHeader = styled.h1`
+  font-weight: 400;
+  color: ${lighten(0.45, "black")};
+  font-size: 1.8em;
+  margin: auto auto 20px;
+`;
+
+const EmailLink = styled.a`
+  color: ${lighten(0.6, "black")};
+  text-decoration: none;
+
+  &:hover {
+    color: ${lighten(0.75, "black")};
+  }
+
+  &:active {
+    color: ${lighten(0.2, "black")};
+  }
+`;
+
+const GoogleLoginErrorStyled = styled.div`
+  color: ${desaturate(0.2, lighten(0.1, "red"))};
+  font-size: 1.3em;
+  font-weight: 600;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+`;
+
+const GoogleLoginErrorSubheading = styled.div`
+  font-size: 0.7em;
+  font-weight: 400;
+  margin: 10px;
+  text-align: center;
+`;
+
+const GoogleLoginError = () => (
+  <GoogleLoginErrorStyled>
+    Google authentication failed.
+    <GoogleLoginErrorSubheading>
+      Try using a different account and return to Clarify.
+    </GoogleLoginErrorSubheading>
+    <Button
+      variant="outlined"
+      style={{ margin: "10px" }}
+      href="https://accounts.google.com/AccountChooser"
+    >
+      Switch Google Accounts
+    </Button>
+  </GoogleLoginErrorStyled>
+);
 
 class Login extends React.Component {
   googleLogin = googleUser => {
     const googleIdToken = googleUser.tokenId;
-    this.props.logUserIn(googleIdToken, true)
-  }
+    this.props.logUserIn(googleIdToken, true);
+  };
 
   render() {
     const { errors } = this.props;
 
     let errorNode = null;
-    if (errors.loginError) {
-      errorNode = errors.loginError;
+    if (errors.queryError) {
+      errorNode = errors.queryError;
     }
 
     return (
       <div style={{ margin: "25vh auto" }}>
-        <div style={{ margin: '0 auto', textAlign: 'center' }}>
-          <p>
-            Go ahead and log in with the Google account you usually use at school. <br />
-            This is likely also your Illuminate email/username
-          </p>
-          <GoogleAuth
-          clientId="729776830467-i92lfrj8sdj1ospq4rn349dvsu0jbjgi.apps.googleusercontent.com"
-          onSuccess={this.googleLogin}
-          onFailure={err => console.log(err)}
-          />
-        </div>
+        <LoginFormContainer>
+          <LoginHeader>Login with Google</LoginHeader>
+          {errors.loginError ? (
+            <GoogleLoginError />
+          ) : (
+            <GoogleAuth onSuccess={this.googleLogin} onFailure={err => console.log(err)} />
+          )}
+
+          <LoginHelperText>
+            This should be the same account you use to login with <strong>Illuminate</strong>.
+            <br />
+            Contact your system administrator if you need account information.
+            <br />
+            Still not sure? Reach out to{" "}
+            <strong>
+              <EmailLink href="mailto:help@clarify.school">help@clarify.school</EmailLink>.
+            </strong>
+          </LoginHelperText>
+        </LoginFormContainer>
         <Error>{errorNode}</Error>
       </div>
     );
