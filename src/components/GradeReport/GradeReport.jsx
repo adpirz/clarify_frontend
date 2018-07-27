@@ -20,9 +20,9 @@ class GradeReport extends React.Component {
     e.preventDefault();
     e.stopPropagation();
 
-    const { reportCrumbs, initialQuery, getReportByQuery } = this.props;
+    const { reportCrumbs, initialQuery, getReportDataByQuery } = this.props;
     const currentReportQuery = _.get(_.last(reportCrumbs), 'query', initialQuery);
-    const { id } = getReportByQuery(currentReportQuery);
+    const { id } = getReportDataByQuery(currentReportQuery);
 
     this.props.deleteReport(id);
   }
@@ -41,15 +41,15 @@ class GradeReport extends React.Component {
       initialQuery,
       displayMode,
       selectReport,
-      getReportByQuery,
+      getReportDataByQuery,
     } = this.props;
 
     if (displayMode === 'summary') {
-      const report = getReportByQuery(initialQuery);
+      const reportData = getReportDataByQuery(initialQuery);
       return (
         <GradeReportSummary
           selectReport={selectReport}
-          report={report}
+          reportData={reportData}
           handleDeleteClick={this.handleDeleteClick}
           handleSaveClick={this.handleSaveClick}
           handleShareClick={this.handleShareClick}
@@ -62,26 +62,29 @@ class GradeReport extends React.Component {
       handlePopReportLevel,
       reportCrumbs,
       deselectReport,
+      getReportById,
     } = this.props;
 
     const currentReportQuery = _.get(_.last(reportCrumbs), 'query', initialQuery);
     const {
       data: currentReportData,
-      id
-    } = getReportByQuery(currentReportQuery);
+      id: reportId
+    } = getReportDataByQuery(currentReportQuery);
 
     const {
       title: currentReportTitle,
-    } = getReportByQuery(initialQuery);
+    } = getReportDataByQuery(initialQuery);
 
     return (
       <div style={{width: '100%'}}>
         <ReportHeading
+          reportId={reportId}
+          getReportById={getReportById}
           title={currentReportTitle}
           crumbs={reportCrumbs}
           deselectReport={deselectReport}
-          handleDeleteClick={id ? this.handleDeleteClick : null}
-          handleSaveClick={!id ? this.handleSaveClick : null}
+          handleDeleteClick={reportId ? this.handleDeleteClick : null}
+          handleSaveClick={!reportId ? this.handleSaveClick : null}
           handleShareClick={this.handleShareClick}
           handlePopReportLevel={reportCrumbs.length ? handlePopReportLevel : null}
         />
@@ -96,12 +99,13 @@ class GradeReport extends React.Component {
 
 export default (props) => (
   <DataConsumer>
-    {({getReportByQuery, deselectReport, saveReport, deleteReport}) => (
+    {({getReportDataByQuery, deselectReport, saveReport, deleteReport, getReportById}) => (
       <GradeReport
-        getReportByQuery={getReportByQuery}
+        getReportDataByQuery={getReportDataByQuery}
         deselectReport={deselectReport}
         saveReport={saveReport}
         deleteReport={deleteReport}
+        getReportById={getReportById}
         {...props}
       />
     )}

@@ -89,8 +89,8 @@ class Worksheet extends React.PureComponent {
     this.props.submitReportQuery(query);
   }
 
-  handleShareReportClick = (targetStaff) => {
-    this.props.shareReport(this.state.parentReportQuery, targetStaff)
+  handleShareReportClick = (targetStaff, note) => {
+    this.props.shareReport(this.state.parentReportQuery, targetStaff, note)
     .then(() => {
       this.setState({
         showShareReportModal: false,
@@ -143,12 +143,12 @@ class Worksheet extends React.PureComponent {
         </div>
       );
     } else if (selectedReportQuery) {
-      const reportForDisplay = _.find(reportDataList, {query: selectedReportQuery});
-      const { type } = reportForDisplay;
+      const reportDataForDisplay = _.find(reportDataList, {query: selectedReportQuery});
+      const { type } = reportDataForDisplay;
       if (type === 'attendance') {
         worksheetBody = (
           <AttendanceReport
-            report={reportForDisplay}
+            reportData={reportDataForDisplay}
             showShareReportModal={this.toggleShareReportModal}
           />
         );
@@ -166,15 +166,15 @@ class Worksheet extends React.PureComponent {
     }
     else {
       worksheetBody = _.map(reportDataList, (reportDataObject) => {
-        const { type, query, id, isTopLevelReport } = reportDataObject;
-        if ( !(id || isTopLevelReport)) {
+        const { type, query, id } = reportDataObject;
+        if ( !(id)) {
           return;
         }
         if (type === 'attendance') {
           return (
             <AttendanceReport
               displayMode="summary"
-              report={reportDataObject}
+              reportData={reportDataObject}
               key={reportDataObject.query}
               selectReport={this.props.selectReport}
               showShareReportModal={this.toggleShareReportModal}
@@ -210,8 +210,7 @@ class Worksheet extends React.PureComponent {
         </div>
         <Modal
           open={this.state.showShareReportModal}
-          onClose={this.toggleShareReportModal}
-          onEscapeKeyDown={this.toggleShareReportModal}>
+          onClose={this.toggleShareReportModal}>
           <ShareReportForm
             shareReport={this.handleShareReportClick}
             closeModal={this.toggleShareReportModal}

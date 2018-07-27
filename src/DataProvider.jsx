@@ -23,9 +23,10 @@ export class DataProvider extends React.Component {
       students: null,
       sections: null,
       gradeLevels: null,
+      staff: [],
+      reports: [],
       reportDataList: null,
       selectedReportQuery: null,
-      staff: [],
       selectReport: this.selectReport,
       deselectReport: this.deselectReport,
       saveReport: this.saveReport,
@@ -35,9 +36,10 @@ export class DataProvider extends React.Component {
       logUserOut: this.logUserOut,
       getNewBaseReport: this.getNewBaseReport,
       submitReportQuery: this.submitReportQuery,
-      getReportByQuery: this.getReportByQuery,
+      getReportDataByQuery: this.getReportDataByQuery,
       generateReportQuery: this.generateReportQuery,
       getStaff: this.getStaff,
+      getReportById: this.getReportById,
       shareReport: this.shareReport,
       summarizeAttendanceReport: this.summarizeAttendanceReport,
       summarizeGradesReport: this.summarizeGradesReport,
@@ -134,6 +136,7 @@ export class DataProvider extends React.Component {
   getUserReports = () => {
     return ApiFetcher.get('report').then((reportsResponse) => {
       if (reportsResponse.data) {
+        this.setState({reports: reportsResponse.data});
         return this.fetchDataForReports(reportsResponse.data);
       }
     })
@@ -164,6 +167,11 @@ export class DataProvider extends React.Component {
     ApiFetcher.post('report', {query}).then((resp) => {
       const newReport = _.get(resp, 'data');
       if (newReport) {
+        this.setState((prevState) => {
+          return {
+            reports: _.concat(prevState.reports, [newReport]),
+          }
+        });
         ReportFetcher.get(newReport.id).then((newReportData) => {
           this.setState((prevState) => {
             const newReportDataList = _.map(prevState.reportDataList, (rd) => {
@@ -195,7 +203,7 @@ export class DataProvider extends React.Component {
   }
 
   getNewBaseReport = (queryString) => {
-    const existingReport = this.getReportByQuery(queryString);
+    const existingReport = this.getReportDataByQuery(queryString);
     if (existingReport) {
       this.setState((prevState) => {
         return {
@@ -222,7 +230,7 @@ export class DataProvider extends React.Component {
     this.setState({
       isLoadingReport: true,
     });
-    const existingReport = this.getReportByQuery(queryString);
+    const existingReport = this.getReportDataByQuery(queryString);
     if (existingReport) {
       this.setState({
         isLoadingReport: false,
@@ -244,11 +252,18 @@ export class DataProvider extends React.Component {
     });
   }
 
-  getReportByQuery = (queryString) => {
+  getReportDataByQuery = (queryString) => {
     if (!queryString) {
       return null;
     }
     return _.find(this.state.reportDataList, {query: queryString});
+  }
+
+  getReportById = (report_id) => {
+    if (!report_id) {
+      return null;
+    }
+    return _.find(this.state.reports, {id: report_id});
   }
 
   generateReportQuery = (parameters) => {
@@ -386,7 +401,7 @@ export class DataProvider extends React.Component {
     });
   }
 
-  shareReport = (query, target_staff) => {
+  shareReport = (query, target_staff, note) => {
     const reportPromises = [];
     // Line up report creation for each of the target staff memebrs
     _.forEach(target_staff, (s) => {
@@ -398,22 +413,31 @@ export class DataProvider extends React.Component {
 
     // Once all the reports are created for the target staff, create the share
     // relationship.
-    const source_report = _.filter(this.state.reportDataList, {query});
+    const source_report = _.find(this.state.reports, {query});
 
     return Promise.all(reportPromises).then((reports) => {
       const sharePromises = []
       _.forEach(reports, (reportRequest) => {
         if (reportRequest.status === 201) {
           sharePromises.push(ApiFetcher.post('report-share', {
-            parent_report_id: _.get(source_report, '[0].id'),
+            parent_report_id: _.get(source_report, 'id'),
             child_report_id: reportRequest.data.id,
+            note,
           }))
         }
       });
 
-      if (source_report.length) {
+      if (source_report) {
         Promise.all(sharePromises).then(() => {
-          source_report[0].shared_with = _.map(target_staff, 'label');
+          _.forEach(target_staff, (s) => {
+            const oldSharedList = _.get(source_report, 'shared_with', []);
+            source_report.shared_with = oldSharedList.concat(_.map(target_staff, (s) => {
+              return {
+                staff: s.label,
+                note,
+              };
+            }));
+          });
         });
       }
     })
@@ -421,6 +445,7 @@ export class DataProvider extends React.Component {
 
   render() {
     const {children} = this.props;
+
     return (
       <Context.Provider value={this.state}>
         {children}

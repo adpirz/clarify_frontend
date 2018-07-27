@@ -25,17 +25,24 @@ class ShareReportForm extends React.Component {
 
     this.state = {
       selectedStaff: [],
+      note: null,
     };
   }
 
-  handleChange = (selectedStaff) => {
+  handleStaffChange = (selectedStaff) => {
     this.setState({
       selectedStaff,
     });
   }
 
+  handleNoteChange = (e) => {
+    this.setState({
+      note: e.target.value,
+    });
+  }
+
   handleShareReportClick = (e) => {
-    this.props.shareReport(this.state.selectedStaff);
+    this.props.shareReport(this.state.selectedStaff, this.state.note);
   }
 
   render() {
@@ -47,12 +54,20 @@ class ShareReportForm extends React.Component {
           options={_.map(this.props.staff, (s) => {
             return {
               value: s.id,
-              label: `${s.first_name} ${s.last_name}`,
+              label: s.name,
             };
           })}
           value={this.state.selectedStaff}
-          onChange={this.handleChange}
+          onChange={this.handleStaffChange}
       />
+    <label htmlFor="note">Note:</label>
+      <textarea
+        id="note"
+        placeholder="e.g. A date for a follow-up or a student who you think needs special attention."
+        style={{width: '100%'}}
+        onChange={this.handleNoteChange}
+        rows={4}
+      / >
       <Button onClick={this.handleShareReportClick} style={{display: 'block', margin: '20px auto', minWidth: 'null'}}>
         Share Report
       </Button>

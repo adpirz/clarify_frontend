@@ -10,22 +10,42 @@ const ReportTitle = styled.h4`
   margin: 0;
 `;
 
-const Subheading = styled.h5`
-  font-size: ${fonts.medium};
-  opacity: .5;
-  margin: 0;
-`;
-
 export default ({
   title,
   crumbs,
-  subheading,
   deselectReport,
   handleSaveClick,
   handleDeleteClick,
   handleShareClick,
   handlePopReportLevel,
+  getReportById,
+  reportId,
 }) => {
+
+  let shareByNode = null;
+  let shareWithNode = null;
+  let report = null;
+  if (reportId) {
+    report = getReportById(reportId);
+    const { shared_by, shared_with } = report;
+
+    if (shared_by) {
+      shareByNode = <span key="share_by">Shared by: {shared_by.staff}</span>;
+    }
+    if (shared_with && shared_with.length) {
+      const sharedWithNames = _.map(shared_with, 'staff').join(', ');
+      shareWithNode = (
+        <span
+          title={sharedWithNames}
+          style={{opacity: '.5'}}
+          key="share_with">
+          Shared with {shared_with.length} educator{shared_with.length > 1 ? 's' : null}
+        </span>
+      );
+    }
+
+  }
+
   return (
     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
       <Button onClick={deselectReport} style={{display: 'inline-block'}}>
@@ -33,7 +53,7 @@ export default ({
       </Button>
       <div style={{flexGrow:"1", textAlign:"center"}}>
         <ReportTitle>{title}</ReportTitle>
-        {subheading ? <Subheading>{subheading}</Subheading> : null}
+        {shareWithNode ? <span>-- {shareWithNode}</span> : null}
         {_.map(crumbs, (c) => {
           return (
             <span key={c.query}>
@@ -41,8 +61,10 @@ export default ({
             </span>
           );
         })}
+        {shareByNode ? <div>({shareByNode})</div> : null}
       </div>
       <ReportActions
+        report={report}
         handleDeleteClick={handleDeleteClick}
         handleSaveClick={handleSaveClick}
         handleShareClick={handleShareClick}
