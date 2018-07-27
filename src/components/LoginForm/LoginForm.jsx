@@ -1,104 +1,94 @@
-import React from 'react';
-import styled from 'styled-components';
-import { DataConsumer } from '../../DataProvider';
-import { Button, Error } from '../PatternLibrary';
-import TextField from '@material-ui/core/TextField';
+import React from "react";
+import { DataConsumer } from "../../DataProvider";
+import { Error } from "../PatternLibrary";
+import GoogleAuth from "../GoogleAuth/GoogleAuth";
+import styled from "styled-components";
+import { lighten } from "polished";
 
-const textFieldStyle = {
-  height: '50px',
-  fontSize: '20px',
-};
-
-const LoginForm = styled.form`
-  border: 5px solid rgba(0, 0, 0, .2);
+const LoginFormContainer = styled.div`
   width: 400px;
-  padding: 15px;
-  margin: 25vh auto;
+  height: 300px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, ${lighten(0.6, "gray")} 70%, ${lighten(0.47, "gray")});
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px 3px ${lighten(0.35, "gray")};
+  padding: 0 0 20px;
+`;
+
+const LoginHelperText = styled.div`
+  color: ${lighten(0.7, "black")};
+  font-size: 0.75em;
+  margin: auto 0 0;
+  text-align: center;
+  line-height: 1.42em;
+`;
+
+const LoginHeader = styled.h1`
+  font-weight: 400;
+  color: ${lighten(0.45, "black")};
+  font-size: 1.8em;
+  margin: auto auto 20px;
+`;
+
+const EmailLink = styled.a`
+  color: ${lighten(0.6, "black")};
+  text-decoration: none;
+
+  &:hover {
+    color: ${lighten(0.75, "black")};
+  }
+
+  &:active {
+    color: ${lighten(0.2, "black")};
+  }
 `;
 
 class Login extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      username: '',
-      password: '',
-    };
+  googleLogin = accessToken => {
+    this.props.logUserIn(accessToken, true)
   }
 
-  handleInputChange = (e) => {
-    const { name, value } = e.target;
-    this.setState({ [name]: value });
-  };
-
-  logUserIn = (e) => {
-    e.preventDefault();
-    const { username, password } = this.state;
-    if (!username || !password) {
-      return null;
-    }
-
-    this.props.logUserIn({username, password});
-  };
-
   render() {
-    const { username, password } = this.state;
     const { errors } = this.props;
 
     let errorNode = null;
     if (errors.loginError) {
-      errorNode = errors.loginError;
+      errorNode = errors.loginError.text;
     }
 
     return (
-      <LoginForm
-        onSubmit={this.logUserIn}
-      >
-        <div >
-          <div>
-            <TextField
-              placeholder="E-mail Address"
-              type="text"
-              required
-              name="username"
-              value={username}
-              onChange={this.handleInputChange}
-              style={textFieldStyle}
-              fullWidth
-            />
-          </div>
-          <div>
-            <TextField
-              placeholder="Password"
-              type="password"
-              required
-              fullWidth
-              name="password"
-              value={password}
-              onChange={this.handleInputChange}
-              style={textFieldStyle}
-            />
-          </div>
-          <div style={{textAlign: 'center'}}>
-            <Button primary> Login </Button>
-          </div>
-        </div>
-        <Error>
-          {errorNode}
-        </Error>
-      </LoginForm>
+      <div style={{ margin: "25vh auto" }}>
+        <LoginFormContainer>
+          <LoginHeader>Login with Google</LoginHeader>
+          <GoogleAuth
+          onSuccess={this.googleLogin}
+          onFailure={err => console.log(err)}
+          />
+          <Error>{errorNode}</Error>
+          <LoginHelperText>
+            This should be the same account you use to login with <strong>Illuminate</strong>.
+            <br />
+            Contact your system administrator if you need account information.
+            <br />
+            Still not sure? Reach out to{" "}
+            <strong>
+              <EmailLink href="mailto:help@clarify.school">help@clarify.school</EmailLink>.
+            </strong>
+          </LoginHelperText>
+        </LoginFormContainer>
+      </div>
     );
   }
 }
 
 export default props => (
   <DataConsumer>
-    {({isLoading, logUserIn, errors}) => (
-      <Login
-        isLoading={isLoading}
-        logUserIn={logUserIn}
-        errors={errors}
-        {...props} />
+    {({ isLoading, logUserIn, errors }) => (
+      <Login isLoading={isLoading} logUserIn={logUserIn} errors={errors} {...props} />
     )}
   </DataConsumer>
 );

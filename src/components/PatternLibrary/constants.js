@@ -15,6 +15,7 @@ const colors = {
   mainTheme: '#F9bC3C',
   accent: '#BFD7EA',
   greyBackground: '#E5E5E5',
+  googleBlue: '#4688f1',
 };
 
 const layout = {
