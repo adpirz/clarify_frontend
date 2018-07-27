@@ -64,6 +64,7 @@ class Login extends React.Component {
               value={username}
               onChange={this.handleInputChange}
               style={textFieldStyle}
+              fullWidth
             />
           </div>
           <div>
