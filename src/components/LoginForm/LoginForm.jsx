@@ -3,8 +3,7 @@ import { DataConsumer } from "../../DataProvider";
 import { Error } from "../PatternLibrary";
 import GoogleAuth from "../GoogleAuth/GoogleAuth";
 import styled from "styled-components";
-import { lighten, desaturate } from "polished";
-import { Button } from "@material-ui/core";
+import { lighten } from "polished";
 
 const LoginFormContainer = styled.div`
   width: 400px;
@@ -48,64 +47,28 @@ const EmailLink = styled.a`
   }
 `;
 
-const GoogleLoginErrorStyled = styled.div`
-  color: ${desaturate(0.2, lighten(0.1, "red"))};
-  font-size: 1.3em;
-  font-weight: 600;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-`;
-
-const GoogleLoginErrorSubheading = styled.div`
-  font-size: 0.7em;
-  font-weight: 400;
-  margin: 10px;
-  text-align: center;
-`;
-
-const GoogleLoginError = () => (
-  <GoogleLoginErrorStyled>
-    Google authentication failed.
-    <GoogleLoginErrorSubheading>
-      Try using a different account and return to Clarify.
-    </GoogleLoginErrorSubheading>
-    <Button
-      variant="outlined"
-      style={{ margin: "10px" }}
-      href="https://accounts.google.com/AccountChooser"
-    >
-      Switch Google Accounts
-    </Button>
-  </GoogleLoginErrorStyled>
-);
-
 class Login extends React.Component {
-  googleLogin = googleUser => {
-    const googleIdToken = googleUser.tokenId;
-    this.props.logUserIn(googleIdToken, true);
-  };
+  googleLogin = accessToken => {
+    this.props.logUserIn(accessToken, true)
+  }
 
   render() {
     const { errors } = this.props;
 
     let errorNode = null;
-    if (errors.queryError) {
-      errorNode = errors.queryError;
+    if (errors.loginError) {
+      errorNode = errors.loginError.text;
     }
 
     return (
       <div style={{ margin: "25vh auto" }}>
         <LoginFormContainer>
           <LoginHeader>Login with Google</LoginHeader>
-          {errors.loginError ? (
-            <GoogleLoginError />
-          ) : (
-            <GoogleAuth onSuccess={this.googleLogin} onFailure={err => console.log(err)} />
-          )}
-
+          <GoogleAuth
+          onSuccess={this.googleLogin}
+          onFailure={err => console.log(err)}
+          />
+          <Error>{errorNode}</Error>
           <LoginHelperText>
             This should be the same account you use to login with <strong>Illuminate</strong>.
             <br />
@@ -117,7 +80,6 @@ class Login extends React.Component {
             </strong>
           </LoginHelperText>
         </LoginFormContainer>
-        <Error>{errorNode}</Error>
       </div>
     );
   }

@@ -6,14 +6,13 @@ import {
 } from '../constants';
 
 const ErrorDiv = styled.div`
-  background-color: ${colors.errorOrange};
-  color: ${colors.black};
+  color: ${colors.errorOrange};
   font-size: ${fonts.small};
   font-weight: bold;
-  padding: 10px 0px;
+  padding: 15px 15px;
   margin: 15px auto;
   text-align: center;
-  width: 100%;
+  width: auto;
 `;
 
 const Error = ({children}) => {

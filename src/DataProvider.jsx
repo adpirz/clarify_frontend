@@ -78,24 +78,29 @@ export class DataProvider extends React.Component {
     })
   }
 
-  logUserIn = (credentials, is_google = false) => {
+  logUserIn = (googleIdToken) => {
     this.setState({isLoading: true});
-    let payload;
-    payload = is_google ? {'is_google': true, 'google_token': credentials } : credentials
+    const payload = {'google_token': googleIdToken };
     ApiFetcher.post('session', payload).then((resp) => {
-      this.setState((prevState) => {
         const newState = {isLoading: false};
         if (resp.data) {
           newState.user = resp.data;
           this.hydrateUserData();
-        } else if (resp.error){
-          newState.errors = {...prevState.errors, ...{loginError: resp.error}};
+        } else if (resp.error === 'user-lookup'){
+          const loginError = {
+            text: "We couldn't find a Clarify user for that email. Are you sure you're using your Alpha email?",
+          }
+          newState.errors = {...this.state.errors, loginError};
         } else {
-          newState.errors = {...prevState.errors, ...{loginError: `There was an error with your username and password.
-            Shoot an email over to help@clarify.com and we'll take a look.`}}
+          const loginError = {
+            text: "There was a problem at Google's end 🤔. Shoot an email over to help@clarify.com and we'll take a look.",
+          }
+          newState.errors = {
+            ...this.state.errors,
+            loginError,
+          }
         }
-        return newState;
-      })
+        this.setState(newState);
     });
   }
 

@@ -1,27 +1,42 @@
 import React from "react";
+import styled from 'styled-components';
 import PropTypes from "prop-types";
-import styled from "styled-components";
-import { lighten } from "polished";
+import { GoogleLogo } from '../PatternLibrary';
+import { colors, fonts } from '../PatternLibrary/constants';
 
-const GAPI_CLIENT_ID = process.env.REACT_APP_GAPI_CLIENT_ID;
+const GAPI_CLIENT_ID = process.env.REACT_APP_GAPI_CLIENT_ID || "729776830467-i92lfrj8sdj1ospq4rn349dvsu0jbjgi.apps.googleusercontent.com";
 
-const GoogleLoginPlaceholder = styled.div`
+const GoogleButton = styled.button`
+  border-radius: 0;
+  background-color: ${colors.googleBlue};
+  width: 250px;
+  height: 50px;
+  font-size: ${fonts.medium};
+  color: ${colors.white};
   display: flex;
-  text-align: center;
+  border: 1px solid ${colors.googleBlue}
+  margin: 0 auto;
+  padding: 0;
   align-items: center;
+`;
+
+const GoogleLogoContainer = styled.div`
+  height: 48px;
+  background-color: ${colors.white};
+  display: flex;
   justify-content: center;
-  font-weight: 400;
-  width: 150px;
-  height: 40px;
-  background: none;
-  color: ${lighten(0.5, "black")};
-  font-size: 0.7em;
+  align-items: center;
+  flex-grow: 1;
+`;
+
+const ButtonLabel = styled.span`
+  flex-grow: 3;
 `;
 
 class GoogleAuth extends React.Component {
-  static propTypes = {
-    onLoginSuccess: PropTypes.func,
-    onLoginFailure: PropTypes.func
+  propTypes: {
+    onSuccess: PropTypes.func.isRequired,
+    onFailure: PropTypes.func,
   };
 
   constructor(props) {
@@ -30,7 +45,6 @@ class GoogleAuth extends React.Component {
   }
 
   componentDidMount() {
-    const { onFailure } = this.props;
     ((document, script, id, callback) => {
       const element = document.getElementsByTagName(script)[0];
       const fjs = element;
@@ -47,18 +61,7 @@ class GoogleAuth extends React.Component {
     })(document, "script", "google-login", () => {
       window.gapi.load("auth2", () => {
         if (!window.gapi.auth2.getAuthInstance()) {
-          window.gapi.auth2.init({ clientId: GAPI_CLIENT_ID }).then(() => {
-            window.gapi.signin2.render("google-login-div", {
-              clientId: GAPI_CLIENT_ID,
-              scope: "email",
-              width: 150,
-              height: 40,
-              longtitle: false,
-              theme: "dark",
-              onsuccess: res => this.handleSigninSuccess(res, this.props.onSuccess),
-              onfailure: onFailure
-            });
-          });
+          window.gapi.auth2.init({clientId: GAPI_CLIENT_ID});
         }
       });
     });
@@ -69,40 +72,28 @@ class GoogleAuth extends React.Component {
       e.preventDefault(); // to prevent submit if used within form
     }
     const auth2 = window.gapi.auth2.getAuthInstance();
-    const { onFailure, prompt } = this.props;
+    const { onFailure } = this.props;
     const options = {
-      prompt
+      prompt: 'select_account'
     };
     auth2.signIn(options).then(res => this.handleSigninSuccess(res), err => onFailure(err));
   }
 
-  handleSigninSuccess(res, successCallback) {
-    /*
-          offer renamed response keys to names that match use
-        */
-    const basicProfile = res.getBasicProfile();
-    const authResponse = res.getAuthResponse();
-    res.googleId = basicProfile.getId();
-    res.tokenObj = authResponse;
-    res.tokenId = authResponse.id_token;
-    res.accessToken = authResponse.access_token;
-    res.profileObj = {
-      googleId: basicProfile.getId(),
-      imageUrl: basicProfile.getImageUrl(),
-      email: basicProfile.getEmail(),
-      name: basicProfile.getName(),
-      givenName: basicProfile.getGivenName(),
-      familyName: basicProfile.getFamilyName()
-    };
-    successCallback ? successCallback(res) : this.props.onSuccess(res);
+  handleSigninSuccess(res) {
+    const { id_token: accessToken } = res.getAuthResponse();
+    this.props.onSuccess(accessToken);
   }
 
   render() {
     return (
-      <GoogleLoginPlaceholder
-        style={{ display: "inline-block", borderRadius: "8px" }}
-        id="google-login-div"
-      />
+      <GoogleButton onClick={this.signIn}>
+        <GoogleLogoContainer>
+          <GoogleLogo />
+        </GoogleLogoContainer>
+        <ButtonLabel>
+          Sign in
+        </ButtonLabel>
+      </GoogleButton>
     );
   }
 }
