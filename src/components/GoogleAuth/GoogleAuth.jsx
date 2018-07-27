@@ -18,6 +18,12 @@ const GoogleButton = styled.button`
   margin: 0 auto;
   padding: 0;
   align-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.25);
+
+  &:hover {
+    box-shadow: 0 0 3px 3px rgba(66,133,244,.3);
+  }
 `;
 
 const GoogleLogoContainer = styled.div`
