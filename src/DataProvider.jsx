@@ -59,9 +59,14 @@ export class DataProvider extends React.Component {
   }
 
   hydrateUserData = () => {
+    this.setState({isLoading: true});
     return this.getQueryObjects().then(() => {
+      this.setState({
+        isLoading: false,
+        isLoadingReport: true,
+      });
       this.getUserReports().then(() => {
-        this.setState({isLoading: false});
+        this.setState({isLoadingReport: false});
       });
     })
   }
@@ -70,12 +75,12 @@ export class DataProvider extends React.Component {
     return ApiFetcher.get('user/me').then((resp) => {
       const newState = {
         isLoading: false,
-      };
+      }
       if (resp.data) {
         newState.user = resp.data;
       }
-        this.setState(newState);
-        return resp;
+      this.setState(newState);
+      return resp;
     })
   }
 
@@ -228,16 +233,13 @@ export class DataProvider extends React.Component {
   }
 
   submitReportQuery = (queryString) => {
+    const existingReport = this.getReportDataByQuery(queryString);
+    if (existingReport) {
+      return existingReport;
+    }
     this.setState({
       isLoadingReport: true,
     });
-    const existingReport = this.getReportDataByQuery(queryString);
-    if (existingReport) {
-      this.setState({
-        isLoadingReport: false,
-      })
-      return existingReport;
-    }
     return ReportFetcher.get(queryString).then((resp) => {
       this.setState((prevState) => {
         const newState = {
