@@ -189,6 +189,10 @@ class ReportQueryBuilder extends React.Component {
     const targetQueryOptionsGroup = _.find(reactSelectOptions, { value: optionValue });
 
     groupList.forEach((groupElement) => {
+      if (!_.get(groupElement, 'is_searchable', true)) {
+        return;
+      }
+
       let name;
       switch (optionValue) {
         case 'section':
