@@ -2,7 +2,7 @@ import React from "react";
 import styled from 'styled-components';
 import PropTypes from "prop-types";
 import { GoogleLogo } from '../PatternLibrary';
-import { colors, fonts } from '../PatternLibrary/constants';
+import { colors, fontSizes } from '../PatternLibrary/constants';
 
 const GAPI_CLIENT_ID = process.env.REACT_APP_GAPI_CLIENT_ID || "729776830467-i92lfrj8sdj1ospq4rn349dvsu0jbjgi.apps.googleusercontent.com";
 
@@ -11,7 +11,7 @@ const GoogleButton = styled.button`
   background-color: ${colors.googleBlue};
   width: 250px;
   height: 50px;
-  font-size: ${fonts.medium};
+  font-size: ${fontSizes.medium};
   color: ${colors.white};
   display: flex;
   border: 1px solid ${colors.googleBlue}

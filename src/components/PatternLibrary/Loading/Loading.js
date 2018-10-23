@@ -2,7 +2,7 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { colors } from '../constants';
 
-const LOADING_COLOR = colors.mainTheme
+const LOADING_COLOR = colors.primary
 const LOADING_SIZE = 15
 const LOADING_DURATION = 1.3
 

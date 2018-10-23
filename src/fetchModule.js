@@ -59,29 +59,6 @@ class ApiFetcher {
 
 }
 
-class ReportFetcher {
-  static get(query) {
-    if (Number.parseInt(query, 10)) {
-      // Query is a report id
-      query = `report_id=${query}`;
-    }
-    const reportRequest = new Request(`${BASE_URL}report/?${query}`, {
-      credentials: 'include'
-    });
-
-    return fetch(reportRequest).then(resp => {
-      if (resp.status === 200) {
-        return resp.json();
-      }
-      else {
-        return null;
-      }
-    });
-  }
-}
-
-
 export {
   ApiFetcher,
-  ReportFetcher
 };

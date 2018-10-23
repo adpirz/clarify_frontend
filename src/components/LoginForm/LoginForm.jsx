@@ -9,13 +9,13 @@ const LoginFormContainer = styled.div`
   width: 400px;
   height: 300px;
   border-radius: 20px;
-  background: linear-gradient(180deg, ${lighten(0.6, "gray")} 70%, ${lighten(0.47, "gray")});
+  background: linear-gradient(180deg, ${lighten(0.6, "grey")} 70%, ${lighten(0.47, "grey")});
   display: flex;
   flex-direction: column;
   align-items: center;
   align-content: center;
   justify-content: center;
-  box-shadow: 0 3px 8px 3px ${lighten(0.35, "gray")};
+  box-shadow: 0 3px 8px 3px ${lighten(0.35, "grey")};
   padding: 0 0 20px;
 `;
 

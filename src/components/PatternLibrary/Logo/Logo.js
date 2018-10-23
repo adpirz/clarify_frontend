@@ -1,12 +1,24 @@
+import React from 'react';
 import styled from 'styled-components';
+import {
+  fontSizes,
+  fontFamilies,
+  colors,
+} from '../../PatternLibrary/constants';
 
-const Logo = styled.div`
-  background: url('./alpha-logo.png');
-  background-repeat: no-repeat;
-  background-size: contain;
+const LogoDiv = styled.div`
   display: inline-block;
   width: 150px;
   height: 46px;
+  font-family: ${fontFamilies.base};
+  font-size: ${fontSizes.huge};
+  color: ${colors.accent}
 `;
+
+const Logo = () => {
+  return (
+    <LogoDiv>Clarify</LogoDiv>
+  )
+};
 
 export default Logo;

@@ -1,4 +1,4 @@
-const fonts = {
+const fontSizes = {
   gargantuan: "5em", // Really just for icons tbh
   huge: "3em",
   large: "1.5em",
@@ -6,15 +6,21 @@ const fonts = {
   small: "1em",
 };
 
+const fontFamilies = {
+  base: 'Helvetica Neue',
+}
+
 const colors = {
   white: '#FFFFFF',
   black: '#292929',
-  primaryGreen: '#229719',
+  textGrey: '#62667A',
+
+  primary: '#7F4FFF',
+  accent: '#7C82FF',
+  backgroundAccent: '#E6E4EE',
+
   errorOrange: '#FDA428',
   warningRed: '#BF114B',
-  mainTheme: '#F9bC3C',
-  accent: '#BFD7EA',
-  greyBackground: '#E5E5E5',
   googleBlue: '#4688f1',
 };
 
@@ -28,7 +34,8 @@ const effects = {
 };
 
 export {
-  fonts,
+  fontSizes,
+  fontFamilies,
   colors,
   effects,
   layout,

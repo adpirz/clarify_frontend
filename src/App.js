@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import map from 'lodash/map';
 import React from 'react';
 import { DataConsumer } from './DataProvider';
 import {
@@ -6,15 +6,32 @@ import {
   Logo,
   Loading,
   Error,
+  LeftNavigation,
 } from './components/PatternLibrary';
 import {
-  colors,
-} from './components/PatternLibrary/constants';
-import {
   LoginForm,
-  ReportQueryBuilder,
-  Worksheet
 } from './components/index';
+
+const styles = {
+  body: {
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
+  },
+  siteNav: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '10px 20px',
+    borderBottom: '1px solid lightgrey',
+    minHeight: '2.5vh',
+  },
+  mainContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: '1',
+  },
+}
 
 class App extends React.Component {
   getPageBody = () => {
@@ -30,23 +47,8 @@ class App extends React.Component {
     }
 
     return (
-      <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          flexGrow: '1',
-          backgroundColor: colors.accent,
-        }}>
-        <ReportQueryBuilder />
-        <div style={{
-            margin: '20px 25px',
-            padding: '25px',
-            border: '1px solid lightgrey',
-            backgroundColor: colors.white,
-            borderRadius: '10px',
-            flexGrow: '1',
-          }}>
-          <Worksheet />
-        </div>
+      <div style={styles.mainContent}>
+        <LeftNavigation location="home" />
       </div>
     );
   }
@@ -54,19 +56,8 @@ class App extends React.Component {
   render() {
     const { user, errorMessages } = this.props;
     return (
-      <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: '100vh',
-        }}>
-        <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '10px 20px',
-            borderBottom: '1px solid lightgrey',
-            minHeight: '46px',
-          }}>
+      <div style={styles.body}>
+        <div style={styles.siteNav}>
           <Logo alt="Clarify Logo" />
           <div style={{
               borderLeft: '2px solid lightgrey',
@@ -87,7 +78,7 @@ class App extends React.Component {
           </div>
         </div>
         <Error>
-          {_.map(errorMessages, (key, message) => {return <p>{message}</p>})}
+          {map(errorMessages, (key, message) => {return <p>{message}</p>})}
         </Error>
         {this.getPageBody()}
       </div>

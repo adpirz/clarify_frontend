@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import {
-  fonts,
+  fontSizes,
   colors,
 } from '../constants';
 
 const ErrorDiv = styled.div`
   color: ${colors.errorOrange};
-  font-size: ${fonts.small};
+  font-size: ${fontSizes.small};
   font-weight: bold;
   padding: 15px 15px;
   margin: 15px auto;
