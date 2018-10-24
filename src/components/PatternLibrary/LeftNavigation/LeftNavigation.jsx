@@ -12,7 +12,7 @@ import {
 
 const styles = {
   leftNavigation: {
-    maxWidth: '22.5%',
+    width: '18%',
     backgroundColor: colors.backgroundAccent,
     padding: '10px',
     minHeight: '97.5vh'
@@ -25,20 +25,31 @@ const styles = {
     overflow: 'hidden',
     textOverflow: 'ellipsis'
   },
+  routeElement: {
+    fontSize: fontSizes.small,
+  },
+  divider: {
+    width: '75%',
+    textAlign: 'right',
+  },
   heading: {
-    fontSize: fontSizes.large,
+    fontSize: fontSizes.medium,
     margin: '0',
     fontWeight: '400',
   },
   searchContainer: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
+    justifyContent: 'flex-start',
     paddingTop: '10px',
   },
-  studentList: {
-    marginLeft: '20px',
+  searchIndicator: {
+    width: '20%',
+    textAlign: 'center',
   },
+  searchInput: {
+    width: '80%',
+  }
 }
 
 
@@ -73,12 +84,15 @@ class LeftNavigation extends React.Component {
     const {filteredStudents} = this.state;
     return (
       <nav style={styles.leftNavigation}>
-        <h3 style={styles.heading}>My Students</h3>
-        <div style={styles.searchContainer}>
-          <i className="fas fa-search"/>
-          <input type='text' placeholder="Search" onChange={this.handleSearch}></input>
-        </div>
+        <h2>Home</h2>
+        <h2>Reminders</h2>
+        <hr style={styles.divider}/>
+        <h3 style={styles.heading}>My Students ({students.length})</h3>
         <div style={styles.studentList}>
+          <div style={styles.searchContainer}>
+            <i style={styles.searchIndicator} className="fas fa-search"/>
+            <input style={styles.searchInput} type='text' placeholder="Search" onChange={this.handleSearch}></input>
+          </div>
           {map(filteredStudents, (s) => {
             return (
               <span key={s.id} style={styles.studentRow}>{s.last_name}, {s.first_name}</span>
