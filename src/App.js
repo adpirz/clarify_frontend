@@ -1,5 +1,7 @@
 import map from 'lodash/map';
 import React from 'react';
+import { Route } from 'react-router-dom'
+
 import { DataConsumer } from './DataProvider';
 import {
   Button,
@@ -9,8 +11,14 @@ import {
   LeftNavigation,
 } from './components/PatternLibrary';
 import {
+  layout
+} from './components/PatternLibrary/constants';
+
+import {
   LoginForm,
 } from './components/index';
+
+
 
 const styles = {
   body: {
@@ -24,14 +32,18 @@ const styles = {
     alignItems: 'center',
     padding: '10px 20px',
     borderBottom: '1px solid lightgrey',
-    minHeight: '2.5vh',
+    height: layout.siteNavHeight,
   },
   mainContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    flexGrow: '1',
+    position: 'absolute',
+    top: `calc(${layout.siteNavHeight} + 20px)`,
+    left: layout.leftNavWidth,
   },
 }
+
+const Home = () => (<h1>HOME</h1>);
+const StudentDetail = () => (<h1>StudentDetail</h1>);
+const Reminders = () => (<h1>Reminders</h1>);
 
 class App extends React.Component {
   getPageBody = () => {
@@ -47,9 +59,14 @@ class App extends React.Component {
     }
 
     return (
-      <div style={styles.mainContent}>
+      <section>
         <LeftNavigation location="home" />
-      </div>
+        <div style={styles.mainContent}>
+          <Route path="/" exact component={Home} />
+          <Route path="/student/:id" component={StudentDetail} />
+          <Route path="/reminders" component={Reminders} />
+        </div>
+      </section>
     );
   }
 

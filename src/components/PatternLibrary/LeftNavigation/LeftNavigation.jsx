@@ -1,6 +1,8 @@
 import React from 'react';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
+import { NavLink } from 'react-router-dom'
+
 import { DataConsumer } from '../../../DataProvider';
 
 import { Loading } from '..';
@@ -8,48 +10,77 @@ import { Loading } from '..';
 import {
   colors,
   fontSizes,
+  layout,
 } from '../constants';
+
+const INDENT = '20';
 
 const styles = {
   leftNavigation: {
-    width: '18%',
+    width: layout.leftNavWidth,
     backgroundColor: colors.backgroundAccent,
-    padding: '10px',
-    minHeight: '97.5vh'
-  },
-  studentRow: {
-    display: 'block',
-    margin: '12px 0',
-    color: colors.textGrey,
-    cursor: 'pointer',
+    position: 'absolute',
+    top: `calc(${layout.siteNavHeight} + 20px)`,
+    bottom: 0,
     overflow: 'hidden',
-    textOverflow: 'ellipsis'
+  },
+  navSection: {
+    display: 'flex',
+    flexDirection: 'column',
   },
   routeElement: {
-    fontSize: fontSizes.small,
+    fontSize: fontSizes.medium,
+    fontWeight: '400',
+    display: 'block',
+    padding: '5px 0px',
+    margin: '15px 20px 15px 0px',
+    borderRadius: '0px 15px 15px 0px',
+    textDecoration: 'none',
+    color: colors.textGrey,
+    paddingLeft: `${INDENT}px`,
+  },
+  activeRouteElement: {
+    backgroundColor: colors.lilacAccent,
   },
   divider: {
     width: '75%',
-    textAlign: 'right',
+    margin: '10px 0 10px auto',
+    border: `.5px solid ${colors.borderGrey}`,
+  },
+  studentSection: {
+    height: '85%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
   },
   heading: {
     fontSize: fontSizes.medium,
-    margin: '0',
+    margin: `0 0 0 ${INDENT}px`,
     fontWeight: '400',
   },
   searchContainer: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    paddingTop: '10px',
+    padding: `10px 0px 10px ${INDENT}px`,
   },
   searchIndicator: {
-    width: '20%',
-    textAlign: 'center',
+    marginRight: '10px',
   },
-  searchInput: {
-    width: '80%',
-  }
+  studentList: {
+    overflow: 'scroll',
+  },
+  studentRow: {
+    padding: `5px 0px 5px ${2*INDENT}px`,
+    display: 'block',
+    color: colors.textGrey,
+    margin: '12px 20px 12px 0px',
+    borderRadius: '0px 15px 15px 0px',
+    cursor: 'pointer',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    textDecoration: 'none',
+  },
 }
 
 
@@ -84,21 +115,43 @@ class LeftNavigation extends React.Component {
     const {filteredStudents} = this.state;
     return (
       <nav style={styles.leftNavigation}>
-        <h2>Home</h2>
-        <h2>Reminders</h2>
-        <hr style={styles.divider}/>
-        <h3 style={styles.heading}>My Students ({students.length})</h3>
-        <div style={styles.studentList}>
+        <section style={styles.navSection}>
+          <NavLink
+            to='/'
+            exact
+            style={styles.routeElement}
+            activeStyle={styles.activeRouteElement}>
+            Home
+          </NavLink>
+          <NavLink
+            exact
+            to='/reminders'
+            style={styles.routeElement}
+            activeStyle={styles.activeRouteElement}>
+            Reminders
+          </NavLink>
+          <hr style={styles.divider}/>
+        </section>
+        <section style={styles.studentSection}>
+          <h3 style={styles.heading}>My Students ({students.length})</h3>
           <div style={styles.searchContainer}>
             <i style={styles.searchIndicator} className="fas fa-search"/>
             <input style={styles.searchInput} type='text' placeholder="Search" onChange={this.handleSearch}></input>
           </div>
-          {map(filteredStudents, (s) => {
-            return (
-              <span key={s.id} style={styles.studentRow}>{s.last_name}, {s.first_name}</span>
-            );
-          })}
-        </div>
+          <div style={styles.studentList}>
+            {map(filteredStudents, (s) => {
+              return (
+                <NavLink
+                  key={s.id}
+                  style={styles.studentRow}
+                  activeStyle={styles.activeRouteElement}
+                  to={`/student/${s.id}`}>
+                  {s.last_name}, {s.first_name[0]}
+                </NavLink>
+              );
+            })}
+          </div>
+        </section>
       </nav>
     )
   }

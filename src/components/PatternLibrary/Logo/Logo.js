@@ -9,7 +9,6 @@ import {
 const LogoDiv = styled.div`
   display: inline-block;
   width: 150px;
-  height: 46px;
   font-family: ${fontFamilies.base};
   font-size: ${fontSizes.huge};
   color: ${colors.accent}
