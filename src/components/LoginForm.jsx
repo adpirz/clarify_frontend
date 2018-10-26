@@ -1,7 +1,7 @@
 import React from "react";
-import { DataConsumer } from "../../DataProvider";
-import { Error } from "../PatternLibrary";
-import GoogleAuth from "../GoogleAuth/GoogleAuth";
+import { DataConsumer } from "../DataProvider";
+import { Error } from "./PatternLibrary";
+import GoogleAuth from "./GoogleAuth";
 import styled from "styled-components";
 import { lighten } from "polished";
 

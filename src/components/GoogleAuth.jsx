@@ -1,8 +1,8 @@
 import React from "react";
 import styled from 'styled-components';
 import PropTypes from "prop-types";
-import { GoogleLogo } from '../PatternLibrary';
-import { colors, fontSizes } from '../PatternLibrary/constants';
+import { GoogleLogo } from './PatternLibrary';
+import { colors, fontSizes } from './PatternLibrary/constants';
 
 const GAPI_CLIENT_ID = process.env.REACT_APP_GAPI_CLIENT_ID || "729776830467-i92lfrj8sdj1ospq4rn349dvsu0jbjgi.apps.googleusercontent.com";
 

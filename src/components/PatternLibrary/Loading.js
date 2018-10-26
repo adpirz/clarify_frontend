@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { colors } from '../constants';
+import { colors } from './constants';
 
 const LOADING_COLOR = colors.primary
 const LOADING_SIZE = 15

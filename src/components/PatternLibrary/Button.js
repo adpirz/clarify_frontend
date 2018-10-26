@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { darken } from 'polished';
-import { colors } from '../constants';
+import { colors } from './constants';
 
 const Button = styled.button`
   background: ${props => props.primary ? colors.primaryGreen : colors.white};

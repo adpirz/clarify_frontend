@@ -16,6 +16,7 @@ export class DataProvider extends React.Component {
         loginError: null,
       },
       students: null,
+      action: null,
       sections: null,
       staff: [],
       initializeUser: this.initializeUser,
@@ -95,6 +96,11 @@ export class DataProvider extends React.Component {
 
   getQueryObjects = () => {
     const promises = [];
+    promises.push(ApiFetcher.get('action').then((resp) => {
+      if (resp.status !== 404) {
+        this.setState({actions: resp.data});
+      }
+    }));
     promises.push(ApiFetcher.get('student').then((resp) => {
       if (resp.status !== 404) {
         this.setState({students: resp.data});

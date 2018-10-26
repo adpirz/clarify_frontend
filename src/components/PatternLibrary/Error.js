@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import {
   fontSizes,
   colors,
-} from '../constants';
+} from './constants';
 
 const ErrorDiv = styled.div`
   color: ${colors.errorOrange};

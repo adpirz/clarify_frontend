@@ -1,6 +1,7 @@
 import map from 'lodash/map';
 import React from 'react';
-import { Route } from 'react-router-dom'
+import { Route } from 'react-router-dom';
+import styled from 'styled-components';
 
 import { DataConsumer } from './DataProvider';
 import {
@@ -8,40 +9,38 @@ import {
   Logo,
   Loading,
   Error,
-  LeftNavigation,
 } from './components/PatternLibrary';
 import {
   layout
 } from './components/PatternLibrary/constants';
 
 import {
+  LeftNavigation,
   LoginForm,
-} from './components/index';
+  Home,
+} from './components';
 
 
 
-const styles = {
-  body: {
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '100vh',
-  },
-  siteNav: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '10px 20px',
-    borderBottom: '1px solid lightgrey',
-    height: layout.siteNavHeight,
-  },
-  mainContent: {
-    position: 'absolute',
-    top: `calc(${layout.siteNavHeight} + 20px)`,
-    left: layout.leftNavWidth,
-  },
-}
+const BodySection = styled.section`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+`;
+const SiteNav = styled.section`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid lightgrey;
+  height: ${layout.siteNavHeight};
+`;
+const MainContent = styled.section`
+  position: absolute;
+  top: calc(${layout.siteNavHeight} + 20px);
+  left: ${layout.leftNavWidth};
+`;
 
-const Home = () => (<h1>HOME</h1>);
 const StudentDetail = () => (<h1>StudentDetail</h1>);
 const Reminders = () => (<h1>Reminders</h1>);
 
@@ -61,11 +60,11 @@ class App extends React.Component {
     return (
       <section>
         <LeftNavigation location="home" />
-        <div style={styles.mainContent}>
+        <MainContent>
           <Route path="/" exact component={Home} />
           <Route path="/student/:id" component={StudentDetail} />
           <Route path="/reminders" component={Reminders} />
-        </div>
+        </MainContent>
       </section>
     );
   }
@@ -73,8 +72,8 @@ class App extends React.Component {
   render() {
     const { user, errorMessages } = this.props;
     return (
-      <div style={styles.body}>
-        <div style={styles.siteNav}>
+      <BodySection>
+        <SiteNav>
           <Logo alt="Clarify Logo" />
           <div style={{
               borderLeft: '2px solid lightgrey',
@@ -93,12 +92,12 @@ class App extends React.Component {
               </Button>
             }
           </div>
-        </div>
+        </SiteNav>
         <Error>
           {map(errorMessages, (key, message) => {return <p>{message}</p>})}
         </Error>
         {this.getPageBody()}
-      </div>
+      </BodySection>
     );
   }
 }
