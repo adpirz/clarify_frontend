@@ -1,7 +1,7 @@
 import React from 'react';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
-import { NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { DataConsumer } from '../DataProvider';
@@ -40,7 +40,7 @@ const RouteElement = styled(NavLink)`
 `;
 
 const ActiveElementStyle = {
-  backgroundColor: colors.lilacAccent,
+  backgroundColor: colors.accent,
 };
 
 const Divider = styled.hr`

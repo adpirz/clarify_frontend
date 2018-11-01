@@ -1,3 +1,6 @@
+import { getCookie } from './utils';
+
+
 const BASE_URL = process.env.NODE_ENV === "production" ? process.env.REACT_APP_BASE_URL : 'http://localhost:8000/'
 
 
@@ -24,10 +27,17 @@ class ApiFetcher {
 
   static post(modelName, objectProperties) {
     const postData = JSON.stringify(objectProperties);
+    const csrfCookie = getCookie('csrftoken')
+
+    const headers = new Headers({
+        'x-csrftoken': csrfCookie
+    });
+
     const apiRequest = new Request(`${BASE_URL}api/${modelName}/`, {
       credentials: 'include',
       method: 'POST',
       body: postData,
+      headers,
     });
 
     return fetch(apiRequest).then(resp => {

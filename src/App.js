@@ -18,6 +18,7 @@ import {
   LeftNavigation,
   LoginForm,
   Home,
+  StudentDetail,
 } from './components';
 
 
@@ -37,11 +38,13 @@ const SiteNav = styled.section`
 `;
 const MainContent = styled.section`
   position: absolute;
+  width: calc(100% - ${layout.leftNavWidth});
   top: calc(${layout.siteNavHeight} + 20px);
   left: ${layout.leftNavWidth};
+  bottom: 0;
+  overflow: scroll;
 `;
 
-const StudentDetail = () => (<h1>StudentDetail</h1>);
 const Reminders = () => (<h1>Reminders</h1>);
 
 class App extends React.Component {
@@ -59,10 +62,10 @@ class App extends React.Component {
 
     return (
       <section>
-        <LeftNavigation location="home" />
+        <LeftNavigation />
         <MainContent>
           <Route path="/" exact component={Home} />
-          <Route path="/student/:id" component={StudentDetail} />
+          <Route path="/student/:studentId" component={StudentDetail} />
           <Route path="/reminders" component={Reminders} />
         </MainContent>
       </section>

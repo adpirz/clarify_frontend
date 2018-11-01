@@ -15,19 +15,19 @@ const colors = {
   textGrey: '#62667A',
   borderGrey: '#979797',
 
-  primary: '#7F4FFF',
-  accent: '#7C82FF',
-  lilacAccent: '#7E98FF',
+  mainTheme: '#7F4FFF',
+  accent: '#7E98FF',
   backgroundAccent: '#E6E4EE',
 
+  primaryPink: '#B36CD5',
   errorOrange: '#FDA428',
   warningRed: '#BF114B',
   googleBlue: '#4688f1',
 };
 
 const effects = {
-  boxShadow: '1px 1px 8px 0px rgba(166,166,166,1)',
-  boxShadowHover: '3px 1px 8px 2px rgba(166,166,166,1)',
+  cardBoxShadow: '0 2px 11px rgba(0, 0, 0, 0.17), 0 3px 6px rgba(0, 0, 0, 0.23)',
+  cardBoxShadowHover: '0 7px 11px rgba(0, 0, 0, 0.17), 0 3px 6px rgba(0, 0, 0, 0.23)',
 };
 
 const layout = {

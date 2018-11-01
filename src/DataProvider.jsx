@@ -1,7 +1,6 @@
 import React from 'react';
 import { ApiFetcher } from './fetchModule';
 
-
 const Context = React.createContext();
 
 export class DataProvider extends React.Component {
@@ -23,6 +22,7 @@ export class DataProvider extends React.Component {
       logUserIn: this.logUserIn,
       logUserOut: this.logUserOut,
       getStaff: this.getStaff,
+      createAction: this.createAction,
     };
   }
 
@@ -119,6 +119,26 @@ export class DataProvider extends React.Component {
     return ApiFetcher.get('staff').then((resp) => {
         this.setState({staff: resp.data});
     });
+  }
+
+  createAction = ({type, note, studentId}) => {
+    const payload = {
+      type,
+      note,
+      student_id: studentId,
+      private: true,
+    }
+    return ApiFetcher.post('action', payload).then((resp) => {
+      if (resp.status === 201) {
+        ApiFetcher.get('action').then((resp) => {
+          if (resp.status !== 404) {
+            this.setState({actions: resp.data});
+          }
+        })
+        return resp;
+      }
+    });
+
   }
 
   render() {

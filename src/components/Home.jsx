@@ -2,70 +2,140 @@ import React from 'react';
 import styled from 'styled-components';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
+import orderBy from 'lodash/orderBy';
+import reduce from 'lodash/reduce';
+import { NavLink } from 'react-router-dom';
 
 import { DataConsumer } from '../DataProvider';
-import { colors } from './PatternLibrary/constants';
-import { CardContainer } from './PatternLibrary';
+import {
+  colors,
+  fontSizes,
+} from './PatternLibrary/constants';
+import { ActionCard } from './PatternLibrary';
+import { ActionForm } from './PatternLibrary';
 
-const CardHeader = styled.div`
-  height: 40px;
-  width: 100%;
+
+const HomeContainer = styled.div`
   display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  overflow: scroll;
+`;
+
+const CardHeader = styled(NavLink)`
+  height: 40px;
+  display: inline-flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: 0 1.2em;
-  font-size: 1.2em;
-  color: ${colors.DELTA_CARD_HEADER_TEXT_COLOR};
+  font-size: ${fontSizes.large};
+  color: ${colors.textGrey};
+  text-decoration: none;
+`;
+
+const ActionList = styled.div`
+  display: flex;
+  flex-direction: row;
 `;
 
 
-class Home extends React.Component {
-  getStudentActionList = (student) => {
-    const { actions } = this.props;
-    const actionsForStudent = filter(actions, (a) => {
-      return a.student.id === student.id;
-    })
+const StyledActionCard = styled(ActionCard)`
+  max-width: 33%;
+  flex-direction: row;
+  cursor: pointer;
+`;
 
-    if (actionsForStudent.length === 0) {
-      return (
-        <div>
-          Create your first action!
-        </div>
-      )
+class Home extends React.Component {
+  state = {
+    selectedStudent: null,
+  }
+
+  handleActionFormClick = (studentId = null) => {
+    this.setState((prevState) => {
+      return {
+        selectedStudentId: studentId === prevState.selectedStudentId ? null : studentId,
+      }
+    })
+  }
+
+  getStudentDeltaList = (student) => {
+    const { actions, createAction } = this.props;
+    const actionsForStudent = filter(actions, (a) => {
+      return a.student_id === student.id;
+    });
+    if (!actionsForStudent.length) {
+      if (this.state.selectedStudentId === student.id) {
+        return (
+          <ActionForm
+            closeActionForm={this.handleActionFormClick}
+            student={student}
+            createAction={createAction} />
+        );
+      } else {
+        return (
+          <StyledActionCard
+            action={null}
+            handleActionFormClick={this.handleActionFormClick.bind(this, student.id)} />
+        )
+      }
     }
+
     return (
-      <div>
-        {map(actionsForStudent, (a) => {
+      <ActionList>
+        {map(actionsForStudent.slice(3), (a, i) => {
           return (
-            <CardContainer>
-              {a.note}
-            </CardContainer>
+            <StyledActionCard
+              key={i}
+              action={a}
+              student={student} />
           )
         })}
-      </div>
+      </ActionList>
     )
+  }
+
+  getStudentViewModels = () => {
+    const { students, actions } = this.props;
+    if (!students || !students.length) {
+      return null;
+    }
+
+    const filteredStudents = reduce(students, (accumulator, student) => {
+      const studentsActions = filter(actions, {student_id: student.id});
+      const sortedActions = orderBy(studentsActions, ['id'], ['desc']);
+
+      accumulator.push({
+        student,
+        actions_list: sortedActions,
+        most_recent_action: sortedActions.length ? sortedActions[0].created_on : null,
+      });
+      return accumulator;
+    }, [])
+
+    return orderBy(filteredStudents, ['most_recent_action'], ['desc']);
   }
 
 
   render() {
-    const { students, actions } = this.props;
+    const studentViewModels = this.getStudentViewModels();
 
-    if (!students || !actions) {
+    if (!studentViewModels) {
       return null;
     }
 
+
     return (
-      <div>
-        {map(students.slice(0,10), (s) => {
+      <HomeContainer>
+        {map(studentViewModels.slice(0,3), ({student}, i) => {
           return (
-            <div>
-              <CardHeader>{s.last_name} {s.first_name}</CardHeader>
-              {this.getStudentActionList(s)}
+            <div key={i}>
+              <CardHeader to={`/student/${student.id}`}>{student.last_name}, {student.first_name[0]}</CardHeader>
+              {this.getStudentDeltaList(student)}
             </div>
           )
         })}
-      </div>
+      </HomeContainer>
     )
   }
 }
@@ -74,10 +144,11 @@ class Home extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({students, actions}) => (
+    {({students, actions, createAction}) => (
       <Home
         students={students}
         actions={actions}
+        createAction={createAction}
         {...props}
       />
     )}
