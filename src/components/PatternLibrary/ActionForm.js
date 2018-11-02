@@ -101,13 +101,13 @@ class ActionForm extends React.Component {
     let placeholderText = "";
     switch (type) {
       case 'call':
-        placeholderText = `What do you want to remember about this phone call?`
+        placeholderText = `What are the details of the call you want to log?`;
         break;
       case 'message':
-        placeholderText = `What do you want to remember about the message you sent?`
+        placeholderText = `What are the details of the message you sent?`;
         break;
       default:
-        placeholderText = `Take a note about ${student.first_name}`
+        placeholderText = `Take a note about ${student.first_name}`;
     }
 
     return (
@@ -127,7 +127,7 @@ class ActionForm extends React.Component {
           </ActionTextArea>
         </ActionTextAreaContainer>
         <ErrorField visible={this.state.noteError}>
-          Please add a note describing the action you're taking <span role="img" aria-label="pointing up at note field"></span>👆
+          Please add a note describing the action you're taking <span role="img" aria-label="pointing up at note field">👆</span>
         </ErrorField>
         <Button onClick={this.handleFormSubmission} primary>
           Save Now

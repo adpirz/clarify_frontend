@@ -5,7 +5,10 @@ import map from 'lodash/map';
 import get from 'lodash/get';
 import styled from 'styled-components';
 import { DataConsumer } from '../DataProvider';
-import { ActionCard } from './PatternLibrary/';
+import {
+  ActionCard,
+  EmptyState,
+} from './PatternLibrary/';
 
 
 const ActionList = styled.div`
@@ -26,15 +29,27 @@ class StudentDetail extends React.Component {
     const { id } = find(students, {id: studentId});
     const studentsActions = filter(actions, {student_id: id});
 
-    return (
-      <div>
-        <ActionList>
-          {map(studentsActions, (a, i) => {
-            return <ActionCard action={a} key={i} />;
-          })}
-        </ActionList>
-      </div>
-    )
+      if (studentsActions.length) {
+          return (
+            <ActionList>
+              {map(studentsActions, (a, i) => {
+                return <ActionCard action={a} key={i} />;
+              })}
+            </ActionList>
+          );
+      }
+
+      return (
+        <EmptyState>
+          <p>
+            <span role="img" aria-label="thinking">🤔</span> Looks like you haven't logged any actions for this student yet.
+          </p>
+          <p>
+            Go ahead and pick one from <span role="img" aria-label="pointing up at actions list">👆</span> when
+            you've got an action you want to log.
+          </p>
+        </EmptyState>
+      )
   }
 }
 
