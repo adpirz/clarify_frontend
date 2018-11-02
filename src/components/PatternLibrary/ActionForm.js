@@ -5,8 +5,7 @@ import {
   effects,
 } from './constants';
 import {
-  ActionIcon,
-  ActionIconImage,
+  ActionIconList,
   Button,
 } from '.';
 
@@ -29,14 +28,6 @@ const Heading = styled.h3`
   margin: 0;
 `;
 
-const ActionIconList = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 35%;
-  margin: 15px 0px;
-`;
-
 const CloseIcon = styled.i`
   position: absolute;
   font-size: 18px;
@@ -54,18 +45,6 @@ const ActionTextArea = styled.textarea`
   border: ${({error}) => {return error ? `1px solid ${colors.errorOrange}` : 'none'}};
 `;
 
-const Caret = styled.div`
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-top: 15px solid ${colors.accent};
-  width: 0;
-  height: 0;
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-`;
-
 const ErrorField = styled.h4`
   color: ${colors.errorOrange};
   visibility: ${({visible}) => {return visible ? 'visible' : 'hidden'}}
@@ -78,7 +57,7 @@ class ActionForm extends React.Component {
     noteError: false,
   }
 
-  handleActionTypeSelection = (type) => {
+  handleTypeSelection = (type) => {
     this.setState({
       type,
     });
@@ -93,27 +72,31 @@ class ActionForm extends React.Component {
   }
 
   handleFormSubmission = () => {
-    const { type, note } = this.state;
+    const { note } = this.state;
     if (!note) {
       this.setState({noteError: true});
       return;
     }
-    const { createAction, student: {id: studentId}} = this.props;
+    const { closeActionForm, createAction, student: {id: studentId}} = this.props;
+    const type = this.getType();
     createAction({
       type,
       note,
       studentId,
     }).then((resp) => {
       if (resp.status === 201) {
-        this.props.closeActionForm();
+        closeActionForm();
       }
     });
   }
 
-  render() {
-    const { student, closeActionForm } = this.props;
-    const { type } = this.state;
+  getType = () => {
+    return this.props.parentManagedType || this.state.type;
+  }
 
+  render() {
+    const { student, closeActionForm, parentManagedType } = this.props;
+    const type = this.getType();
 
     let placeholderText = "";
     switch (type) {
@@ -130,28 +113,10 @@ class ActionForm extends React.Component {
     return (
       <ActionFormContainer>
         <CloseIcon className="fas fa-times" onClick={closeActionForm}/>
-        <Heading>What kind of action do you want to record for {student.first_name}:</Heading>
-        <ActionIconList>
-          <ActionIconImage
-            selected={type === 'note'}
-            onClick={this.handleActionTypeSelection.bind(this, 'note')}
-            imageFileName="note_icon.png"
-            actionAlt="Make a Note icon">
-            {type === 'note' ? <Caret /> : null}
-          </ActionIconImage>
-          <ActionIcon
-            selected={type === 'call'}
-            onClick={this.handleActionTypeSelection.bind(this, 'call')}
-            className="fa-phone">
-            {type === 'call' ? <Caret /> : null}
-          </ActionIcon>
-          <ActionIcon
-            selected={type === 'message'}
-            onClick={this.handleActionTypeSelection.bind(this, 'message')}
-            className="fa-comment-alt">
-            {type === 'message' ? <Caret /> : null}
-          </ActionIcon>
-        </ActionIconList>
+        <div style={{display: parentManagedType ? 'none' : 'initial', margin: '15px 0px'}}>
+          <Heading>What kind of action do you want to record for {student.first_name}:</Heading>
+          <ActionIconList type={type} handleTypeSelection={this.handleTypeSelection}/>
+        </div>
         <ActionTextAreaContainer>
           <ActionTextArea
             onChange={this.handleNoteUpdate}

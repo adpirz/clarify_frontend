@@ -5,7 +5,8 @@ import Error from './Error.js';
 import {
   ActionIcon,
   ActionIconImage,
-} from './ActionIcon.js';
+  ActionIconList,
+} from './ActionItems.js';
 import GoogleLogo from './GoogleLogo.js';
 import Loading from './Loading.js';
 import Logo from './Logo.js';
@@ -16,6 +17,7 @@ export {
   ActionForm,
   ActionIcon,
   ActionIconImage,
+  ActionIconList,
   Button,
   Error,
   GoogleLogo,
