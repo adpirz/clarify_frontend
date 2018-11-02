@@ -4,7 +4,11 @@ import {
   colors,
   effects,
 } from './constants';
-import Button from './Button';
+import {
+  ActionIcon,
+  ActionIconImage,
+  Button,
+} from '.';
 
 const ActionFormContainer = styled.section`
   width: calc(100% - 50px);
@@ -31,24 +35,6 @@ const ActionIconList = styled.div`
   justify-content: space-between;
   width: 35%;
   margin: 15px 0px;
-`;
-
-const ActionIconContainer = styled.div`
-  padding: 10px;
-  box-shadow: 0px 0px 2px #888;
-  border-radius: 50%;
-  display: flex;
-  cursor: pointer;
-  background-color: ${({selected}) => {return selected ? colors.accent : 'transparent'}};
-  position: relative;
-
-  &:hover {
-    opacity: ${({selected}) => {return selected ? 1 : .5}}
-  }
-`;
-
-const ActionIcon = styled.i`
-  font-size: 40px;
 `;
 
 const CloseIcon = styled.i`
@@ -78,11 +64,6 @@ const Caret = styled.div`
   bottom: -10px;
   left: 50%;
   transform: translateX(-50%);
-`;
-
-const ActionImage = styled.img`
-  width: 49px;
-  height: 39px;
 `;
 
 const ErrorField = styled.h4`
@@ -151,27 +132,25 @@ class ActionForm extends React.Component {
         <CloseIcon className="fas fa-times" onClick={closeActionForm}/>
         <Heading>What kind of action do you want to record for {student.first_name}:</Heading>
         <ActionIconList>
-          <ActionIconContainer
+          <ActionIconImage
             selected={type === 'note'}
-            onClick={this.handleActionTypeSelection.bind(this, 'note')}>
-            <ActionImage
-              src="note_icon.png"
-              alt="Make a Note icon" />
+            onClick={this.handleActionTypeSelection.bind(this, 'note')}
+            imageFileName="note_icon.png"
+            actionAlt="Make a Note icon">
             {type === 'note' ? <Caret /> : null}
-          </ActionIconContainer>
-          <ActionIconContainer
+          </ActionIconImage>
+          <ActionIcon
             selected={type === 'call'}
-            onClick={this.handleActionTypeSelection.bind(this, 'call')}>
-            <ActionIcon className="fas fa-phone" />
+            onClick={this.handleActionTypeSelection.bind(this, 'call')}
+            className="fa-phone">
             {type === 'call' ? <Caret /> : null}
-          </ActionIconContainer>
-          <ActionIconContainer
+          </ActionIcon>
+          <ActionIcon
             selected={type === 'message'}
-            onClick={this.handleActionTypeSelection.bind(this, 'message')}>
-            <ActionIcon
-              className="fas fa-comment-alt" />
+            onClick={this.handleActionTypeSelection.bind(this, 'message')}
+            className="fa-comment-alt">
             {type === 'message' ? <Caret /> : null}
-          </ActionIconContainer>
+          </ActionIcon>
         </ActionIconList>
         <ActionTextAreaContainer>
           <ActionTextArea

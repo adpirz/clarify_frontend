@@ -2,6 +2,7 @@ import React from 'react';
 import find from 'lodash/find';
 import filter from 'lodash/filter';
 import map from 'lodash/map';
+import get from 'lodash/get';
 import styled from 'styled-components';
 import { DataConsumer } from '../DataProvider';
 import { ActionCard } from './PatternLibrary/';
@@ -14,10 +15,6 @@ const ActionList = styled.div`
   justify-content: flex-start;
 `;
 
-const DetailHeading = styled.h2`
-  text-align: center;
-`;
-
 class StudentDetail extends React.Component {
   render() {
     const { students, actions } = this.props;
@@ -25,12 +22,12 @@ class StudentDetail extends React.Component {
       return null;
     }
 
-    const {first_name, last_name, id} = find(students, {id: parseInt(this.props.match.params.studentId, 10)});
+    const studentId = parseInt(get(this.props, 'match.params.studentId'), 10);
+    const { id } = find(students, {id: studentId});
     const studentsActions = filter(actions, {student_id: id});
 
     return (
       <div>
-        <DetailHeading>{last_name}, {first_name[0]}&#39;s timeline</DetailHeading>
         <ActionList>
           {map(studentsActions, (a, i) => {
             return <ActionCard action={a} key={i} />;

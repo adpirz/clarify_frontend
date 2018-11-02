@@ -20,7 +20,7 @@ const Nav = styled.nav`
   width: ${layout.leftNavWidth};
   background-color: ${colors.backgroundAccent};
   position: absolute;
-  top: calc(${layout.siteNavHeight} + 20px);
+  top: 0;
   bottom: 0;
   overflow: hidden;
   display: flex;
@@ -120,7 +120,7 @@ class LeftNavigation extends React.Component {
             to='/'
             activeStyle={ActiveElementStyle}
             exact>
-            Home
+            Next Steps
           </RouteElement>
           <RouteElement
             exact
@@ -131,7 +131,7 @@ class LeftNavigation extends React.Component {
           <Divider />
         </section>
         <StudentSection>
-          <Heading>My Students ({students.length})</Heading>
+          <Heading>Student Profiles</Heading>
           <SearchContainer>
             <SearchIndicator className="fas fa-search" />
             <input type='text' placeholder="Search" onChange={this.handleSearch}></input>
@@ -143,7 +143,7 @@ class LeftNavigation extends React.Component {
                   key={s.id}
                   activeStyle={ActiveElementStyle}
                   to={`/student/${s.id}`}>
-                  {s.last_name}, {s.first_name[0]}
+                  {s.first_name} {s.last_name[0]}
                 </StudentRow>
               );
             })}

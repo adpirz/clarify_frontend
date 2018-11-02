@@ -31,7 +31,7 @@ const effects = {
 };
 
 const layout = {
-  siteNavHeight: '6vh',
+  siteNavHeight: '60px',
   leftNavWidth: '200px'
 };
 

@@ -6,9 +6,10 @@ import styled from 'styled-components';
 import { DataConsumer } from './DataProvider';
 import {
   Button,
+  Error,
   Logo,
   Loading,
-  Error,
+  PageHeading,
 } from './components/PatternLibrary';
 import {
   layout
@@ -22,12 +23,20 @@ import {
 } from './components';
 
 
-
-const BodySection = styled.section`
+const Window = styled.section`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 `;
+
+const PageBody = styled.section`
+  position: absolute;
+  top: calc(${layout.siteNavHeight} + 20px);
+  left: 0;
+  bottom: 0;
+  right: 0;
+`;
+
 const SiteNav = styled.section`
   display: flex;
   justify-content: space-between;
@@ -36,11 +45,12 @@ const SiteNav = styled.section`
   border-bottom: 1px solid lightgrey;
   height: ${layout.siteNavHeight};
 `;
+
 const MainContent = styled.section`
   position: absolute;
   width: calc(100% - ${layout.leftNavWidth});
-  top: calc(${layout.siteNavHeight} + 20px);
   left: ${layout.leftNavWidth};
+  top: 0;
   bottom: 0;
   overflow: scroll;
 `;
@@ -61,21 +71,22 @@ class App extends React.Component {
     }
 
     return (
-      <section>
+      <PageBody>
         <LeftNavigation />
         <MainContent>
+          <Route path="/" component={PageHeading} />
           <Route path="/" exact component={Home} />
           <Route path="/student/:studentId" component={StudentDetail} />
           <Route path="/reminders" component={Reminders} />
         </MainContent>
-      </section>
+      </PageBody>
     );
   }
 
   render() {
     const { user, errorMessages } = this.props;
     return (
-      <BodySection>
+      <Window>
         <SiteNav>
           <Logo alt="Clarify Logo" />
           <div style={{
@@ -100,7 +111,7 @@ class App extends React.Component {
           {map(errorMessages, (key, message) => {return <p>{message}</p>})}
         </Error>
         {this.getPageBody()}
-      </BodySection>
+      </Window>
     );
   }
 }

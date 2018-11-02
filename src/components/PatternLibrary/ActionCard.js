@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
+import { effects } from './constants';
 import {
-  effects,
-  colors,
-} from './constants';
+  ActionIcon,
+  ActionIconImage,
+} from '.';
 
 const CardContainer = styled.div`
   min-height: 120px;
@@ -24,23 +25,6 @@ const CardContainer = styled.div`
   }
 `;
 
-const ActionIconContainer = styled.div`
-  padding: 10px;
-  box-shadow: 0px 0px 2px #888;
-  border-radius: 50%;
-  display: flex;
-  background-color: ${colors.accent};
-`;
-
-const ActionIcon = styled.i`
-  font-size: 40px;
-`;
-
-const ActionImage = styled.img`
-  width: 49px;
-  height: 39px;
-`;
-
 const ActionNote = styled.div`
   margin: 10px 25px;
 `;
@@ -51,28 +35,20 @@ class ActionCard extends React.Component {
     let iconNode = null;
     switch (type) {
       case 'call':
-        iconNode = (
-          <ActionIcon className="fas fa-phone" />
-        )
+        iconNode = <ActionIcon className='fa-phone' />
         break;
       case 'message':
-        iconNode = (
-          <ActionIcon className="fas fa-comment-alt" />
-        )
+        iconNode = <ActionIcon className='fa-comment-alt' />
         break;
       default:
         iconNode = (
-          <ActionImage
-            src="../note_icon.png"
-            alt="Make a Note icon" />
+          <ActionIconImage
+            imageFileName="note_icon.png"
+            actionAlt="Make a Note icon" />
           );
     }
 
-    return (
-      <ActionIconContainer>
-        {iconNode}
-      </ActionIconContainer>
-    );
+    return iconNode;
   }
 
   render() {

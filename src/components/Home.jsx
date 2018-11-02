@@ -130,7 +130,7 @@ class Home extends React.Component {
         {map(studentViewModels.slice(0,3), ({student}, i) => {
           return (
             <div key={i}>
-              <CardHeader to={`/student/${student.id}`}>{student.last_name}, {student.first_name[0]}</CardHeader>
+              <CardHeader to={`/student/${student.id}`}>{student.first_name} {student.last_name[0]}</CardHeader>
               {this.getStudentDeltaList(student)}
             </div>
           )
