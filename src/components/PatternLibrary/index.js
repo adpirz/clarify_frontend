@@ -1,3 +1,5 @@
+import styled from 'styled-components';
+
 import ActionCard from './ActionCard.js';
 import ActionForm from './ActionForm.js';
 import Button from './Button.js';
@@ -13,6 +15,15 @@ import Loading from './Loading.js';
 import Logo from './Logo.js';
 import PageHeading from './PageHeading.js';
 
+
+
+const MainContentBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+`;
+
+
 export {
   ActionCard,
   ActionForm,
@@ -25,5 +36,6 @@ export {
   GoogleLogo,
   Loading,
   Logo,
+  MainContentBody,
   PageHeading,
 };

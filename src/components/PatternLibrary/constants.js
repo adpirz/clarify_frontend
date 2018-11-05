@@ -1,3 +1,4 @@
+
 const fontSizes = {
   huge: "2em",
   large: "1.5em",
@@ -17,9 +18,10 @@ const colors = {
 
   mainTheme: '#7F4FFF',
   accent: '#7E98FF',
-  backgroundAccent: '#E6E4EE',
+  backgroundAccent: '#DED9F0',
 
   primaryPink: '#B36CD5',
+  secondaryMidnightBlue: '#282A5F',
   errorOrange: '#FDA428',
   warningRed: '#BF114B',
   googleBlue: '#4688f1',

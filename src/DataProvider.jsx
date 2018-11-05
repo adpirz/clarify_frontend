@@ -1,5 +1,6 @@
 import React from 'react';
 import { ApiFetcher } from './fetchModule';
+import filter from 'lodash/filter';
 
 const Context = React.createContext();
 
@@ -15,7 +16,7 @@ export class DataProvider extends React.Component {
         loginError: null,
       },
       students: null,
-      action: null,
+      actions: null,
       sections: null,
       staff: [],
       initializeUser: this.initializeUser,
@@ -23,6 +24,7 @@ export class DataProvider extends React.Component {
       logUserOut: this.logUserOut,
       getStaff: this.getStaff,
       createAction: this.createAction,
+      getReminders: this.getReminders,
     };
   }
 
@@ -121,12 +123,14 @@ export class DataProvider extends React.Component {
     });
   }
 
-  createAction = ({type, note, studentId}) => {
+  createAction = ({type, note, studentId, dueOn, completedOn}) => {
     const payload = {
       type,
       note,
       student_id: studentId,
       private: true,
+      due_on: dueOn,
+      completed_on: completedOn,
     }
     return ApiFetcher.post('action', payload).then((resp) => {
       if (resp.status === 201) {
@@ -138,7 +142,13 @@ export class DataProvider extends React.Component {
         return resp;
       }
     });
+  }
 
+  getReminders = () => {
+    console.debug(this.state);
+    return filter(this.state.actions, (a) => {
+      return a.date_completed;
+    });
   }
 
   render() {

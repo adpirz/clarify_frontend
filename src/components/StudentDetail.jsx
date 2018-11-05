@@ -3,20 +3,14 @@ import find from 'lodash/find';
 import filter from 'lodash/filter';
 import map from 'lodash/map';
 import get from 'lodash/get';
-import styled from 'styled-components';
+
 import { DataConsumer } from '../DataProvider';
 import {
   ActionCard,
   EmptyState,
+  MainContentBody,
 } from './PatternLibrary/';
 
-
-const ActionList = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-`;
 
 class StudentDetail extends React.Component {
   render() {
@@ -31,11 +25,11 @@ class StudentDetail extends React.Component {
 
       if (studentsActions.length) {
           return (
-            <ActionList>
+            <MainContentBody>
               {map(studentsActions, (a, i) => {
                 return <ActionCard action={a} key={i} />;
               })}
-            </ActionList>
+            </MainContentBody>
           );
       }
 

@@ -8,7 +8,7 @@ import {
 
 const CardContainer = styled.div`
   min-height: 120px;
-  margin: 10px;
+  margin: 25px auto;
   box-shadow: ${effects.cardBoxShadow};
   border-radius: 20px;
   display: flex;
@@ -52,12 +52,12 @@ class ActionCard extends React.Component {
   }
 
   render() {
-      const { action, handleActionFormClick, className } = this.props;
+      const { action, handleActionFormClick, className, firstName } = this.props;
 
       if (!action) {
         return (
           <CardContainer onClick={handleActionFormClick} className={className}>
-            Log your first action!
+            Log your first action for {firstName}!
           </CardContainer>
         )
       }

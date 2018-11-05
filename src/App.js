@@ -12,6 +12,7 @@ import {
   PageHeading,
 } from './components/PatternLibrary';
 import {
+  fontFamilies,
   layout
 } from './components/PatternLibrary/constants';
 
@@ -20,6 +21,7 @@ import {
   LoginForm,
   Home,
   StudentDetail,
+  Reminders,
 } from './components';
 
 
@@ -35,6 +37,7 @@ const PageBody = styled.section`
   left: 0;
   bottom: 0;
   right: 0;
+  font-family: ${fontFamilies.base};
 `;
 
 const SiteNav = styled.section`
@@ -55,7 +58,6 @@ const MainContent = styled.section`
   overflow: scroll;
 `;
 
-const Reminders = () => (<h1>Reminders</h1>);
 
 class App extends React.Component {
   getPageBody = () => {
@@ -77,7 +79,7 @@ class App extends React.Component {
           <Route path="/" component={PageHeading} />
           <Route path="/" exact component={Home} />
           <Route path="/student/:studentId" component={StudentDetail} />
-          <Route path="/reminders" component={Reminders} />
+          <Route path="/reminders/:studentId?" component={Reminders} />
         </MainContent>
       </PageBody>
     );

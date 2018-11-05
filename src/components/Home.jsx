@@ -11,16 +11,12 @@ import {
   colors,
   fontSizes,
 } from './PatternLibrary/constants';
-import { ActionCard } from './PatternLibrary';
-import { ActionForm } from './PatternLibrary';
+import {
+  MainContentBody,
+  ActionCard,
+  ActionForm,
+} from './PatternLibrary';
 
-
-const HomeContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  overflow: scroll;
-`;
 
 const CardHeader = styled(NavLink)`
   height: 40px;
@@ -76,6 +72,7 @@ class Home extends React.Component {
         return (
           <StyledActionCard
             action={null}
+            firstName={student.first_name}
             handleActionFormClick={this.handleActionFormClick.bind(this, student.id)} />
         )
       }
@@ -126,7 +123,7 @@ class Home extends React.Component {
 
 
     return (
-      <HomeContainer>
+      <MainContentBody>
         {map(studentViewModels.slice(0,3), ({student}, i) => {
           return (
             <div key={i}>
@@ -135,7 +132,7 @@ class Home extends React.Component {
             </div>
           )
         })}
-      </HomeContainer>
+      </MainContentBody>
     )
   }
 }
