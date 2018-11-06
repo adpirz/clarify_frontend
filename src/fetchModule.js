@@ -57,9 +57,15 @@ class ApiFetcher {
   }
 
   static delete(modelName, objectId) {
+    const csrfCookie = getCookie('csrftoken')
+    const headers = new Headers({
+        'x-csrftoken': csrfCookie
+    });
+
     const apiRequest = new Request(`${BASE_URL}api/${modelName}/${objectId || ''}`, {
       credentials: 'include',
       method: 'DELETE',
+      headers,
     });
 
     return fetch(apiRequest).then(resp => {

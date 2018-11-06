@@ -1,8 +1,9 @@
-import React from "react";
-import find from "lodash/find";
-import filter from "lodash/filter";
-import map from "lodash/map";
-import get from "lodash/get";
+import React from 'react';
+import styled from 'styled-components';
+import filter from 'lodash/filter';
+import map from 'lodash/map';
+import get from 'lodash/get';
+import find from 'lodash/find';
 
 import posed from "react-pose";
 
@@ -25,6 +26,11 @@ const PosedP = posed.p({
   }
 });
 
+const StudentDetailEmptyState = styled(EmptyState)`
+  box-shadow: none;
+  margin: auto auto;
+`;
+
 class StudentDetail extends React.Component {
   render() {
     const { students, actions } = this.props;
@@ -32,9 +38,27 @@ class StudentDetail extends React.Component {
       return null;
     }
 
-    const studentId = parseInt(get(this.props, "match.params.studentId"), 10);
-    const { id } = find(students, { id: studentId });
-    const studentsActions = filter(actions, { student_id: id });
+    const studentId = parseInt(get(this.props, 'match.params.studentId'), 10);
+    const studentsActions = filter(actions, (a) => {
+      return a.student_id === studentId && !!a.completed_on;
+    });
+
+      if (studentsActions.length) {
+        const student = find(students, {id: studentId});
+        return (
+          <MainContentBody>
+            {map(studentsActions, (a, i) => {
+              return (
+                <ActionCard
+                  closeActionForm={this.handleActionFormClick}
+                  action={a}
+                  key={i}
+                  studentFirstName={student.first_name} />
+              )
+            })}
+          </MainContentBody>
+        );
+      }
 
     if (studentsActions.length) {
       return (
@@ -52,7 +76,7 @@ class StudentDetail extends React.Component {
     return (
       <div>
         <PageHeading />
-        <EmptyState>
+        <StudentDetailEmptyState>
           <PosedP>
             <span role="img" aria-label="thinking">
               🤔
@@ -66,7 +90,7 @@ class StudentDetail extends React.Component {
             </span>{" "}
             when you've got an action you want to log.
           </PosedP>
-        </EmptyState>
+        </StudentDetailEmptyState>
       </div>
     );
   }
