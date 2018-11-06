@@ -1,3 +1,6 @@
+import { getCookie } from './utils';
+
+
 const BASE_URL = process.env.NODE_ENV === "production" ? process.env.REACT_APP_BASE_URL : 'http://localhost:8000/'
 
 
@@ -24,10 +27,17 @@ class ApiFetcher {
 
   static post(modelName, objectProperties) {
     const postData = JSON.stringify(objectProperties);
+    const csrfCookie = getCookie('csrftoken')
+
+    const headers = new Headers({
+        'x-csrftoken': csrfCookie
+    });
+
     const apiRequest = new Request(`${BASE_URL}api/${modelName}/`, {
       credentials: 'include',
       method: 'POST',
       body: postData,
+      headers,
     });
 
     return fetch(apiRequest).then(resp => {
@@ -59,29 +69,6 @@ class ApiFetcher {
 
 }
 
-class ReportFetcher {
-  static get(query) {
-    if (Number.parseInt(query, 10)) {
-      // Query is a report id
-      query = `report_id=${query}`;
-    }
-    const reportRequest = new Request(`${BASE_URL}report/?${query}`, {
-      credentials: 'include'
-    });
-
-    return fetch(reportRequest).then(resp => {
-      if (resp.status === 200) {
-        return resp.json();
-      }
-      else {
-        return null;
-      }
-    });
-  }
-}
-
-
 export {
   ApiFetcher,
-  ReportFetcher
 };

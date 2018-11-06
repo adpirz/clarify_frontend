@@ -1,34 +1,45 @@
-const fonts = {
-  gargantuan: "5em", // Really just for icons tbh
-  huge: "3em",
+
+const fontSizes = {
+  huge: "2em",
   large: "1.5em",
   medium: "1.25em",
   small: "1em",
 };
 
+const fontFamilies = {
+  base: 'Helvetica Neue',
+}
+
 const colors = {
   white: '#FFFFFF',
   black: '#292929',
-  primaryGreen: '#229719',
+  textGrey: '#62667A',
+  borderGrey: '#979797',
+
+  mainTheme: '#7F4FFF',
+  accent: '#7E98FF',
+  backgroundAccent: '#DED9F0',
+
+  primaryPink: '#B36CD5',
+  secondaryMidnightBlue: '#282A5F',
   errorOrange: '#FDA428',
   warningRed: '#BF114B',
-  mainTheme: '#F9bC3C',
-  accent: '#BFD7EA',
-  greyBackground: '#E5E5E5',
   googleBlue: '#4688f1',
 };
 
-const layout = {
-  reportPadding: '20px',
+const effects = {
+  cardBoxShadow: '0 2px 11px rgba(0, 0, 0, 0.17), 0 3px 6px rgba(0, 0, 0, 0.23)',
+  cardBoxShadowHover: '0 7px 11px rgba(0, 0, 0, 0.17), 0 3px 6px rgba(0, 0, 0, 0.23)',
 };
 
-const effects = {
-  boxShadow: '1px 1px 8px 0px rgba(166,166,166,1)',
-  boxShadowHover: '3px 1px 8px 2px rgba(166,166,166,1)',
+const layout = {
+  siteNavHeight: '60px',
+  leftNavWidth: '200px'
 };
 
 export {
-  fonts,
+  fontSizes,
+  fontFamilies,
   colors,
   effects,
   layout,

@@ -1,21 +1,13 @@
-import LoginForm from './LoginForm/LoginForm';
-import ReportQueryBuilder from './ReportQueryBuilder/ReportQueryBuilder';
-import AttendanceReport from './AttendanceReport/AttendanceReport';
-import GradeReport from './GradeReport/GradeReport';
-import ReportCard from './ReportCard/ReportCard';
-import ReportCardContainer from './ReportCardContainer/ReportCardContainer';
-import ReportHeading from './ReportHeading/ReportHeading';
-import ShareReportForm from './ShareReportForm/ShareReportForm';
-import Worksheet from './Worksheet/Worksheet';
+import Home from './Home';
+import LoginForm from './LoginForm';
+import LeftNavigation from './LeftNavigation';
+import Reminders from './Reminders';
+import StudentDetail from './StudentDetail';
 
 export {
+  Home,
   LoginForm,
-  ReportQueryBuilder,
-  AttendanceReport,
-  GradeReport,
-  ReportHeading,
-  ReportCard,
-  ReportCardContainer,
-  ShareReportForm,
-  Worksheet,
+  LeftNavigation,
+  Reminders,
+  StudentDetail
 };

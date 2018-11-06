@@ -1,20 +1,63 @@
-import _ from 'lodash';
+import map from 'lodash/map';
 import React from 'react';
+import { Route } from 'react-router-dom';
+import styled from 'styled-components';
+
 import { DataConsumer } from './DataProvider';
 import {
   Button,
+  Error,
   Logo,
   Loading,
-  Error,
+  PageHeading,
 } from './components/PatternLibrary';
 import {
-  colors,
+  fontFamilies,
+  layout
 } from './components/PatternLibrary/constants';
+
 import {
+  LeftNavigation,
   LoginForm,
-  ReportQueryBuilder,
-  Worksheet
-} from './components/index';
+  Home,
+  StudentDetail,
+  Reminders,
+} from './components';
+
+
+const Window = styled.section`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+`;
+
+const PageBody = styled.section`
+  position: absolute;
+  top: calc(${layout.siteNavHeight} + 20px);
+  left: 0;
+  bottom: 0;
+  right: 0;
+  font-family: ${fontFamilies.base};
+`;
+
+const SiteNav = styled.section`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid lightgrey;
+  height: ${layout.siteNavHeight};
+`;
+
+const MainContent = styled.section`
+  position: absolute;
+  width: calc(100% - ${layout.leftNavWidth});
+  left: ${layout.leftNavWidth};
+  top: 0;
+  bottom: 0;
+  overflow: scroll;
+`;
+
 
 class App extends React.Component {
   getPageBody = () => {
@@ -30,43 +73,23 @@ class App extends React.Component {
     }
 
     return (
-      <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          flexGrow: '1',
-          backgroundColor: colors.accent,
-        }}>
-        <ReportQueryBuilder />
-        <div style={{
-            margin: '20px 25px',
-            padding: '25px',
-            border: '1px solid lightgrey',
-            backgroundColor: colors.white,
-            borderRadius: '10px',
-            flexGrow: '1',
-          }}>
-          <Worksheet />
-        </div>
-      </div>
+      <PageBody>
+        <LeftNavigation />
+        <MainContent>
+          <Route path="/" component={PageHeading} />
+          <Route path="/" exact component={Home} />
+          <Route path="/student/:studentId" component={StudentDetail} />
+          <Route path="/reminders/:studentId?" component={Reminders} />
+        </MainContent>
+      </PageBody>
     );
   }
 
   render() {
     const { user, errorMessages } = this.props;
     return (
-      <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          minHeight: '100vh',
-        }}>
-        <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '10px 20px',
-            borderBottom: '1px solid lightgrey',
-            minHeight: '46px',
-          }}>
+      <Window>
+        <SiteNav>
           <Logo alt="Clarify Logo" />
           <div style={{
               borderLeft: '2px solid lightgrey',
@@ -85,12 +108,12 @@ class App extends React.Component {
               </Button>
             }
           </div>
-        </div>
+        </SiteNav>
         <Error>
-          {_.map(errorMessages, (key, message) => {return <p>{message}</p>})}
+          {map(errorMessages, (key, message) => {return <p>{message}</p>})}
         </Error>
         {this.getPageBody()}
-      </div>
+      </Window>
     );
   }
 }
