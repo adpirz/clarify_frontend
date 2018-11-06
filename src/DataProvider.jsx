@@ -1,6 +1,7 @@
 import React from 'react';
 import { ApiFetcher } from './fetchModule';
 import filter from 'lodash/filter';
+import format from 'date-fns/format';
 
 const Context = React.createContext();
 
@@ -23,8 +24,9 @@ export class DataProvider extends React.Component {
       logUserIn: this.logUserIn,
       logUserOut: this.logUserOut,
       getStaff: this.getStaff,
-      createAction: this.createAction,
-      getReminders: this.getReminders,
+      saveAction: this.saveAction,
+      deleteAction: this.deleteAction,
+      getReminderActions: this.getReminderActions,
     };
   }
 
@@ -123,16 +125,21 @@ export class DataProvider extends React.Component {
     });
   }
 
-  createAction = ({type, note, studentId, dueOn, completedOn}) => {
-    const payload = {
+  saveAction = (payload) => {
+    const { type, note, dueOn, completed, studentId, actionId } = payload;
+    if (!dueOn && !completed) {
+      return;
+    }
+    const actionPayload = {
+      action_id: actionId,
       type,
       note,
       student_id: studentId,
       private: true,
-      due_on: dueOn,
-      completed_on: completedOn,
+      due_on: dueOn ? format(dueOn, 'MM/DD/YYYY HH:mm') : null,
+      completed_on: completed ? format(new Date(), 'MM/DD/YYYY HH:mm') : null,
     }
-    return ApiFetcher.post('action', payload).then((resp) => {
+    return ApiFetcher.post('action', actionPayload).then((resp) => {
       if (resp.status === 201) {
         ApiFetcher.get('action').then((resp) => {
           if (resp.status !== 404) {
@@ -144,10 +151,22 @@ export class DataProvider extends React.Component {
     });
   }
 
-  getReminders = () => {
-    console.debug(this.state);
+  deleteAction = (actionId) => {
+    return ApiFetcher.delete(`action/${actionId}`).then((resp) => {
+      if (resp.status === 200) {
+        ApiFetcher.get('action').then((resp) => {
+          if (resp.status !== 404) {
+            this.setState({actions: resp.data});
+          }
+        })
+        return resp;
+      }
+    });
+  }
+
+  getReminderActions = () => {
     return filter(this.state.actions, (a) => {
-      return a.date_completed;
+      return !a.completed_on && !!a.due_on;
     });
   }
 

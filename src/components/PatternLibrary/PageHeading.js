@@ -1,12 +1,13 @@
-import React from "react";
-import find from "lodash/find";
-import styled from "styled-components";
+import React from 'react';
+import find from 'lodash/find';
+import styled from 'styled-components';
 import { withRouter } from "react-router-dom";
 import posed, { PoseGroup } from "react-pose";
 
-import { DataConsumer } from "../../DataProvider";
-import { colors } from "./constants";
-import { ActionIconList, ActionForm } from ".";
+import { DataConsumer } from '../../DataProvider';
+import { colors } from './constants';
+import { ActionIconList, ActionCard } from '.';
+
 
 const PageHeadingContainer = styled.div`
   background-color: ${colors.mainTheme};
@@ -52,20 +53,19 @@ class PageHeading extends React.Component {
   };
 
   renderActionForm = student => {
-    const { createAction } = this.props;
+    const { saveAction } = this.props;
     const { type } = this.state;
     if (!type) {
       return null;
     }
     return (
-      <ActionForm
+      <ActionCard
         closeActionForm={this.handleTypeSelection.bind(this, null)}
-        parentManagedType={type}
-        student={student}
-        createAction={createAction}
-      />
-    );
-  };
+        type={type}
+        studentFirstName={student.first_name}
+        saveAction={saveAction} />
+    )
+  }
 
   handleTypeSelection = type => {
     this.setState(prevState => {
@@ -94,9 +94,9 @@ class PageHeading extends React.Component {
         actionIconListNode = (
           <div style={{ width: "25%" }}>
             <ActionIconList
+              isSelected={!!type}
               type={type}
-              handleTypeSelection={this.handleTypeSelection}
-            />
+              handleTypeSelection={this.handleTypeSelection} />
           </div>
         );
       } else if (location.pathname.indexOf("/reminders") > -1) {
@@ -120,8 +120,8 @@ class PageHeading extends React.Component {
 
 export default withRouter(props => (
   <DataConsumer>
-    {({ students, createAction }) => (
-      <PageHeading students={students} createAction={createAction} {...props} />
+    {({ students, saveAction }) => (
+      <PageHeading students={students} saveAction={saveAction} {...props}/>
     )}
   </DataConsumer>
 ));

@@ -1,11 +1,11 @@
 import React from "react";
-import find from "lodash/find";
+import styled from "styled-components";
+import posed from "react-pose";
+
 import filter from "lodash/filter";
 import map from "lodash/map";
 import get from "lodash/get";
-
-import posed from "react-pose";
-import styled from "styled-components";
+import find from "lodash/find";
 
 import { DataConsumer } from "../DataProvider";
 import {
@@ -40,6 +40,11 @@ const EmojiSpan = styled.span`
   font-size: 1.8em;
 `;
 
+const StudentDetailEmptyState = styled(EmptyState)`
+  box-shadow: none;
+  margin: auto auto;
+`;
+
 class StudentDetail extends React.Component {
   render() {
     const { students, actions } = this.props;
@@ -48,8 +53,27 @@ class StudentDetail extends React.Component {
     }
 
     const studentId = parseInt(get(this.props, "match.params.studentId"), 10);
-    const { id } = find(students, { id: studentId });
-    const studentsActions = filter(actions, { student_id: id });
+    const studentsActions = filter(actions, a => {
+      return a.student_id === studentId && !!a.completed_on;
+    });
+
+    if (studentsActions.length) {
+      const student = find(students, { id: studentId });
+      return (
+        <MainContentBody>
+          {map(studentsActions, (a, i) => {
+            return (
+              <ActionCard
+                closeActionForm={this.handleActionFormClick}
+                action={a}
+                key={i}
+                studentFirstName={student.first_name}
+              />
+            );
+          })}
+        </MainContentBody>
+      );
+    }
 
     if (studentsActions.length) {
       return (
@@ -67,9 +91,10 @@ class StudentDetail extends React.Component {
     return (
       <div>
         <PageHeading />
-        <EmptyState>
+        <StudentDetailEmptyState>
           <LineStyled>
             <EmojiSpan role="img" aria-label="thinking">
+              {/* eslint-disable-next-line */}
               🤔
             </EmojiSpan>{" "}
             <p>
@@ -82,10 +107,12 @@ class StudentDetail extends React.Component {
               log.
             </p>
             <EmojiSpan role="img" aria-label="pointing up at actions list">
+              {/* eslint-disable-next-line */}
               👆
-            </EmojiSpan>
+            </EmojiSpan>{" "}
+            when you've got an action you want to log.
           </LineStyled>
-        </EmptyState>
+        </StudentDetailEmptyState>
       </div>
     );
   }
