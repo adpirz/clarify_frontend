@@ -12,14 +12,15 @@ import { Loading } from "./PatternLibrary";
 import { colors, fontSizes, layout } from "./PatternLibrary/constants";
 import { lighten, darken, desaturate } from "polished";
 
-const INDENT = "20";
+const INDENT = "15";
 
 const SearchStyled = styled.input`
-  padding: 2px 6px;
-  border-radius: 3px;
+  padding: 2px 8px;
+  margin-right: 8px;
   border: none;
+  border-radius: 4px;
   width: 85%;
-  height: 35px;
+  height: 42px;
   font-size: 1.1em;
   box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
 
@@ -77,7 +78,7 @@ const Heading = styled.h3`
 const SearchContainer = styled.div`
   display: flex;
   align-items: center;
-  min-height: 40px;
+  min-height: 50px;
   padding: 10px 5px 10px ${INDENT}px;
 `;
 

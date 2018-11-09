@@ -17,41 +17,32 @@ const PageHeadingContainer = styled.div`
   justify-content: space-between;
   flex-wrap: wrap;
   color: ${colors.white};
+  min-height: 80px;
 `;
 
-const transition = {
-  default: {
-    duration: 350
-  }
-};
 const Posed = posed.div({
   before: {
-    x: -20,
-    scale: 3.0,
-    opacity: 0.3,
-    transition: {
-      scale: {
-        duration: 400
-      }
-    }
+    scale: 1.2,
+    opacity: 0
   },
   enter: {
-    x: 0,
     scale: 1,
     opacity: 1,
-    transition
+    delay: 200
   },
   exit: {
-    x: 140,
-    scale: 0.8,
+    scale: 0.9,
     opacity: 0,
-    transition
+    transition: {
+      duration: 150
+    }
   }
 });
 
 const PageHeadingCopy = styled(Posed)`
   min-width: 200px;
   text-align: center;
+  font-size: 1.2em;
 `;
 
 class PageHeading extends React.Component {

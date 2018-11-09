@@ -11,6 +11,7 @@ import Loading from "./Loading.js";
 import Logo from "./Logo.js";
 import PageHeading from "./PageHeading.js";
 import SiteNav from "./SiteNav";
+import NotFound from "./404";
 
 const MainContentBody = styled.div`
   display: flex;
@@ -32,5 +33,6 @@ export {
   Logo,
   MainContentBody,
   PageHeading,
-  SiteNav
+  SiteNav,
+  NotFound
 };

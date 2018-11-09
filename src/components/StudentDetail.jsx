@@ -4,6 +4,8 @@ import filter from "lodash/filter";
 import map from "lodash/map";
 import get from "lodash/get";
 
+import posed from "react-pose";
+
 import { DataConsumer } from "../DataProvider";
 import {
   ActionCard,
@@ -11,6 +13,17 @@ import {
   MainContentBody,
   PageHeading
 } from "./PatternLibrary/";
+
+const PosedP = posed.p({
+  enter: {
+    x: 0,
+    opacity: 1
+  },
+  exit: {
+    x: -50,
+    opacity: 0
+  }
+});
 
 class StudentDetail extends React.Component {
   render() {
@@ -40,19 +53,19 @@ class StudentDetail extends React.Component {
       <div>
         <PageHeading />
         <EmptyState>
-          <p>
+          <PosedP>
             <span role="img" aria-label="thinking">
               🤔
             </span>{" "}
             Looks like you haven't logged any actions for this student yet.
-          </p>
-          <p>
+          </PosedP>
+          <PosedP>
             Go ahead and pick one from{" "}
             <span role="img" aria-label="pointing up at actions list">
               👆
             </span>{" "}
             when you've got an action you want to log.
-          </p>
+          </PosedP>
         </EmptyState>
       </div>
     );

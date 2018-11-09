@@ -1,10 +1,11 @@
 import map from "lodash/map";
 import React from "react";
-import { Route } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import styled from "styled-components";
+import posed, { PoseGroup } from "react-pose";
 
 import { DataConsumer } from "./DataProvider";
-import { Error, Loading, SiteNav } from "./components/PatternLibrary";
+import { Error, Loading, SiteNav, NotFound } from "./components/PatternLibrary";
 import { fontFamilies, layout } from "./components/PatternLibrary/constants";
 
 import {
@@ -39,6 +40,8 @@ const MainContent = styled.section`
   overflow: scroll;
 `;
 
+const RouteContainer = posed.div();
+
 class App extends React.Component {
   getPageBody = () => {
     const { isLoading, user } = this.props;
@@ -54,9 +57,26 @@ class App extends React.Component {
       <PageBody>
         <LeftNavigation />
         <MainContent>
-          <Route path="/" exact component={Home} />
-          <Route path="/student/:studentId" component={StudentDetail} />
-          <Route path="/reminders/:studentId?" component={Reminders} />
+          <Route
+            render={({ location }) => (
+              <PoseGroup animateOnMount>
+                <RouteContainer key={location.key || "start"}>
+                  <Switch location={location}>
+                    <Route path="/" exact component={Home} />
+                    <Route
+                      path="/student/:studentId"
+                      component={StudentDetail}
+                    />
+                    <Route
+                      path="/reminders/:studentId?"
+                      component={Reminders}
+                    />
+                    <Route component={NotFound} />
+                  </Switch>
+                </RouteContainer>
+              </PoseGroup>
+            )}
+          />
         </MainContent>
       </PageBody>
     );
