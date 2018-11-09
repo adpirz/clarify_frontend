@@ -10,7 +10,7 @@ import { DataConsumer } from "../DataProvider";
 import { Loading } from "./PatternLibrary";
 
 import { colors, fontSizes, layout } from "./PatternLibrary/constants";
-import { lighten, darken } from "polished";
+import { lighten, darken, desaturate } from "polished";
 
 const INDENT = "20";
 
@@ -80,15 +80,11 @@ const SearchContainer = styled.div`
   padding: 10px 5px 10px ${INDENT}px;
 `;
 
-const SearchIndicator = styled.i`
-  margin-right: 10px;
-`;
-
 const StudentList = styled.div`
   overflow: scroll;
 `;
 
-const highlightBackground = darken(0.3, colors.accent);
+const highlightBackground = desaturate(0.17, darken(0.17, colors.accent));
 const StudentRow = styled(NavLink)`
   padding: 5px 0px 5px ${2 * INDENT}px;
   font-size: 1.1em;
@@ -127,7 +123,7 @@ const PressEnterSpan = () => (
   <div
     style={{
       fontSize: "0.7em",
-      opacity: "0.6",
+      opacity: "0.7",
       margin: "0.4em 0",
       fontWeight: 400
     }}
