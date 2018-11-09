@@ -288,6 +288,7 @@ class ActionCard extends React.Component {
       saveAction,
       deleteAction,
       closeActionForm,
+      reminderButtonCopy,
       action: {
         completed_on: completedOn,
         due_on: dueOn
@@ -310,14 +311,14 @@ class ActionCard extends React.Component {
         </ErrorField>
         <ActionButtons visible={!!saveAction}>
           <Button onClick={this.handleFormSubmission.bind(this, true, null)} primary>
-            Save Now
+            Save
           </Button>
           <Divider>
             -- or --
           </Divider>
           { this.state.pose === 'hideReminders' ?
             <Button onClick={this.showReminders}>
-              Remind Me
+              {reminderButtonCopy}
             </Button> : null
           }
           {this.getReminderButtons()}

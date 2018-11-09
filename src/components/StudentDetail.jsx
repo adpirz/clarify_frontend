@@ -65,6 +65,7 @@ class StudentDetail extends React.Component {
             return (
               <ActionCard
                 closeActionForm={this.handleActionFormClick}
+                reminderButtonCopy="Remind Me"
                 showTitle={false}
                 action={a}
                 key={i}

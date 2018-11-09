@@ -147,6 +147,17 @@ class LeftNavigation extends React.Component {
     };
   }
 
+  componentWillReceiveProps = (nextProps) => {
+    const newStudents = nextProps.students;
+    const oldStudents = this.props.students;
+
+    if (newStudents && oldStudents.length !== newStudents.length) {
+      this.setState = {
+        filteredStudents: newStudents,
+      };
+    }
+  }
+
   handleSearch = e => {
     const needle = e.target.value.toLowerCase();
     const filteredStudents = filter(this.props.students, s => {

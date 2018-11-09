@@ -60,6 +60,7 @@ class Reminders extends React.Component {
                 saveAction={saveAction}
                 deleteAction={deleteAction.bind(this, a.id)}
                 student={studentForAction}
+                reminderButtonCopy="Snooze"
                 showTitle={true}
                 key={i}
                 />

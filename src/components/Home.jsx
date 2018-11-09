@@ -103,6 +103,7 @@ class Home extends React.Component {
             showTitle={false}
             student={student}
             saveAction={saveAction}
+            reminderButtonCopy="Remind Me"
             action={{type: this.state.type}}/>
         );
       } else {

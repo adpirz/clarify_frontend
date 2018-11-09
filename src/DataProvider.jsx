@@ -159,7 +159,7 @@ export class DataProvider extends React.Component {
 
   deleteAction = (actionId) => {
     return ApiFetcher.delete(`action/${actionId}`).then((resp) => {
-      if (resp.status === 200) {
+      if (resp.status === 204) {
         ApiFetcher.get('action').then((resp) => {
           if (resp.status !== 404) {
             this.setState({actions: resp.data});

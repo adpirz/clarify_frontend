@@ -63,6 +63,7 @@ class PageHeading extends React.Component {
         closeActionForm={this.handleTypeSelection.bind(this, null)}
         type={type}
         student={student}
+        reminderButtonCopy="Remind Me"
         showTitle={false}
         saveAction={saveAction} />
     )
