@@ -5,6 +5,7 @@ import map from "lodash/map";
 import get from "lodash/get";
 
 import posed from "react-pose";
+import styled from "styled-components";
 
 import { DataConsumer } from "../DataProvider";
 import {
@@ -14,7 +15,7 @@ import {
   PageHeading
 } from "./PatternLibrary/";
 
-const PosedP = posed.p({
+const Posed = posed.div({
   enter: {
     x: 0,
     opacity: 1
@@ -24,6 +25,20 @@ const PosedP = posed.p({
     opacity: 0
   }
 });
+
+const LineStyled = styled(Posed)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.4em;
+  margin: 15px auto;
+  text-align: center;
+`;
+
+const EmojiSpan = styled.span`
+  margin: 0 8px;
+  font-size: 1.8em;
+`;
 
 class StudentDetail extends React.Component {
   render() {
@@ -53,19 +68,23 @@ class StudentDetail extends React.Component {
       <div>
         <PageHeading />
         <EmptyState>
-          <PosedP>
-            <span role="img" aria-label="thinking">
+          <LineStyled>
+            <EmojiSpan role="img" aria-label="thinking">
               🤔
-            </span>{" "}
-            Looks like you haven't logged any actions for this student yet.
-          </PosedP>
-          <PosedP>
-            Go ahead and pick one from{" "}
-            <span role="img" aria-label="pointing up at actions list">
+            </EmojiSpan>{" "}
+            <p>
+              Looks like you haven't logged any actions for this student yet.
+            </p>
+          </LineStyled>
+          <LineStyled>
+            <p>
+              Go ahead and pick one from when you've got an action you want to
+              log.
+            </p>
+            <EmojiSpan role="img" aria-label="pointing up at actions list">
               👆
-            </span>{" "}
-            when you've got an action you want to log.
-          </PosedP>
+            </EmojiSpan>
+          </LineStyled>
         </EmptyState>
       </div>
     );

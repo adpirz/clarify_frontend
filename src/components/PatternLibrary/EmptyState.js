@@ -3,7 +3,7 @@ import styled from "styled-components";
 import posed from "react-pose";
 
 const Posed = posed.div({
-  enter: { opacity: 1, delay: 200, staggerChildren: 50, beforeChildren: true },
+  enter: { opacity: 1, delay: 200, staggerChildren: 70, beforeChildren: true },
   exit: { opacity: 0 }
 });
 
