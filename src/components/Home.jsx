@@ -8,7 +8,12 @@ import { NavLink } from "react-router-dom";
 
 import { DataConsumer } from "../DataProvider";
 import { colors, fontSizes } from "./PatternLibrary/constants";
-import { MainContentBody, ActionCard, ActionForm } from "./PatternLibrary";
+import {
+  MainContentBody,
+  ActionCard,
+  ActionForm,
+  PageHeading
+} from "./PatternLibrary";
 
 const CardHeader = styled(NavLink)`
   height: 40px;
@@ -119,18 +124,21 @@ class Home extends React.Component {
     }
 
     return (
-      <MainContentBody>
-        {map(studentViewModels.slice(0, 3), ({ student }, i) => {
-          return (
-            <div key={i}>
-              <CardHeader to={`/student/${student.id}`}>
-                {student.first_name} {student.last_name[0]}
-              </CardHeader>
-              {this.getStudentDeltaList(student)}
-            </div>
-          );
-        })}
-      </MainContentBody>
+      <div>
+        <PageHeading />
+        <MainContentBody>
+          {map(studentViewModels.slice(0, 3), ({ student }, i) => {
+            return (
+              <div key={i}>
+                <CardHeader to={`/student/${student.id}`}>
+                  {student.first_name} {student.last_name[0]}
+                </CardHeader>
+                {this.getStudentDeltaList(student)}
+              </div>
+            );
+          })}
+        </MainContentBody>
+      </div>
     );
   }
 }

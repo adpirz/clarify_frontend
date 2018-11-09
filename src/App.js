@@ -4,12 +4,7 @@ import { Route } from "react-router-dom";
 import styled from "styled-components";
 
 import { DataConsumer } from "./DataProvider";
-import {
-  Error,
-  Loading,
-  PageHeading,
-  SiteNav
-} from "./components/PatternLibrary";
+import { Error, Loading, SiteNav } from "./components/PatternLibrary";
 import { fontFamilies, layout } from "./components/PatternLibrary/constants";
 
 import {

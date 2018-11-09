@@ -115,7 +115,7 @@ class PageHeading extends React.Component {
 
     return (
       <PageHeadingContainer>
-        <PoseGroup preEnterPose="before">
+        <PoseGroup animateOnMount preEnterPose="before">
           <PageHeadingCopy key={this.props.location.key || "start"}>
             <h2>{pageHeadingCopy}</h2>
           </PageHeadingCopy>

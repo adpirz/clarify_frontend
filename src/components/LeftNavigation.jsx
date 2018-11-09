@@ -53,7 +53,8 @@ const RouteElement = styled(NavLink)`
 const ActiveElementStyle = {
   backgroundColor: colors.accent,
   color: "white",
-  fontWeight: 600
+  fontWeight: 600,
+  textShadow: "1px 1px rgba(0,0,0,0.5)"
 };
 
 const Divider = styled.hr`
