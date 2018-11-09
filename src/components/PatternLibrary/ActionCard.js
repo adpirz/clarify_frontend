@@ -127,6 +127,7 @@ const ActionDateWrapper = styled.div`
 
 const ActionDate = styled.p`
   opacity: .5;
+  margin: 0px 15px;
   font-size: ${fontSizes.medium};
   display: ${({visible}) => { return visible ? 'block;' : 'none;'}}
 `;
@@ -170,14 +171,17 @@ class ActionCard extends React.Component {
       this.setState({noteError: true});
       return;
     }
-    const { closeActionForm, saveAction, type, student: { id: studentId }, action: { id } } = this.props;
+    const { closeActionForm, saveAction, type, student: { id: studentId }, action } = this.props;
     const actionPayload = {
       type,
       note,
       studentId,
       dueOn,
       completed,
-      actionId: id,
+    };
+
+    if (action && action.id) {
+      actionPayload.actionId = action.id;
     }
     saveAction(actionPayload).then((resp) => {
       if (resp.status === 201 && closeActionForm) {
@@ -227,7 +231,7 @@ class ActionCard extends React.Component {
   }
 
   getNoteField = () => {
-    const { studentFirstName, saveAction, action: { type } } = this.props;
+    const { student, saveAction, action: { type } } = this.props;
     const { note } = this.state;
 
     if (!saveAction) {
@@ -245,10 +249,10 @@ class ActionCard extends React.Component {
           placeholderText = `I called home about...?`;
           break;
         case 'message':
-          placeholderText = `I sent an email to ${studentFirstName}'s other teachers about...`;
+          placeholderText = `I sent an email to ${student.first_name}'s other teachers about...`;
           break;
         default:
-          placeholderText = `Today, I noticed ${studentFirstName} was really good at...`;
+          placeholderText = `Today, I noticed ${student.first_name} was really good at...`;
       }
     }
 
@@ -278,13 +282,23 @@ class ActionCard extends React.Component {
   }
 
   render() {
-    const { student, saveAction, deleteAction, closeActionForm, action: { completed_on: completedOn, due_on: dueOn }  } = this.props;
+    const {
+      student,
+      showTitle,
+      saveAction,
+      deleteAction,
+      closeActionForm,
+      action: {
+        completed_on: completedOn,
+        due_on: dueOn
+      },
+    } = this.props;
 
     return (
       <ActionCardContainer>
         <ActionCardHeading>
           {this.getActionIcon()}
-          {student ? <StudentHeading>{student.first_name} {student.last_name[0]}</StudentHeading> : null}
+          {showTitle ? <StudentHeading>{student.first_name} {student.last_name[0]}</StudentHeading> : null}
           {deleteAction ? <DeleteIcon className="fas fa-trash" onClick={deleteAction} /> : null}
           {closeActionForm ? <CloseIcon className="fas fa-times" onClick={closeActionForm} /> : null}
         </ActionCardHeading>
