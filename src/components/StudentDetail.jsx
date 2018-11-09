@@ -65,9 +65,10 @@ class StudentDetail extends React.Component {
             return (
               <ActionCard
                 closeActionForm={this.handleActionFormClick}
+                showTitle={false}
                 action={a}
                 key={i}
-                studentFirstName={student.first_name}
+                student={student}
               />
             );
           })}

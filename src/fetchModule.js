@@ -41,18 +41,35 @@ class ApiFetcher {
     });
 
     return fetch(apiRequest).then(resp => {
-      if (resp.status !== 404 && resp.status !== 400 && resp.status !== 500) {
-        return resp.json().then((body) => ({
-          status: resp.status,
-          data: body.data,
-        }));
-      } else {
-        return resp.json().then((body) => ({
-          status: resp.status,
-          error: body.error,
-          data: null,
-        }));
-      }
+      return resp.json().then((body) => ({
+        status: resp.status,
+        error: body.error || null,
+        data: body.data || null,
+      }));
+    });
+  }
+
+  static put(modelName, objectProperties) {
+    const postData = JSON.stringify(objectProperties);
+    const csrfCookie = getCookie('csrftoken')
+
+    const headers = new Headers({
+        'x-csrftoken': csrfCookie
+    });
+
+    const apiRequest = new Request(`${BASE_URL}api/${modelName}/`, {
+      credentials: 'include',
+      method: 'PUT',
+      body: postData,
+      headers,
+    });
+
+    return fetch(apiRequest).then(resp => {
+      return resp.json().then((body) => ({
+        status: resp.status,
+        error: body.error || null,
+        data: body.data || null,
+      }));
     });
   }
 

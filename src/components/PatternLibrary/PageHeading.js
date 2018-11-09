@@ -62,7 +62,8 @@ class PageHeading extends React.Component {
       <ActionCard
         closeActionForm={this.handleTypeSelection.bind(this, null)}
         type={type}
-        studentFirstName={student.first_name}
+        student={student}
+        showTitle={false}
         saveAction={saveAction} />
     )
   }

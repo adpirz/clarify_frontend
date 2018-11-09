@@ -25,6 +25,7 @@ const MainContentBody = styled.div`
   display: flex;
   flex-direction: column;
   overflow: scroll;
+  padding-bottom: 25px;
 `;
 
 const ActionTextArea = styled.textarea`

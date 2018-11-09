@@ -100,14 +100,15 @@ class Home extends React.Component {
         return (
           <ActionCard
             closeActionForm={this.handleActionFormClick}
-            studentFirstName={student.first_name}
+            showTitle={false}
+            student={student}
             saveAction={saveAction}
             action={{type: this.state.type}}/>
         );
       } else {
         return (
           <StudentActionsEmptyState>
-            Click an action icon up there <span role="img" aria-label="pointing up at actions list">👆</span> to create your first action for {student.first_name}
+            Click an icon up there <span role="img" aria-label="pointing up at actions list">👆</span> to create your first action for {student.first_name}
           </StudentActionsEmptyState>
         )
       }

@@ -139,15 +139,21 @@ export class DataProvider extends React.Component {
       due_on: dueOn ? format(dueOn, 'MM/DD/YYYY HH:mm') : null,
       completed_on: completed ? format(new Date(), 'MM/DD/YYYY HH:mm') : null,
     }
-    return ApiFetcher.post('action', actionPayload).then((resp) => {
-      if (resp.status === 201) {
+    let actionPromise = null;
+    if (!actionId) {
+      actionPromise = ApiFetcher.post('action', actionPayload);
+    } else {
+      actionPromise = ApiFetcher.put('action', actionPayload)
+    }
+    return actionPromise.then((resp) => {
+      if (resp.status === 200 || resp.status === 201) {
         ApiFetcher.get('action').then((resp) => {
           if (resp.status !== 404) {
             this.setState({actions: resp.data});
           }
         })
-        return resp;
       }
+      return resp;
     });
   }
 
