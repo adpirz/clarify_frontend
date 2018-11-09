@@ -19,21 +19,33 @@ const PageHeadingContainer = styled.div`
   color: ${colors.white};
 `;
 
+const transition = {
+  default: {
+    duration: 350
+  }
+};
 const Posed = posed.div({
   before: {
     x: -20,
-    scale: 1.4,
-    opacity: 0.3
+    scale: 3.0,
+    opacity: 0.3,
+    transition: {
+      scale: {
+        duration: 400
+      }
+    }
   },
   enter: {
     x: 0,
     scale: 1,
-    opacity: 1
+    opacity: 1,
+    transition
   },
   exit: {
     x: 140,
     scale: 0.8,
-    opacity: 0
+    opacity: 0,
+    transition
   }
 });
 

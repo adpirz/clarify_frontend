@@ -95,7 +95,7 @@ const StudentRow = styled(NavLink)`
   display: block;
   color: ${props => (props.highlight ? "white" : colors.textGrey)};
   margin: 7px 20px 7px 0px;
-  border-radius: 0px 15px 15px 0px;
+  border-radius: 0px 30px 30px 0px;
   cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;

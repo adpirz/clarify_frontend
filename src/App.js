@@ -59,7 +59,6 @@ class App extends React.Component {
       <PageBody>
         <LeftNavigation />
         <MainContent>
-          <Route path="/" component={PageHeading} />
           <Route path="/" exact component={Home} />
           <Route path="/student/:studentId" component={StudentDetail} />
           <Route path="/reminders/:studentId?" component={Reminders} />
