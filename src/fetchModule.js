@@ -86,7 +86,18 @@ class ApiFetcher {
     });
 
     return fetch(apiRequest).then(resp => {
-      return resp.status === 200;
+      const response = {
+        status: resp.status,
+      };
+
+      if (resp.status !== 204) {
+        resp.json().then((body) => {
+          response.error = body.error
+          return response;
+        });
+      } else {
+        return response;
+      }
     });
   }
 
