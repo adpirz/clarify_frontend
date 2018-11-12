@@ -20,7 +20,7 @@ const PageHeadingContainer = styled.div`
   min-height: 80px;
 `;
 
-const Posed = posed.div({
+const PageHeadingPosed = posed.div({
   before: {
     scale: 1.2,
     opacity: 0
@@ -39,7 +39,7 @@ const Posed = posed.div({
   }
 });
 
-const PageHeadingCopy = styled(Posed)`
+const PageHeadingCopy = styled(PageHeadingPosed)`
   min-width: 200px;
   text-align: center;
   font-size: 1.2em;
