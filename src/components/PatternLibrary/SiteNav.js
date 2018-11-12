@@ -31,6 +31,24 @@ const UserSection = styled.div`
   align-items: center;
 `;
 
+const UserGroupStyled = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const UserIconStyled = styled.i`
+  margin: 0 0.8em;
+  font-size: 2em;
+  color: ${colors.secondaryMidnightBlue};
+`;
+
+const UserDisplayStyled = styled.div`
+  margin-right: 2.5em;
+  font-size: 1.3em;
+  font-weight: 400;
+  color: ${lighten(0.2, colors.black)};
+`;
+
 const SiteNav = ({ user, logUserOut }) => {
   return (
     <Styled>
@@ -38,26 +56,10 @@ const SiteNav = ({ user, logUserOut }) => {
         <Logo alt="Clarify Logo" />
         <UserSection>
           {user && (
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <i
-                className="fas fa-user"
-                style={{
-                  fontSize: "2em",
-                  margin: "0 0.8em",
-                  color: colors.secondaryMidnightBlue
-                }}
-              />
-              <div
-                style={{
-                  marginRight: "2.5em",
-                  fontSize: "1.3em",
-                  fontWeight: "400",
-                  color: lighten(0.2, "black")
-                }}
-              >
-                {getUserDisplay(user)}
-              </div>
-            </div>
+            <UserGroupStyled>
+              <UserIconStyled className="fas fa-user" />
+              <UserDisplayStyled>{getUserDisplay(user)}</UserDisplayStyled>
+            </UserGroupStyled>
           )}
           {user && <Button onClick={logUserOut}>Logout</Button>}
         </UserSection>
