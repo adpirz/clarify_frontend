@@ -25,11 +25,6 @@ const PosedItem = posed.div({
 const StyledContainer = styled(PosedContainer)`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  align-content: center;
-  width: 100%;
-  max-width: 700px;
 `;
 
 const Styled = styled(PosedItem)`
