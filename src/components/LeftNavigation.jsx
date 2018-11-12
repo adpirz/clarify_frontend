@@ -4,15 +4,13 @@ import filter from "lodash/filter";
 import findIndex from "lodash/findIndex";
 import { NavLink, withRouter } from "react-router-dom";
 import styled from "styled-components";
+import { lighten, darken, desaturate } from "polished";
 
 import { DataConsumer } from "../DataProvider";
 
 import { Loading } from "./PatternLibrary";
 
 import { colors, fontSizes, layout } from "./PatternLibrary/constants";
-import { lighten, darken, desaturate } from "polished";
-
-const INDENT = "15";
 
 const SearchStyled = styled.input`
   padding: 2px 8px;
@@ -48,7 +46,7 @@ const RouteElement = styled(NavLink)`
   border-radius: 0px 15px 15px 0px;
   text-decoration: none;
   color: ${colors.textGrey};
-  padding-left: ${INDENT}px;
+  padding-left: ${layout.indent}px;
 `;
 
 const ActiveElementStyle = {
@@ -71,7 +69,7 @@ const StudentSection = styled.section`
 
 const Heading = styled.h3`
   font-size: ${fontSizes.medium};
-  margin: 0 0 0 ${INDENT}px;
+  margin: 0 0 0 ${layout.indent}px;
   font-weight: 400;
 `;
 
@@ -79,7 +77,7 @@ const SearchContainer = styled.div`
   display: flex;
   align-items: center;
   min-height: 50px;
-  padding: 10px 5px 10px ${INDENT}px;
+  padding: 10px 5px 10px ${layout.indent}px;
 `;
 
 const StudentList = styled.div`
@@ -88,7 +86,7 @@ const StudentList = styled.div`
 
 const highlightBackground = desaturate(0.17, darken(0.17, colors.accent));
 const StudentRow = styled(NavLink)`
-  padding: 5px 0px 5px ${2 * INDENT}px;
+  padding: 5px 0px 5px ${2 * layout.indent}px;
   font-size: 1.1em;
   display: block;
   color: ${props => (props.highlight ? "white" : colors.textGrey)};
