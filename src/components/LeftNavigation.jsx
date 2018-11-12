@@ -51,7 +51,7 @@ const RouteElement = styled(NavLink)`
 
 const ActiveElementStyle = {
   backgroundColor: colors.accent,
-  color: "white",
+  color: colors.white,
   fontWeight: 600,
   textShadow: "1px 1px rgba(0,0,0,0.5)"
 };
