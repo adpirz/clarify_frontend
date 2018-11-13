@@ -1,9 +1,6 @@
-import React from 'react';
-import styled from 'styled-components';
-import {
-  fontSizes,
-  colors,
-} from './constants';
+import React from "react";
+import styled from "styled-components";
+import { fontSizes, colors } from "./constants";
 
 const ErrorDiv = styled.div`
   color: ${colors.errorOrange};
@@ -15,15 +12,11 @@ const ErrorDiv = styled.div`
   width: auto;
 `;
 
-const Error = ({children}) => {
+const Error = ({ children }) => {
   if (!children || !children.length) {
     return null;
   }
-  return (
-    <ErrorDiv>
-      {children}
-    </ErrorDiv>
-  )
-}
+  return <ErrorDiv>{children}</ErrorDiv>;
+};
 
 export default Error;

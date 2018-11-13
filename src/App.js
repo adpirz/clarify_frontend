@@ -8,13 +8,7 @@ import { DataConsumer } from "./DataProvider";
 import { Error, Loading, SiteNav, NotFound } from "./components/PatternLibrary";
 import { fontFamilies, layout } from "./components/PatternLibrary/constants";
 
-import {
-  LeftNavigation,
-  LoginForm,
-  Home,
-  StudentDetail,
-  Reminders
-} from "./components";
+import { LeftNavigation, LoginForm, Home, StudentDetail, Reminders } from "./components";
 
 const Window = styled.section`
   display: flex;
@@ -63,14 +57,8 @@ class App extends React.Component {
                 <RouteContainer key={location.key || "start"}>
                   <Switch location={location}>
                     <Route path="/" exact component={Home} />
-                    <Route
-                      path="/student/:studentId"
-                      component={StudentDetail}
-                    />
-                    <Route
-                      path="/reminders/:studentId?"
-                      component={Reminders}
-                    />
+                    <Route path="/student/:studentId" component={StudentDetail} />
+                    <Route path="/reminders/:studentId?" component={Reminders} />
                     <Route component={NotFound} />
                   </Switch>
                 </RouteContainer>
@@ -101,13 +89,7 @@ class App extends React.Component {
 export default props => (
   <DataConsumer>
     {({ isLoading, user, errors, logUserOut }) => (
-      <App
-        user={user}
-        logUserOut={logUserOut}
-        isLoading={isLoading}
-        errors={errors}
-        {...props}
-      />
+      <App user={user} logUserOut={logUserOut} isLoading={isLoading} errors={errors} {...props} />
     )}
   </DataConsumer>
 );

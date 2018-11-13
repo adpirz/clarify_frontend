@@ -12,6 +12,8 @@ import { Loading } from "./PatternLibrary";
 
 import { colors, fontSizes, layout } from "./PatternLibrary/constants";
 
+const highlightBackground = desaturate(0.17, darken(0.17, colors.accent));
+
 const SearchStyled = styled.input`
   padding: 2px 8px;
   margin-right: 8px;
@@ -23,7 +25,7 @@ const SearchStyled = styled.input`
   box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
 
   &::placeholder {
-    color: ${lighten(0.7, "black")};
+    color: ${lighten(0.7, colors.black)};
   }
 `;
 const Nav = styled.nav`
@@ -47,13 +49,18 @@ const RouteElement = styled(NavLink)`
   text-decoration: none;
   color: ${colors.textGrey};
   padding-left: ${layout.indent}px;
+
+  &:hover {
+    background-color: ${highlightBackground};
+    color: ${colors.white};
+  }
 `;
 
 const ActiveElementStyle = {
   backgroundColor: colors.accent,
   color: colors.white,
   fontWeight: 600,
-  textShadow: "1px 1px rgba(0,0,0,0.5)"
+  textShadow: "1px 1px rgba(0,0,0,0.5)",
 };
 
 const Divider = styled.hr`
@@ -84,12 +91,11 @@ const StudentList = styled.div`
   overflow: scroll;
 `;
 
-const highlightBackground = desaturate(0.17, darken(0.17, colors.accent));
 const StudentRow = styled(NavLink)`
   padding: 5px 0px 5px ${2 * layout.indent}px;
   font-size: 1.1em;
   display: block;
-  color: ${props => (props.highlight ? "white" : colors.textGrey)};
+  color: ${props => (props.highlight ? colors.white : colors.textGrey)};
   margin: 7px 20px 7px 0px;
   border-radius: 0px 30px 30px 0px;
   cursor: pointer;
@@ -97,10 +103,8 @@ const StudentRow = styled(NavLink)`
   text-overflow: ellipsis;
   text-decoration: none;
   font-weight: ${props => (props.highlight ? 600 : 400)};
-  text-shadow: ${props =>
-    props.highlight ? "1px 1px 0px rgba(0, 0, 0, 0.3)" : "none"};
-  background-color: ${props =>
-    props.highlight ? highlightBackground : "none"};
+  text-shadow: ${props => (props.highlight ? "1px 1px 0px rgba(0, 0, 0, 0.3)" : "none")};
+  background-color: ${props => (props.highlight ? highlightBackground : "none")};
 
   &:hover {
     background-color: ${highlightBackground};
@@ -112,7 +116,7 @@ const EnterSpan = () => (
   <span
     style={{
       fontWeight: 600,
-      textShadow: "1px 1px 0px rgba(0, 0, 0, 0.6)"
+      textShadow: "1px 1px 0px rgba(0, 0, 0, 0.6)",
     }}
   >
     ENTER
@@ -125,7 +129,7 @@ const PressEnterSpan = () => (
       fontSize: "0.7em",
       opacity: "0.7",
       margin: "0.4em 0",
-      fontWeight: 400
+      fontWeight: 400,
     }}
   >
     Press <EnterSpan /> to select
@@ -143,9 +147,20 @@ class LeftNavigation extends React.Component {
 
     this.state = {
       filteredStudents: props.students,
-      currentSelection: null
+      currentSelection: null,
     };
   }
+
+  componentWillReceiveProps = nextProps => {
+    const newStudents = nextProps.students;
+    const oldStudents = this.props.students;
+
+    if (newStudents && oldStudents.length !== newStudents.length) {
+      this.setState = {
+        filteredStudents: newStudents,
+      };
+    }
+  };
 
   handleSearch = e => {
     const needle = e.target.value.toLowerCase();
@@ -158,8 +173,7 @@ class LeftNavigation extends React.Component {
           .indexOf(needle) > -1;
       return firstNameHit || lastNameHit || displayNameHit;
     });
-    const currentSelection =
-      needle && filteredStudents.length > 0 ? filteredStudents[0].id : null;
+    const currentSelection = needle && filteredStudents.length > 0 ? filteredStudents[0].id : null;
 
     this.setState({ filteredStudents, currentSelection });
   };
@@ -174,7 +188,7 @@ class LeftNavigation extends React.Component {
       this.props.history.push(`/student/${this.state.currentSelection}`);
       this.setState({
         filteredStudents: this.props.students,
-        currentSelection: null
+        currentSelection: null,
       });
     }
   };
@@ -193,15 +207,8 @@ class LeftNavigation extends React.Component {
       return arr[i - 1];
     }
 
-    if (
-      this.state.filteredStudents.length > 0 &&
-      [UP, DOWN].indexOf(e.keyCode) > -1
-    ) {
-      const nextStudent = cycleNextItem(
-        filteredStudents,
-        currentIndex,
-        e.keyCode === DOWN
-      );
+    if (this.state.filteredStudents.length > 0 && [UP, DOWN].indexOf(e.keyCode) > -1) {
+      const nextStudent = cycleNextItem(filteredStudents, currentIndex, e.keyCode === DOWN);
       this.updateCurrentSelection(nextStudent.id);
     }
   };
@@ -210,7 +217,7 @@ class LeftNavigation extends React.Component {
     this.inputRef.current.value = "";
     this.setState({
       filteredStudents: this.props.students,
-      currentSelection: null
+      currentSelection: null,
     });
   }
 
@@ -233,7 +240,7 @@ class LeftNavigation extends React.Component {
           <RouteElement to="/" activeStyle={ActiveElementStyle} exact>
             Next Steps
           </RouteElement>
-          <RouteElement exact activeStyle={ActiveElementStyle} to="/reminders">
+          <RouteElement to="/reminders" activeStyle={ActiveElementStyle} exact>
             Reminders
           </RouteElement>
           <Divider />
@@ -252,13 +259,13 @@ class LeftNavigation extends React.Component {
           </SearchContainer>
           <StudentList>
             {map(filteredStudents, (s, i, students) => {
+              // Can't use boolean, see:
+              // https://github.com/styled-components/styled-components/issues/1198
               const highlight = s.id === this.state.currentSelection ? 1 : 0;
               return (
                 <StudentRow
                   key={s.id}
                   activeStyle={ActiveElementStyle}
-                  // Can't use boolean, see:
-                  // https://github.com/styled-components/styled-components/issues/1198
                   highlight={highlight}
                   onClick={this.resetSearch}
                   to={`/student/${s.id}`}
@@ -276,7 +283,5 @@ class LeftNavigation extends React.Component {
 }
 
 export default withRouter(props => (
-  <DataConsumer>
-    {({ students }) => <LeftNavigation students={students} {...props} />}
-  </DataConsumer>
+  <DataConsumer>{({ students }) => <LeftNavigation students={students} {...props} />}</DataConsumer>
 ));

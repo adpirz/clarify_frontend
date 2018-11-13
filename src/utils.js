@@ -31,37 +31,20 @@ const getReminders = () => {
       copy: "Tomorrow, 9am",
       key: "tomorrowMorning",
       order: 2,
-      reminderDate: new Date(
-        TODAY.getFullYear(),
-        TODAY.getMonth(),
-        TODAY.getDate() + 1,
-        9
-      )
+      reminderDate: new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate() + 1, 9),
     },
     {
       copy: "Sunday, 5pm",
       key: "endOfWeek",
       order: 7,
-      reminderDate: new Date(
-        Sunday.getFullYear(),
-        Sunday.getMonth(),
-        Sunday.getDate(),
-        17,
-        0
-      )
+      reminderDate: new Date(Sunday.getFullYear(), Sunday.getMonth(), Sunday.getDate(), 17, 0),
     },
     {
       copy: "Monday, 9am",
       key: "mondayMorning",
       order: 8,
-      reminderDate: new Date(
-        Monday.getFullYear(),
-        Monday.getMonth(),
-        Monday.getDate() + 7,
-        9,
-        0
-      )
-    }
+      reminderDate: new Date(Monday.getFullYear(), Monday.getMonth(), Monday.getDate() + 7, 9, 0),
+    },
   ];
 
   if (TODAY.getHours() < 12) {
@@ -69,13 +52,7 @@ const getReminders = () => {
       copy: "This evening, 5pm",
       key: "endOfDay",
       order: 1,
-      reminderDate: new Date(
-        TODAY.getFullYear(),
-        TODAY.getMonth(),
-        TODAY.getDate(),
-        17,
-        0
-      )
+      reminderDate: new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate(), 17, 0),
     };
     REMINDERS.push(THIS_EVENING_REMINDER);
   }
@@ -92,7 +69,7 @@ const getReminders = () => {
         wednesday.getDate(),
         9,
         0
-      )
+      ),
     };
     REMINDERS.push(MIDWEEK_REMINDER);
   } else if (isWednesday(TODAY)) {
@@ -101,13 +78,7 @@ const getReminders = () => {
       copy: "Friday, 9am",
       key: "end_of_week",
       order: 3,
-      reminderDate: new Date(
-        friday.getFullYear(),
-        friday.getMonth(),
-        friday.getDate(),
-        9,
-        0
-      )
+      reminderDate: new Date(friday.getFullYear(), friday.getMonth(), friday.getDate(), 9, 0),
     };
     REMINDERS.push(END_OF_WEEK_REMINDER);
   }

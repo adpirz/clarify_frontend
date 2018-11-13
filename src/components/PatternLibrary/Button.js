@@ -4,8 +4,7 @@ import darken from "polished/lib/color/darken";
 import { colors, fontFamilies } from "./constants";
 
 const ThemedButton = styled.button`
-  background-color: ${props =>
-    props.primary ? colors.primaryPink : colors.secondaryMidnightBlue};
+  background-color: ${props => (props.primary ? colors.primaryPink : colors.secondaryMidnightBlue)};
   color: ${colors.white};
   font-size: 1.1em;
   border-radius: 20px;
@@ -21,10 +20,7 @@ const ThemedButton = styled.button`
 
   &:hover {
     background: ${props =>
-      darken(
-        0.1,
-        props.primary ? colors.primaryPink : colors.secondaryMidnightBlue
-      )};
+      darken(0.1, props.primary ? colors.primaryPink : colors.secondaryMidnightBlue)};
   }
 `;
 

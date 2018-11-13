@@ -1,10 +1,12 @@
 import React from "react";
-import styled from 'styled-components';
+import styled from "styled-components";
 import PropTypes from "prop-types";
-import { GoogleLogo } from './PatternLibrary';
-import { colors, fontSizes } from './PatternLibrary/constants';
+import { GoogleLogo } from "./PatternLibrary";
+import { colors, fontSizes } from "./PatternLibrary/constants";
 
-const GAPI_CLIENT_ID = process.env.REACT_APP_GAPI_CLIENT_ID || "729776830467-i92lfrj8sdj1ospq4rn349dvsu0jbjgi.apps.googleusercontent.com";
+const GAPI_CLIENT_ID =
+  process.env.REACT_APP_GAPI_CLIENT_ID ||
+  "729776830467-i92lfrj8sdj1ospq4rn349dvsu0jbjgi.apps.googleusercontent.com";
 
 const GoogleButton = styled.button`
   border-radius: 0;
@@ -67,7 +69,7 @@ class GoogleAuth extends React.Component {
     })(document, "script", "google-login", () => {
       window.gapi.load("auth2", () => {
         if (!window.gapi.auth2.getAuthInstance()) {
-          window.gapi.auth2.init({clientId: GAPI_CLIENT_ID});
+          window.gapi.auth2.init({ clientId: GAPI_CLIENT_ID });
         }
       });
     });
@@ -80,7 +82,7 @@ class GoogleAuth extends React.Component {
     const auth2 = window.gapi.auth2.getAuthInstance();
     const { onFailure } = this.props;
     const options = {
-      prompt: 'select_account'
+      prompt: "select_account",
     };
     auth2.signIn(options).then(res => this.handleSigninSuccess(res), err => onFailure(err));
   }
@@ -96,9 +98,7 @@ class GoogleAuth extends React.Component {
         <GoogleLogoContainer>
           <GoogleLogo />
         </GoogleLogoContainer>
-        <ButtonLabel>
-          Sign in
-        </ButtonLabel>
+        <ButtonLabel>Sign in</ButtonLabel>
       </GoogleButton>
     );
   }

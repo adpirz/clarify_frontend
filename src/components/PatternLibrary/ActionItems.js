@@ -1,30 +1,36 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
-import { colors } from './constants'
-
+import { colors } from "./constants";
 
 const ActionIconContainer = styled.div`
-  padding: 15px;
+  display: inline-block;
+  padding: 10px;
   box-shadow: 0px 0px 2px #888;
   border-radius: 50%;
   color: ${colors.black};
-  cursor: ${({selected}) => { return typeof(selected) === 'undefined' ? 'initial' : 'pointer'}};
-  background-color: ${({selected}) => { return typeof(selected) === 'undefined' || selected === true ? colors.accent : colors.white} };
+  cursor: ${({ isSelected }) => {
+    return typeof isSelected === "undefined" ? "initial" : "pointer";
+  }};
+  background-color: ${({ isSelected }) => {
+    return typeof isSelected === "undefined" || isSelected === true ? colors.accent : colors.white;
+  }};
   position: relative;
 
   &:hover {
-    opacity: ${({selected}) => { return typeof(selected) === 'undefined' || selected === true ? 1 : .5} };
+    opacity: ${({ isSelected }) => {
+      return typeof isSelected === "undefined" || isSelected === true ? 1 : 0.5;
+    }};
   }
 `;
 
 const ActionI = styled.i`
-  font-size: 35px;
+  font-size: 30px;
 `;
 
 const ActionIconImg = styled.img`
-  width: 49px;
-  height: 39px;
+  width: 40px;
+  height: 32px;
 `;
 
 const Caret = styled.div`
@@ -45,49 +51,41 @@ const ActionIconListDiv = styled.div`
   justify-content: space-between;
 `;
 
-
-const ActionIconImage = ({ imageFileName, actionAlt, children, selected, onClick }) => (
-  <ActionIconContainer selected={selected} onClick={onClick}>
-    <ActionIconImg
-      src={`/${imageFileName}`}
-      actionAlt={actionAlt} />
-    {selected ? <Caret /> : null}
+const ActionIconImage = ({ imageFileName, actionAlt, children, isSelected, onClick }) => (
+  <ActionIconContainer isSelected={isSelected} onClick={onClick}>
+    <ActionIconImg src={`/${imageFileName}`} actionAlt={actionAlt} />
+    {isSelected ? <Caret /> : null}
   </ActionIconContainer>
 );
 
-const ActionIcon = ({ className, selected, onClick, children }) => (
-  <ActionIconContainer selected={selected} onClick={onClick}>
+const ActionIcon = ({ className, isSelected, onClick, children }) => (
+  <ActionIconContainer isSelected={isSelected} onClick={onClick}>
     <ActionI className={`fas ${className}`} />
-    {selected ? <Caret /> : null}
+    {isSelected ? <Caret /> : null}
   </ActionIconContainer>
 );
 
-const ActionIconList = ({type, handleTypeSelection}) => {
+const ActionIconList = ({ type, handleTypeSelection, className, isSelected }) => {
   return (
-    <ActionIconListDiv>
+    <ActionIconListDiv className={className}>
       <ActionIconImage
-        selected={type === 'note'}
-        onClick={handleTypeSelection.bind(this, 'note')}
+        isSelected={isSelected && type === "note"}
+        onClick={handleTypeSelection.bind(this, "note")}
         imageFileName="note_icon.png"
-        actionAlt="Make a Note icon">
-      </ActionIconImage>
+        actionAlt="Make a Note icon"
+      />
       <ActionIcon
-        selected={type === 'call'}
-        onClick={handleTypeSelection.bind(this, 'call')}
-        className="fa-phone">
-      </ActionIcon>
+        isSelected={isSelected && type === "call"}
+        onClick={handleTypeSelection.bind(this, "call")}
+        className="fa-phone"
+      />
       <ActionIcon
-        selected={type === 'message'}
-        onClick={handleTypeSelection.bind(this, 'message')}
-        className="fa-comment-alt">
-      </ActionIcon>
+        isSelected={isSelected && type === "message"}
+        onClick={handleTypeSelection.bind(this, "message")}
+        className="fa-comment-alt"
+      />
     </ActionIconListDiv>
   );
-}
-
-
-export {
-  ActionIcon,
-  ActionIconImage,
-  ActionIconList,
 };
+
+export { ActionIcon, ActionIconImage, ActionIconList };
