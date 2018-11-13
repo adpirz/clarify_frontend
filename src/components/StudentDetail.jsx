@@ -58,16 +58,7 @@ class StudentDetail extends React.Component {
       mainContentBodyNode = (
         <MainContentBody>
           {map(studentsActions, (a, i) => {
-            return (
-              <ActionCard
-                closeActionForm={this.handleActionFormClick}
-                reminderButtonCopy="Remind Me"
-                showTitle={false}
-                action={a}
-                key={i}
-                student={student}
-              />
-            );
+            return <ActionCard showTitle={false} action={a} key={i} student={student} />;
           })}
         </MainContentBody>
       );

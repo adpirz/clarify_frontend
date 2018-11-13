@@ -81,12 +81,11 @@ class Home extends React.Component {
     }
   };
 
-  getStudentDeltaList = student => {
-    const { actions, saveAction } = this.props;
-    const actionsForStudent = filter(actions, a => {
-      return a.student_id === student.id;
-    });
-    if (!actionsForStudent.length && this.state.selectedStudentId === student.id) {
+  getStudentDeltaList = studentViewModel => {
+    const { saveAction } = this.props;
+    const { actionsAndDeltas, student } = studentViewModel;
+
+    if (!actionsAndDeltas.length && this.state.selectedStudentId === student.id) {
       return (
         <ActionCard
           closeActionForm={this.handleActionFormClick}
@@ -97,48 +96,81 @@ class Home extends React.Component {
           action={{ type: this.state.type }}
         />
       );
+    } else if (!actionsAndDeltas.length) {
+      return (
+        <StudentActionsEmptyState>
+          Click an icon up there{" "}
+          <span role="img" aria-label="pointing up at actions list">
+            👆
+          </span>{" "}
+          to create your first action for {student.first_name}
+        </StudentActionsEmptyState>
+      );
     }
 
     return (
-      <StudentActionsEmptyState>
-        Click an icon up there{" "}
-        <span role="img" aria-label="pointing up at actions list">
-          👆
-        </span>{" "}
-        to create your first action for {student.first_name}
-      </StudentActionsEmptyState>
+      <div>
+        {map(actionsAndDeltas.slice(0, 3), (node, i) => {
+          if (node.note) {
+            return <ActionCard showTitle={false} student={student} action={node} key={i} />;
+          } else {
+            return (
+              <div key={i}>
+                <div>DELTA: {node.type}</div>
+                <div>
+                  node:{" "}
+                  {node.score
+                    ? node.score.assignment_name
+                    : node.missing_assignments[0].assignment_name}
+                </div>
+              </div>
+            );
+          }
+        })}
+      </div>
     );
   };
 
-  getStudentViewModels = () => {
-    const { students, actions } = this.props;
+  getStudentViewModels = student => {
+    const { actions, deltas, students } = this.props;
+
     if (!students || !students.length) {
       return null;
     }
 
-    const filteredStudents = reduce(
+    const studentViewModels = reduce(
       students,
       (accumulator, student) => {
-        const studentsActions = filter(actions, { student_id: student.id });
-        const sortedActions = orderBy(studentsActions, ["id"], ["desc"]);
+        const actionsForStudent = filter(actions, a => {
+          return a.student_id === student.id;
+        });
+        const deltasForStudent = filter(deltas, d => {
+          return d.student_id === student.id;
+        });
+
+        const combinedAndSorted = orderBy(
+          actionsForStudent.concat(deltasForStudent),
+          ["created_on"],
+          ["desc"]
+        );
 
         accumulator.push({
           student,
-          actions_list: sortedActions,
-          most_recent_action: sortedActions.length ? sortedActions[0].created_on : null,
+          actionsAndDeltas: combinedAndSorted,
+          mostRecentAction: actionsForStudent.length ? actionsForStudent[0].created_on : null,
         });
         return accumulator;
       },
       []
     );
 
-    return orderBy(filteredStudents, ["most_recent_action"], ["desc"]);
+    return orderBy(studentViewModels, ["mostRecentAction"], ["desc"]);
   };
 
   render() {
     const studentViewModels = this.getStudentViewModels();
 
-    if (!studentViewModels) {
+    if (!studentViewModels || !studentViewModels.length) {
       return null;
     }
 
@@ -146,7 +178,8 @@ class Home extends React.Component {
       <div>
         <PageHeading />
         <MainContentBody>
-          {map(studentViewModels.slice(0, 3), ({ student }, i) => {
+          {map(studentViewModels.slice(0, 3), (studentViewModel, i) => {
+            const { student } = studentViewModel;
             const isSelected = this.state.selectedStudentId === student.id;
             return (
               <StudentRow key={i}>
@@ -160,7 +193,7 @@ class Home extends React.Component {
                     handleTypeSelection={this.handleTypeSelection.bind(this, student.id)}
                   />
                 </StudentRowHeading>
-                {this.getStudentDeltaList(student)}
+                {this.getStudentDeltaList(studentViewModel)}
               </StudentRow>
             );
           })}
@@ -172,8 +205,14 @@ class Home extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({ students, actions, saveAction }) => (
-      <Home students={students} actions={actions} saveAction={saveAction} {...props} />
+    {({ students, actions, saveAction, deltas }) => (
+      <Home
+        students={students}
+        actions={actions}
+        saveAction={saveAction}
+        deltas={deltas}
+        {...props}
+      />
     )}
   </DataConsumer>
 );

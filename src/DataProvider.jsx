@@ -20,6 +20,7 @@ export class DataProvider extends React.Component {
       actions: null,
       sections: null,
       staff: [],
+      deltas: null,
       initializeUser: this.initializeUser,
       logUserIn: this.logUserIn,
       logUserOut: this.logUserOut,
@@ -105,6 +106,13 @@ export class DataProvider extends React.Component {
       ApiFetcher.get("action").then(resp => {
         if (resp.status !== 404) {
           this.setState({ actions: resp.data });
+        }
+      })
+    );
+    promises.push(
+      ApiFetcher.get("delta").then(resp => {
+        if (resp.status !== 404) {
+          this.setState({ deltas: resp.data });
         }
       })
     );
