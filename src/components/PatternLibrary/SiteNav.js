@@ -45,7 +45,7 @@ const SiteNav = ({ user, logUserOut }) => {
                 style={{
                   fontSize: "2em",
                   margin: "0 0.8em",
-                  color: colors.secondaryMidnightBlue
+                  color: colors.secondaryMidnightBlue,
                 }}
               />
               <div
@@ -53,7 +53,7 @@ const SiteNav = ({ user, logUserOut }) => {
                   marginRight: "2.5em",
                   fontSize: "1.3em",
                   fontWeight: "400",
-                  color: lighten(0.2, "black")
+                  color: lighten(0.2, "black"),
                 }}
               >
                 {getUserDisplay(user)}

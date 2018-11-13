@@ -1,9 +1,9 @@
-import React from 'react';
-import styled from 'styled-components';
-import filter from 'lodash/filter';
-import map from 'lodash/map';
-import get from 'lodash/get';
-import find from 'lodash/find';
+import React from "react";
+import styled from "styled-components";
+import filter from "lodash/filter";
+import map from "lodash/map";
+import get from "lodash/get";
+import find from "lodash/find";
 
 import posed from "react-pose";
 
@@ -12,18 +12,18 @@ import {
   ActionCard,
   EmptyState,
   MainContentBody,
-  PageHeading
+  PageHeading,
 } from "./PatternLibrary/";
 
 const PosedP = posed.p({
   enter: {
     x: 0,
-    opacity: 1
+    opacity: 1,
   },
   exit: {
     x: -50,
-    opacity: 0
-  }
+    opacity: 0,
+  },
 });
 
 const StudentDetailEmptyState = styled(EmptyState)`
@@ -38,9 +38,9 @@ class StudentDetail extends React.Component {
       return null;
     }
 
-    const studentId = parseInt(get(this.props, 'match.params.studentId'), 10);
-    const student = find(students, {id: studentId});
-    const studentsActions = filter(actions, (a) => {
+    const studentId = parseInt(get(this.props, "match.params.studentId"), 10);
+    const student = find(students, { id: studentId });
+    const studentsActions = filter(actions, a => {
       return a.student_id === studentId && !!a.completed_on;
     });
 
@@ -56,7 +56,8 @@ class StudentDetail extends React.Component {
                 showTitle={false}
                 action={a}
                 key={i}
-                student={student} />
+                student={student}
+              />
             );
           })}
         </MainContentBody>
@@ -68,7 +69,8 @@ class StudentDetail extends React.Component {
             <span role="img" aria-label="thinking">
               🤔
             </span>{" "}
-            Looks like you haven't logged any actions for {student.first_name} yet.
+            Looks like you haven't logged any actions for {student.first_name}{" "}
+            yet.
           </PosedP>
           <PosedP>
             Go ahead and pick one from{" "}

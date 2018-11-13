@@ -4,22 +4,22 @@ import posed from "react-pose";
 
 const PosedContainer = posed.div({
   enter: {
-    staggerChildren: 100
-  }
+    staggerChildren: 100,
+  },
 });
 
 const PosedItem = posed.div({
   enter: {
     x: 0,
-    opacity: 1
+    opacity: 1,
   },
   exit: {
     x: -50,
     opacity: 0,
     transition: {
-      duration: 100
-    }
-  }
+      duration: 100,
+    },
+  },
 });
 
 const StyledContainer = styled(PosedContainer)`

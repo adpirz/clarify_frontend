@@ -36,7 +36,7 @@ const getReminders = () => {
         TODAY.getMonth(),
         TODAY.getDate() + 1,
         9
-      )
+      ),
     },
     {
       copy: "Sunday, 5pm",
@@ -48,7 +48,7 @@ const getReminders = () => {
         Sunday.getDate(),
         17,
         0
-      )
+      ),
     },
     {
       copy: "Monday, 9am",
@@ -60,8 +60,8 @@ const getReminders = () => {
         Monday.getDate() + 7,
         9,
         0
-      )
-    }
+      ),
+    },
   ];
 
   if (TODAY.getHours() < 12) {
@@ -75,7 +75,7 @@ const getReminders = () => {
         TODAY.getDate(),
         17,
         0
-      )
+      ),
     };
     REMINDERS.push(THIS_EVENING_REMINDER);
   }
@@ -92,7 +92,7 @@ const getReminders = () => {
         wednesday.getDate(),
         9,
         0
-      )
+      ),
     };
     REMINDERS.push(MIDWEEK_REMINDER);
   } else if (isWednesday(TODAY)) {
@@ -107,7 +107,7 @@ const getReminders = () => {
         friday.getDate(),
         9,
         0
-      )
+      ),
     };
     REMINDERS.push(END_OF_WEEK_REMINDER);
   }
