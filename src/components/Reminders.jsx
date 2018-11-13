@@ -12,24 +12,6 @@ const RemindersDetailEmptyState = styled(EmptyState)`
 `;
 
 class Reminders extends React.Component {
-  getRemindersOrEmptyState = () => {
-    return (
-      <RemindersDetailEmptyState>
-        <p>
-          Here's where you'll find reminders for actions you want to remember to do later. Looks
-          like you haven't created any yet{" "}
-          <span role="img" aria-label="thinking">
-            🤔
-          </span>
-        </p>
-        <p>
-          Pick a student from the left or head to the home page to find a student you haven't talked
-          to in a while!
-        </p>
-      </RemindersDetailEmptyState>
-    );
-  };
-
   render() {
     const { getReminderActions, saveAction, deleteAction, students } = this.props;
     const actionReminders = getReminderActions();
@@ -45,11 +27,8 @@ class Reminders extends React.Component {
             </span>
           </p>
           <p>
-            Pick a student from the navigation over there{" "}
-            <span role="img" aria-label="thinking">
-              👈
-            </span>
-            , or head to the home page to find a student you haven't talked to in a while!
+            Pick a student on the left or head to the Next Steps page to find a student you haven't
+            talked to in a while!
           </p>
         </RemindersDetailEmptyState>
       );
