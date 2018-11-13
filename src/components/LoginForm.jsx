@@ -5,6 +5,8 @@ import GoogleAuth from "./GoogleAuth";
 import styled from "styled-components";
 import { lighten } from "polished";
 
+import { colors } from "./PatternLibrary/constants";
+
 const LoginFormContainer = styled.div`
   width: 400px;
   height: 300px;
@@ -20,7 +22,7 @@ const LoginFormContainer = styled.div`
 `;
 
 const LoginHelperText = styled.div`
-  color: ${lighten(0.7, "black")};
+  color: ${lighten(0.7, colors.black)};
   font-size: 0.75em;
   margin: auto 0 0;
   text-align: center;
@@ -29,21 +31,21 @@ const LoginHelperText = styled.div`
 
 const LoginHeader = styled.h1`
   font-weight: 400;
-  color: ${lighten(0.45, "black")};
+  color: ${lighten(0.45, colors.black)};
   font-size: 1.8em;
   margin: auto auto 20px;
 `;
 
 const EmailLink = styled.a`
-  color: ${lighten(0.6, "black")};
+  color: ${lighten(0.6, colors.black)};
   text-decoration: none;
 
   &:hover {
-    color: ${lighten(0.75, "black")};
+    color: ${lighten(0.75, colors.black)};
   }
 
   &:active {
-    color: ${lighten(0.2, "black")};
+    color: ${lighten(0.2, colors.black)};
   }
 `;
 

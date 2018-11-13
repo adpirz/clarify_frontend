@@ -52,7 +52,7 @@ const SiteNav = ({ user, logUserOut }) => {
                   marginRight: "2.5em",
                   fontSize: "1.3em",
                   fontWeight: "400",
-                  color: lighten(0.2, "black"),
+                  color: lighten(0.2, colors.black),
                 }}
               >
                 {getUserDisplay(user)}
