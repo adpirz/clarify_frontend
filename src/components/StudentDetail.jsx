@@ -10,7 +10,7 @@ import find from "lodash/find";
 import { DataConsumer } from "../DataProvider";
 import { ActionCard, EmptyState, MainContentBody, PageHeading } from "./PatternLibrary/";
 
-const Posed = posed.div({
+const LinePosed = posed.div({
   enter: {
     x: 0,
     opacity: 1,
@@ -21,7 +21,7 @@ const Posed = posed.div({
   },
 });
 
-const LineStyled = styled(Posed)`
+const LineStyled = styled(LinePosed)`
   display: flex;
   justify-content: center;
   font-size: 1.2em;

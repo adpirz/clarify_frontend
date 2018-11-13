@@ -2,15 +2,15 @@ import React from "react";
 import { Card, Container, Statistic } from "semantic-ui-react";
 import posed from "react-pose";
 
-const Posed = posed.div({
+const DeltaCardPosed = posed.div({
   enter: {
     x: 0,
-    opacity: 1
+    opacity: 1,
   },
   exit: {
     x: -30,
-    opacity: 0
-  }
+    opacity: 0,
+  },
 });
 
 export default function(props) {
@@ -34,16 +34,11 @@ export default function(props) {
   if (delta.type === "category") {
     header = delta.gradebook_name;
     meta = delta.context_record.category_name;
-    value = Math.round(
-      (delta.category_average_after - delta.category_average_before) * 100
-    );
+    value = Math.round((delta.category_average_after - delta.category_average_before) * 100);
     color = value > 0 ? "green" : "red";
     extra = (
       <div>
-        <p>
-          Student's Current Average:{" "}
-          {Math.round(delta.category_average_after * 100)}
-        </p>
+        <p>Student's Current Average: {Math.round(delta.category_average_after * 100)}</p>
         <p>
           Class Average at this point:{" "}
           {Math.round(
@@ -79,10 +74,10 @@ export default function(props) {
   }
 
   return (
-    <Posed>
+    <DeltaCardPosed>
       <Container
         style={{
-          margin: "20px auto"
+          margin: "20px auto",
         }}
       >
         <Card>
@@ -96,6 +91,6 @@ export default function(props) {
           <Card.Content extra>{delta.delta_id}</Card.Content>
         </Card>
       </Container>
-    </Posed>
+    </DeltaCardPosed>
   );
 }

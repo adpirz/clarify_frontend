@@ -3,12 +3,12 @@ import styled from "styled-components";
 import posed from "react-pose";
 import { effects } from "./constants";
 
-const Posed = posed.div({
+const EmptyStatePosed = posed.div({
   enter: { opacity: 1, delay: 200, staggerChildren: 50, beforeChildren: true },
   exit: { opacity: 0 },
 });
 
-const EmptyStateContainer = styled(Posed)`
+const EmptyStateContainer = styled(EmptyStatePosed)`
   text-align: center;
   padding: 25px 100px;
   box-shadow: ${effects.cardBoxShadow};
