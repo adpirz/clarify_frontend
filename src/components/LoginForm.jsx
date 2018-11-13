@@ -9,7 +9,11 @@ const LoginFormContainer = styled.div`
   width: 400px;
   height: 300px;
   border-radius: 20px;
-  background: linear-gradient(180deg, ${lighten(0.6, "grey")} 70%, ${lighten(0.47, "grey")});
+  background: linear-gradient(
+    180deg,
+    ${lighten(0.6, "grey")} 70%,
+    ${lighten(0.47, "grey")}
+  );
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -49,8 +53,8 @@ const EmailLink = styled.a`
 
 class Login extends React.Component {
   googleLogin = accessToken => {
-    this.props.logUserIn(accessToken, true)
-  }
+    this.props.logUserIn(accessToken, true);
+  };
 
   render() {
     const { errors } = this.props;
@@ -65,18 +69,22 @@ class Login extends React.Component {
         <LoginFormContainer>
           <LoginHeader>Login with Google</LoginHeader>
           <GoogleAuth
-          onSuccess={this.googleLogin}
-          onFailure={err => console.log(err)}
+            onSuccess={this.googleLogin}
+            onFailure={err => console.log(err)}
           />
           <Error>{errorNode}</Error>
           <LoginHelperText>
-            This should be the same account you use to login with <strong>Illuminate</strong>.
+            This should be the same account you use to login with{" "}
+            <strong>Illuminate</strong>.
             <br />
             Contact your system administrator if you need account information.
             <br />
             Still not sure? Reach out to{" "}
             <strong>
-              <EmailLink href="mailto:help@clarify.school">help@clarify.school</EmailLink>.
+              <EmailLink href="mailto:help@clarify.school">
+                help@clarify.school
+              </EmailLink>
+              .
             </strong>
           </LoginHelperText>
         </LoginFormContainer>
@@ -88,7 +96,12 @@ class Login extends React.Component {
 export default props => (
   <DataConsumer>
     {({ isLoading, logUserIn, errors }) => (
-      <Login isLoading={isLoading} logUserIn={logUserIn} errors={errors} {...props} />
+      <Login
+        isLoading={isLoading}
+        logUserIn={logUserIn}
+        errors={errors}
+        {...props}
+      />
     )}
   </DataConsumer>
 );

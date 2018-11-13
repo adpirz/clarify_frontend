@@ -13,7 +13,7 @@ import {
   LoginForm,
   Home,
   StudentDetail,
-  Reminders
+  Reminders,
 } from "./components";
 
 const Window = styled.section`

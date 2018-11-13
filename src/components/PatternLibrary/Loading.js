@@ -1,10 +1,10 @@
-import React from 'react';
-import styled, { keyframes } from 'styled-components';
-import { colors } from './constants';
+import React from "react";
+import styled, { keyframes } from "styled-components";
+import { colors } from "./constants";
 
-const LOADING_COLOR = colors.mainTheme
-const LOADING_SIZE = 15
-const LOADING_DURATION = 1.3
+const LOADING_COLOR = colors.mainTheme;
+const LOADING_SIZE = 15;
+const LOADING_DURATION = 1.3;
 
 const loading = keyframes`
   0% {
@@ -16,11 +16,13 @@ const loading = keyframes`
 `;
 
 function getColor(props) {
-  const d = document.createElement('div');
+  const d = document.createElement("div");
   d.style.color = LOADING_COLOR;
   document.body.appendChild(d);
   const rgbcolor = window.getComputedStyle(d).color;
-  const match = /rgba?\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,\s*\d+[.d+]*)*\)/g.exec(rgbcolor);
+  const match = /rgba?\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,\s*\d+[.d+]*)*\)/g.exec(
+    rgbcolor
+  );
   const color = `${match[1]}, ${match[2]}, ${match[3]}`;
   return color;
 }
@@ -46,11 +48,11 @@ const RotateSpin = styled.div`
 
 const Loading = () => {
   return (
-    <div style={{width: '100%', textAlign: 'center'}}>
+    <div style={{ width: "100%", textAlign: "center" }}>
       <RotateSpin />
     </div>
   );
-}
+};
 
 export default Loading;
 

@@ -1,18 +1,22 @@
-import { getCookie } from './utils';
+import { getCookie } from "./utils";
 
-
-const BASE_URL = process.env.NODE_ENV === "production" ? process.env.REACT_APP_BASE_URL : 'http://localhost:8000/'
-
+const BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.REACT_APP_BASE_URL
+    : "http://localhost:8000/";
 
 class ApiFetcher {
   static get(modelName, objectId) {
-    const apiRequest = new Request(`${BASE_URL}api/${modelName}/${objectId || ''}`, {
-      credentials: 'include'
-    });
+    const apiRequest = new Request(
+      `${BASE_URL}api/${modelName}/${objectId || ""}`,
+      {
+        credentials: "include",
+      }
+    );
 
     return fetch(apiRequest).then(resp => {
       if (resp.status !== 404 && resp.status !== 400 && resp.status !== 500) {
-        return resp.json().then((body) => ({
+        return resp.json().then(body => ({
           status: resp.status,
           data: body.data,
         }));
@@ -27,21 +31,21 @@ class ApiFetcher {
 
   static post(modelName, objectProperties) {
     const postData = JSON.stringify(objectProperties);
-    const csrfCookie = getCookie('csrftoken')
+    const csrfCookie = getCookie("csrftoken");
 
     const headers = new Headers({
-        'x-csrftoken': csrfCookie
+      "x-csrftoken": csrfCookie,
     });
 
     const apiRequest = new Request(`${BASE_URL}api/${modelName}/`, {
-      credentials: 'include',
-      method: 'POST',
+      credentials: "include",
+      method: "POST",
       body: postData,
       headers,
     });
 
     return fetch(apiRequest).then(resp => {
-      return resp.json().then((body) => ({
+      return resp.json().then(body => ({
         status: resp.status,
         error: body.error || null,
         data: body.data || null,
@@ -51,21 +55,21 @@ class ApiFetcher {
 
   static put(modelName, objectProperties) {
     const postData = JSON.stringify(objectProperties);
-    const csrfCookie = getCookie('csrftoken')
+    const csrfCookie = getCookie("csrftoken");
 
     const headers = new Headers({
-        'x-csrftoken': csrfCookie
+      "x-csrftoken": csrfCookie,
     });
 
     const apiRequest = new Request(`${BASE_URL}api/${modelName}/`, {
-      credentials: 'include',
-      method: 'PUT',
+      credentials: "include",
+      method: "PUT",
       body: postData,
       headers,
     });
 
     return fetch(apiRequest).then(resp => {
-      return resp.json().then((body) => ({
+      return resp.json().then(body => ({
         status: resp.status,
         error: body.error || null,
         data: body.data || null,
@@ -74,16 +78,19 @@ class ApiFetcher {
   }
 
   static delete(modelName, objectId) {
-    const csrfCookie = getCookie('csrftoken')
+    const csrfCookie = getCookie("csrftoken");
     const headers = new Headers({
-        'x-csrftoken': csrfCookie
+      "x-csrftoken": csrfCookie,
     });
 
-    const apiRequest = new Request(`${BASE_URL}api/${modelName}/${objectId || ''}`, {
-      credentials: 'include',
-      method: 'DELETE',
-      headers,
-    });
+    const apiRequest = new Request(
+      `${BASE_URL}api/${modelName}/${objectId || ""}`,
+      {
+        credentials: "include",
+        method: "DELETE",
+        headers,
+      }
+    );
 
     return fetch(apiRequest).then(resp => {
       const response = {
@@ -91,8 +98,8 @@ class ApiFetcher {
       };
 
       if (resp.status !== 204) {
-        resp.json().then((body) => {
-          response.error = body.error
+        resp.json().then(body => {
+          response.error = body.error;
           return response;
         });
       } else {
@@ -100,9 +107,6 @@ class ApiFetcher {
       }
     });
   }
-
 }
 
-export {
-  ApiFetcher,
-};
+export { ApiFetcher };

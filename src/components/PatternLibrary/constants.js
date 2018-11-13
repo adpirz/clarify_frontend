@@ -2,11 +2,11 @@ const fontSizes = {
   huge: "2em",
   large: "1.5em",
   medium: "1.25em",
-  small: "1em"
+  small: "1em",
 };
 
 const fontFamilies = {
-  base: "Helvetica Neue"
+  base: "Helvetica Neue",
 };
 
 const colors = {
@@ -23,19 +23,19 @@ const colors = {
   secondaryMidnightBlue: "#282A5F",
   errorOrange: "#FDA428",
   warningRed: "#BF114B",
-  googleBlue: "#4688f1"
+  googleBlue: "#4688f1",
 };
 
 const effects = {
   cardBoxShadow:
     "0 2px 11px rgba(0, 0, 0, 0.17), 0 3px 6px rgba(0, 0, 0, 0.23)",
   cardBoxShadowHover:
-    "0 7px 11px rgba(0, 0, 0, 0.17), 0 3px 6px rgba(0, 0, 0, 0.23)"
+    "0 7px 11px rgba(0, 0, 0, 0.17), 0 3px 6px rgba(0, 0, 0, 0.23)",
 };
 
 const layout = {
   siteNavHeight: "60px",
-  leftNavWidth: "200px"
+  leftNavWidth: "200px",
 };
 
 export { fontSizes, fontFamilies, colors, effects, layout };

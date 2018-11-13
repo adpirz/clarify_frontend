@@ -53,7 +53,7 @@ const ActiveElementStyle = {
   backgroundColor: colors.accent,
   color: colors.white,
   fontWeight: 600,
-  textShadow: "1px 1px rgba(0,0,0,0.5)"
+  textShadow: "1px 1px rgba(0,0,0,0.5)",
 };
 
 const Divider = styled.hr`
@@ -112,7 +112,7 @@ const EnterSpan = () => (
   <span
     style={{
       fontWeight: 600,
-      textShadow: "1px 1px 0px rgba(0, 0, 0, 0.6)"
+      textShadow: "1px 1px 0px rgba(0, 0, 0, 0.6)",
     }}
   >
     ENTER
@@ -125,7 +125,7 @@ const PressEnterSpan = () => (
       fontSize: "0.7em",
       opacity: "0.7",
       margin: "0.4em 0",
-      fontWeight: 400
+      fontWeight: 400,
     }}
   >
     Press <EnterSpan /> to select
@@ -143,11 +143,11 @@ class LeftNavigation extends React.Component {
 
     this.state = {
       filteredStudents: props.students,
-      currentSelection: null
+      currentSelection: null,
     };
   }
 
-  componentWillReceiveProps = (nextProps) => {
+  componentWillReceiveProps = nextProps => {
     const newStudents = nextProps.students;
     const oldStudents = this.props.students;
 
@@ -156,7 +156,7 @@ class LeftNavigation extends React.Component {
         filteredStudents: newStudents,
       };
     }
-  }
+  };
 
   handleSearch = e => {
     const needle = e.target.value.toLowerCase();
@@ -185,7 +185,7 @@ class LeftNavigation extends React.Component {
       this.props.history.push(`/student/${this.state.currentSelection}`);
       this.setState({
         filteredStudents: this.props.students,
-        currentSelection: null
+        currentSelection: null,
       });
     }
   };
@@ -221,7 +221,7 @@ class LeftNavigation extends React.Component {
     this.inputRef.current.value = "";
     this.setState({
       filteredStudents: this.props.students,
-      currentSelection: null
+      currentSelection: null,
     });
   }
 

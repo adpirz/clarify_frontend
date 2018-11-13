@@ -13,9 +13,8 @@ import {
   ActionIconList,
   ActionCard,
   EmptyState,
-  PageHeading
-} from './PatternLibrary';
-
+  PageHeading,
+} from "./PatternLibrary";
 
 const StudentRow = styled.div`
   display: flex;
@@ -44,7 +43,6 @@ const StudentActionIconList = styled(ActionIconList)`
   width: 35%;
 `;
 
-
 const StyledActionCard = styled(ActionCard)`
   max-width: 33%;
   flex-direction: row;
@@ -60,18 +58,22 @@ class Home extends React.Component {
   state = {
     selectedStudent: null,
     type: "",
-  }
+  };
 
   handleActionFormClick = (newStudentId = null) => {
-    this.setState((prevState) => {
+    this.setState(prevState => {
       return {
-        selectedStudentId: newStudentId === prevState.selectedStudentId ? null : newStudentId,
-      }
-    })
-  }
+        selectedStudentId:
+          newStudentId === prevState.selectedStudentId ? null : newStudentId,
+      };
+    });
+  };
 
   handleTypeSelection = (newStudentId = null, newType = null) => {
-    const { type: oldType, selectedStudentId: oldSelectedStudentId } = this.state;
+    const {
+      type: oldType,
+      selectedStudentId: oldSelectedStudentId,
+    } = this.state;
     // If both type and student are same, then the user clicked the same action
     // icon they used to open the form, so we should close it.
     if (oldType === newType && oldSelectedStudentId === newStudentId) {
@@ -79,20 +81,23 @@ class Home extends React.Component {
         type: "",
         selectedStudentId: null,
       });
-    } else {// it not, update whatever's new
-      this.setState((prevState) => {
+    } else {
+      // it not, update whatever's new
+      this.setState(prevState => {
         return {
           type: oldType !== newType ? newType : oldType,
-          selectedStudentId: oldSelectedStudentId !== newStudentId ? newStudentId : oldSelectedStudentId,
+          selectedStudentId:
+            oldSelectedStudentId !== newStudentId
+              ? newStudentId
+              : oldSelectedStudentId,
         };
       });
-
     }
-  }
+  };
 
-  getStudentDeltaList = (student) => {
+  getStudentDeltaList = student => {
     const { actions, saveAction } = this.props;
-    const actionsForStudent = filter(actions, (a) => {
+    const actionsForStudent = filter(actions, a => {
       return a.student_id === student.id;
     });
     if (!actionsForStudent.length) {
@@ -104,14 +109,19 @@ class Home extends React.Component {
             student={student}
             saveAction={saveAction}
             reminderButtonCopy="Remind Me"
-            action={{type: this.state.type}}/>
+            action={{ type: this.state.type }}
+          />
         );
       } else {
         return (
           <StudentActionsEmptyState>
-            Click an icon up there <span role="img" aria-label="pointing up at actions list">👆</span> to create your first action for {student.first_name}
+            Click an icon up there{" "}
+            <span role="img" aria-label="pointing up at actions list">
+              👆
+            </span>{" "}
+            to create your first action for {student.first_name}
           </StudentActionsEmptyState>
-        )
+        );
       }
     }
 
@@ -141,7 +151,7 @@ class Home extends React.Component {
           actions_list: sortedActions,
           most_recent_action: sortedActions.length
             ? sortedActions[0].created_on
-            : null
+            : null,
         });
         return accumulator;
       },
@@ -162,30 +172,36 @@ class Home extends React.Component {
       <div>
         <PageHeading />
         <MainContentBody>
-          {map(studentViewModels.slice(0,3), ({student}, i) => {
+          {map(studentViewModels.slice(0, 3), ({ student }, i) => {
             const isSelected = this.state.selectedStudentId === student.id;
             return (
               <div key={i}>
                 <StudentRow>
-                  <StudentHeader to={`/student/${student.id}`}>{student.first_name} {student.last_name[0]}</StudentHeader>
+                  <StudentHeader to={`/student/${student.id}`}>
+                    {student.first_name} {student.last_name[0]}
+                  </StudentHeader>
                   <StudentActionIconList
                     isSelected={isSelected}
                     type={this.state.type}
-                    handleTypeSelection={this.handleTypeSelection.bind(this, student.id)} />
+                    handleTypeSelection={this.handleTypeSelection.bind(
+                      this,
+                      student.id
+                    )}
+                  />
                 </StudentRow>
                 {this.getStudentDeltaList(student)}
               </div>
-            )
+            );
           })}
         </MainContentBody>
       </div>
-    )
+    );
   }
 }
 
 export default props => (
   <DataConsumer>
-    {({students, actions, saveAction}) => (
+    {({ students, actions, saveAction }) => (
       <Home
         students={students}
         actions={actions}
