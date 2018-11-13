@@ -53,13 +53,13 @@ const RouteElement = styled(NavLink)`
 
   &:hover {
     background-color: ${highlightBackground};
-    color: white;
+    color: ${colors.white};
   }
 `;
 
 const ActiveElementStyle = {
   backgroundColor: colors.accent,
-  color: "white",
+  color: colors.white,
   fontWeight: 600,
   textShadow: "1px 1px rgba(0,0,0,0.5)",
 };
@@ -96,7 +96,7 @@ const StudentRow = styled(NavLink)`
   padding: 5px 0px 5px ${2 * INDENT}px;
   font-size: 1.1em;
   display: block;
-  color: ${props => (props.highlight ? "white" : colors.textGrey)};
+  color: ${props => (props.highlight ? colors.white : colors.textGrey)};
   margin: 7px 20px 7px 0px;
   border-radius: 0px 30px 30px 0px;
   cursor: pointer;
