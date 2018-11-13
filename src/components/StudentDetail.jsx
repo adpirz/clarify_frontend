@@ -53,13 +53,14 @@ class StudentDetail extends React.Component {
     }
 
     const studentId = parseInt(get(this.props, "match.params.studentId"), 10);
+    const student = find(students, { id: studentId });
     const studentsActions = filter(actions, a => {
       return a.student_id === studentId && !!a.completed_on;
     });
 
+    let mainContentBodyNode = null;
     if (studentsActions.length) {
-      const student = find(students, { id: studentId });
-      return (
+      mainContentBodyNode = (
         <MainContentBody>
           {map(studentsActions, (a, i) => {
             return (
@@ -75,24 +76,8 @@ class StudentDetail extends React.Component {
           })}
         </MainContentBody>
       );
-    }
-
-    if (studentsActions.length) {
-      return (
-        <div>
-          <PageHeading />
-          <MainContentBody>
-            {map(studentsActions, (a, i) => {
-              return <ActionCard action={a} key={i} />;
-            })}
-          </MainContentBody>
-        </div>
-      );
-    }
-
-    return (
-      <div>
-        <PageHeading />
+    } else {
+      mainContentBodyNode = (
         <StudentDetailEmptyState>
           <LineStyled>
             <EmojiSpan role="img" aria-label="thinking">
@@ -115,6 +100,13 @@ class StudentDetail extends React.Component {
             when you've got an action you want to log.
           </LineStyled>
         </StudentDetailEmptyState>
+      );
+    }
+
+    return (
+      <div>
+        <PageHeading />
+        {mainContentBodyNode}
       </div>
     );
   }
