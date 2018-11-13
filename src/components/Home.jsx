@@ -17,41 +17,34 @@ import {
 } from "./PatternLibrary";
 
 const StudentRow = styled.div`
+  padding: 0 1.2em;
+`;
+
+
+const StudentRowHeading = styled.div`
   display: flex;
   justify-content: space-between;
   margin: 15px 0px;
 `;
 
-const StudentHeader = styled(NavLink)`
+const StudentName = styled(NavLink)`
   display: inline-flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 1.2em;
   font-size: ${fontSizes.huge};
   color: ${colors.black};
   font-weight: bold;
   text-decoration: none;
 `;
 
-const ActionList = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-
 const StudentActionIconList = styled(ActionIconList)`
   width: 35%;
 `;
 
-const StyledActionCard = styled(ActionCard)`
-  max-width: 33%;
-  flex-direction: row;
-  cursor: pointer;
-`;
-
 const StudentActionsEmptyState = styled(EmptyState)`
   width: 25%;
-  margin: auto auto;
+  margin: auto 0;
 `;
 
 class Home extends React.Component {
@@ -100,37 +93,27 @@ class Home extends React.Component {
     const actionsForStudent = filter(actions, a => {
       return a.student_id === student.id;
     });
-    if (!actionsForStudent.length) {
-      if (this.state.selectedStudentId === student.id) {
-        return (
-          <ActionCard
-            closeActionForm={this.handleActionFormClick}
-            showTitle={false}
-            student={student}
-            saveAction={saveAction}
-            reminderButtonCopy="Remind Me"
-            action={{ type: this.state.type }}
-          />
-        );
-      } else {
-        return (
-          <StudentActionsEmptyState>
-            Click an icon up there{" "}
-            <span role="img" aria-label="pointing up at actions list">
-              👆
-            </span>{" "}
-            to create your first action for {student.first_name}
-          </StudentActionsEmptyState>
-        );
-      }
+    if (!actionsForStudent.length && this.state.selectedStudentId === student.id) {
+      return (
+        <ActionCard
+          closeActionForm={this.handleActionFormClick}
+          showTitle={false}
+          student={student}
+          saveAction={saveAction}
+          reminderButtonCopy="Remind Me"
+          action={{ type: this.state.type }}
+        />
+      );
     }
 
     return (
-      <ActionList>
-        {map(actionsForStudent.slice(3), (a, i) => {
-          return <StyledActionCard key={i} action={a} student={student} />;
-        })}
-      </ActionList>
+      <StudentActionsEmptyState>
+        Click an icon up there{" "}
+        <span role="img" aria-label="pointing up at actions list">
+          👆
+        </span>{" "}
+        to create your first action for {student.first_name}
+      </StudentActionsEmptyState>
     );
   };
 
@@ -175,11 +158,11 @@ class Home extends React.Component {
           {map(studentViewModels.slice(0, 3), ({ student }, i) => {
             const isSelected = this.state.selectedStudentId === student.id;
             return (
-              <div key={i}>
-                <StudentRow>
-                  <StudentHeader to={`/student/${student.id}`}>
+              <StudentRow key={i}>
+                <StudentRowHeading>
+                  <StudentName to={`/student/${student.id}`}>
                     {student.first_name} {student.last_name[0]}
-                  </StudentHeader>
+                  </StudentName>
                   <StudentActionIconList
                     isSelected={isSelected}
                     type={this.state.type}
@@ -188,9 +171,9 @@ class Home extends React.Component {
                       student.id
                     )}
                   />
-                </StudentRow>
+                </StudentRowHeading>
                 {this.getStudentDeltaList(student)}
-              </div>
+              </StudentRow>
             );
           })}
         </MainContentBody>

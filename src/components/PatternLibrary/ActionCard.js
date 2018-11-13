@@ -13,6 +13,7 @@ import { colors, effects, fontSizes } from "./constants";
 import { ActionTextArea, ActionIcon, ActionIconImage, Button } from ".";
 import { getReminders } from "../../utils";
 
+
 const ActionCardContainer = styled.section`
   width: calc(80% - 50px);
   min-height: 160px;
@@ -27,6 +28,23 @@ const ActionCardContainer = styled.section`
   box-shadow: ${effects.cardBoxShadow};
   color: ${colors.black};
 `;
+
+
+const PosedActionCardContainer = posed(ActionCardContainer)({
+  enter: {
+    scale: 1,
+    opacity: 1,
+    delay: 200,
+  },
+  exit: {
+    scale: 0.9,
+    opacity: 0,
+    transition: {
+      duration: 150,
+    },
+  },
+});
+
 
 const ActionCardHeading = styled.div`
   display: flex;
@@ -312,7 +330,7 @@ class ActionCard extends React.Component {
     } = this.props;
 
     return (
-      <ActionCardContainer>
+      <PosedActionCardContainer>
         <ActionCardHeading>
           {this.getActionIcon()}
           {showTitle ? (
@@ -357,7 +375,7 @@ class ActionCard extends React.Component {
             {this.getDate(completedOn)}
           </ActionDate>
         </ActionDateWrapper>
-      </ActionCardContainer>
+      </PosedActionCardContainer>
     );
   }
 }
