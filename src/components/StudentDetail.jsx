@@ -39,51 +39,36 @@ class StudentDetail extends React.Component {
     }
 
     const studentId = parseInt(get(this.props, 'match.params.studentId'), 10);
+    const student = find(students, {id: studentId});
     const studentsActions = filter(actions, (a) => {
       return a.student_id === studentId && !!a.completed_on;
     });
 
-      if (studentsActions.length) {
-        const student = find(students, {id: studentId});
-        return (
-          <MainContentBody>
-            {map(studentsActions, (a, i) => {
-              return (
-                <ActionCard
-                  closeActionForm={this.handleActionFormClick}
-                  reminderButtonCopy="Remind Me"
-                  showTitle={false}
-                  action={a}
-                  key={i}
-                  student={student} />
-              )
-            })}
-          </MainContentBody>
-        );
-      }
-
+    let mainContentBodyNode = null;
     if (studentsActions.length) {
-      return (
-        <div>
-          <PageHeading />
-          <MainContentBody>
-            {map(studentsActions, (a, i) => {
-              return <ActionCard action={a} key={i} />;
-            })}
-          </MainContentBody>
-        </div>
+      mainContentBodyNode = (
+        <MainContentBody>
+          {map(studentsActions, (a, i) => {
+            return (
+              <ActionCard
+                closeActionForm={this.handleActionFormClick}
+                reminderButtonCopy="Remind Me"
+                showTitle={false}
+                action={a}
+                key={i}
+                student={student} />
+            );
+          })}
+        </MainContentBody>
       );
-    }
-
-    return (
-      <div>
-        <PageHeading />
+    } else {
+      mainContentBodyNode = (
         <StudentDetailEmptyState>
           <PosedP>
             <span role="img" aria-label="thinking">
               🤔
             </span>{" "}
-            Looks like you haven't logged any actions for this student yet.
+            Looks like you haven't logged any actions for {student.first_name} yet.
           </PosedP>
           <PosedP>
             Go ahead and pick one from{" "}
@@ -93,6 +78,13 @@ class StudentDetail extends React.Component {
             when you've got an action you want to log.
           </PosedP>
         </StudentDetailEmptyState>
+      );
+    }
+
+    return (
+      <div>
+        <PageHeading />
+        {mainContentBodyNode}
       </div>
     );
   }
