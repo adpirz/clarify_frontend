@@ -1,11 +1,12 @@
-import React from 'react';
-import find from 'lodash/find';
-import styled from 'styled-components';
+import React from "react";
+import find from "lodash/find";
+import styled from "styled-components";
+import { withRouter } from "react-router-dom";
+import posed, { PoseGroup } from "react-pose";
 
-import { DataConsumer } from '../../DataProvider';
-import { colors } from './constants';
-import { ActionIconList, ActionForm } from '.';
-
+import { DataConsumer } from "../../DataProvider";
+import { colors } from "./constants";
+import { ActionIconList, ActionForm } from ".";
 
 const PageHeadingContainer = styled.div`
   background-color: ${colors.mainTheme};
@@ -16,20 +17,41 @@ const PageHeadingContainer = styled.div`
   justify-content: space-between;
   flex-wrap: wrap;
   color: ${colors.white};
+  min-height: 80px;
 `;
 
-const PageHeadingCopy = styled.h2`
-  margin: 10px 0px;
-`;
+const PageHeadingPosed = posed.div({
+  before: {
+    scale: 1.2,
+    opacity: 0
+  },
+  enter: {
+    scale: 1,
+    opacity: 1,
+    delay: 200
+  },
+  exit: {
+    scale: 0.9,
+    opacity: 0,
+    transition: {
+      duration: 150
+    }
+  }
+});
 
+const PageHeadingCopy = styled(PageHeadingPosed)`
+  min-width: 200px;
+  text-align: center;
+  font-size: 1.2em;
+`;
 
 class PageHeading extends React.Component {
   state = {
     type: null,
-    showActionForm: false,
-  }
+    showActionForm: false
+  };
 
-  renderActionForm = (student) => {
+  renderActionForm = student => {
     const { createAction } = this.props;
     const { type } = this.state;
     if (!type) {
@@ -40,17 +62,18 @@ class PageHeading extends React.Component {
         closeActionForm={this.handleTypeSelection.bind(this, null)}
         parentManagedType={type}
         student={student}
-        createAction={createAction} />
-    )
-  }
+        createAction={createAction}
+      />
+    );
+  };
 
-  handleTypeSelection = (type) => {
-    this.setState((prevState) => {
+  handleTypeSelection = type => {
+    this.setState(prevState => {
       return {
-        type: prevState.type === type ? null : type,
-      }
-    })
-  }
+        type: prevState.type === type ? null : type
+      };
+    });
+  };
 
   render() {
     const { location, students } = this.props;
@@ -59,41 +82,46 @@ class PageHeading extends React.Component {
     let currentStudent = null;
     let actionIconListNode = null;
     if (students) {
-      pageHeadingCopy = 'Next Steps';
+      pageHeadingCopy = "Next Steps";
 
       const studentIdRegexResults = location.pathname.match(studentIdRegex);
       if (studentIdRegexResults) {
-        currentStudent = find(students, {id: parseInt(studentIdRegexResults[1], 10)})
+        currentStudent = find(students, {
+          id: parseInt(studentIdRegexResults[1], 10)
+        });
         pageHeadingCopy = `${currentStudent.first_name}'s Timeline`;
         const { type } = this.state;
         actionIconListNode = (
-          <div style={{width: '25%'}}>
-            <ActionIconList type={type} handleTypeSelection={this.handleTypeSelection} />
+          <div style={{ width: "25%" }}>
+            <ActionIconList
+              type={type}
+              handleTypeSelection={this.handleTypeSelection}
+            />
           </div>
-        )
-      } else if (location.pathname.indexOf('/reminders') > -1) {
+        );
+      } else if (location.pathname.indexOf("/reminders") > -1) {
         pageHeadingCopy = `Reminders`;
       }
     }
 
     return (
       <PageHeadingContainer>
-        <PageHeadingCopy>
-          {pageHeadingCopy}
-        </PageHeadingCopy>
+        <PoseGroup animateOnMount preEnterPose="before">
+          <PageHeadingCopy key={this.props.location.key || "start"}>
+            <h2>{pageHeadingCopy}</h2>
+          </PageHeadingCopy>
+        </PoseGroup>
         {actionIconListNode}
         {this.renderActionForm(currentStudent)}
       </PageHeadingContainer>
-    )
+    );
   }
 }
 
-
-
-export default (props) => (
+export default withRouter(props => (
   <DataConsumer>
     {({ students, createAction }) => (
-      <PageHeading students={students} createAction={createAction} {...props}/>
+      <PageHeading students={students} createAction={createAction} {...props} />
     )}
   </DataConsumer>
-);
+));

@@ -1,28 +1,23 @@
-import React from 'react';
-import {DataConsumer} from '../DataProvider';
+import React from "react";
+import { DataConsumer } from "../DataProvider";
 
-import {
-  MainContentBody
-} from './PatternLibrary';
-
+import { MainContentBody, PageHeading } from "./PatternLibrary";
 
 class Reminders extends React.Component {
   render() {
     return (
-      <MainContentBody>
-        REMINDERS
-      </MainContentBody>
-    )
+      <div>
+        <PageHeading />
+        <MainContentBody>REMINDERS</MainContentBody>
+      </div>
+    );
   }
 }
 
-export default (props) => (
+export default props => (
   <DataConsumer>
-    {({getReminders, students}) => (
-      <Reminders
-        reminders={getReminders()}
-        students={students}
-        />
+    {({ getReminders, students }) => (
+      <Reminders reminders={getReminders()} students={students} />
     )}
   </DataConsumer>
 );

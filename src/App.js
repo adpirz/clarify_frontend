@@ -1,29 +1,20 @@
-import map from 'lodash/map';
-import React from 'react';
-import { Route } from 'react-router-dom';
-import styled from 'styled-components';
+import map from "lodash/map";
+import React from "react";
+import { Route, Switch } from "react-router-dom";
+import styled from "styled-components";
+import posed, { PoseGroup } from "react-pose";
 
-import { DataConsumer } from './DataProvider';
-import {
-  Button,
-  Error,
-  Logo,
-  Loading,
-  PageHeading,
-} from './components/PatternLibrary';
-import {
-  fontFamilies,
-  layout
-} from './components/PatternLibrary/constants';
+import { DataConsumer } from "./DataProvider";
+import { Error, Loading, SiteNav, NotFound } from "./components/PatternLibrary";
+import { fontFamilies, layout } from "./components/PatternLibrary/constants";
 
 import {
   LeftNavigation,
   LoginForm,
   Home,
   StudentDetail,
-  Reminders,
-} from './components';
-
+  Reminders
+} from "./components";
 
 const Window = styled.section`
   display: flex;
@@ -40,15 +31,6 @@ const PageBody = styled.section`
   font-family: ${fontFamilies.base};
 `;
 
-const SiteNav = styled.section`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  border-bottom: 1px solid lightgrey;
-  height: ${layout.siteNavHeight};
-`;
-
 const MainContent = styled.section`
   position: absolute;
   width: calc(100% - ${layout.leftNavWidth});
@@ -58,14 +40,13 @@ const MainContent = styled.section`
   overflow: scroll;
 `;
 
+const RouteContainer = posed.div();
 
 class App extends React.Component {
   getPageBody = () => {
     const { isLoading, user } = this.props;
     if (isLoading) {
-      return (
-        <Loading />
-      );
+      return <Loading />;
     }
 
     if (!user) {
@@ -76,41 +57,40 @@ class App extends React.Component {
       <PageBody>
         <LeftNavigation />
         <MainContent>
-          <Route path="/" component={PageHeading} />
-          <Route path="/" exact component={Home} />
-          <Route path="/student/:studentId" component={StudentDetail} />
-          <Route path="/reminders/:studentId?" component={Reminders} />
+          <Route
+            render={({ location }) => (
+              <PoseGroup animateOnMount>
+                <RouteContainer key={location.key || "start"}>
+                  <Switch location={location}>
+                    <Route path="/" exact component={Home} />
+                    <Route
+                      path="/student/:studentId"
+                      component={StudentDetail}
+                    />
+                    <Route
+                      path="/reminders/:studentId?"
+                      component={Reminders}
+                    />
+                    <Route component={NotFound} />
+                  </Switch>
+                </RouteContainer>
+              </PoseGroup>
+            )}
+          />
         </MainContent>
       </PageBody>
     );
-  }
+  };
 
   render() {
-    const { user, errorMessages } = this.props;
+    const { user, errorMessages, logUserOut } = this.props;
     return (
       <Window>
-        <SiteNav>
-          <Logo alt="Clarify Logo" />
-          <div style={{
-              borderLeft: '2px solid lightgrey',
-              paddingLeft: '25px',
-            }}>
-            {user &&
-              <span style={{marginRight: '15px'}}>
-                <i className="fas fa-user" style={{margin: '0 10px'}}/>
-                User: {user.username}
-              </span>
-            }
-            {user &&
-              <Button
-                onClick={this.props.logUserOut}>
-                Logout
-              </Button>
-            }
-          </div>
-        </SiteNav>
+        <SiteNav user={user} logUserOut={logUserOut} />
         <Error>
-          {map(errorMessages, (key, message) => {return <p>{message}</p>})}
+          {map(errorMessages, (key, message) => {
+            return <p>{message}</p>;
+          })}
         </Error>
         {this.getPageBody()}
       </Window>
@@ -120,7 +100,7 @@ class App extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({isLoading, user, errors, logUserOut}) => (
+    {({ isLoading, user, errors, logUserOut }) => (
       <App
         user={user}
         logUserOut={logUserOut}
