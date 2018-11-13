@@ -5,7 +5,7 @@ import { effects } from "./constants";
 
 const Posed = posed.div({
   enter: { opacity: 1, delay: 200, staggerChildren: 50, beforeChildren: true },
-  exit: { opacity: 0 }
+  exit: { opacity: 0 },
 });
 
 const EmptyStateContainer = styled(Posed)`
