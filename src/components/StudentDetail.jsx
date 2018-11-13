@@ -24,8 +24,8 @@ const Posed = posed.div({
 const LineStyled = styled(Posed)`
   display: flex;
   justify-content: center;
+  font-size: 1.2em;
   align-items: center;
-  font-size: 1.4em;
   margin: 15px auto;
   text-align: center;
 `;
@@ -87,7 +87,6 @@ class StudentDetail extends React.Component {
               {/* eslint-disable-next-line */}
               👆
             </EmojiSpan>{" "}
-            when you've got an action you want to log.
           </LineStyled>
         </StudentDetailEmptyState>
       );
