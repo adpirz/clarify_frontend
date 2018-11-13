@@ -15,9 +15,9 @@ class Reminders extends React.Component {
   render() {
     const { getReminderActions, saveAction, deleteAction, students } = this.props;
     const actionReminders = getReminderActions();
-
+    let mainContentBodyNode = null;
     if (!actionReminders || !actionReminders.length) {
-      return (
+      mainContentBodyNode = (
         <RemindersDetailEmptyState>
           <p>
             Here's where you'll find reminders for actions you want to remember to do later, but
@@ -32,11 +32,8 @@ class Reminders extends React.Component {
           </p>
         </RemindersDetailEmptyState>
       );
-    }
-
-    return (
-      <div>
-        <PageHeading />
+    } else {
+      mainContentBodyNode = (
         <MainContentBody>
           {map(actionReminders, (a, i) => {
             const studentForAction = find(students, { id: a.student_id });
@@ -53,6 +50,13 @@ class Reminders extends React.Component {
             );
           })}
         </MainContentBody>
+      );
+    }
+
+    return (
+      <div>
+        <PageHeading />
+        {mainContentBodyNode}
       </div>
     );
   }
