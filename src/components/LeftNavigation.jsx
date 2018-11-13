@@ -25,7 +25,7 @@ const SearchStyled = styled.input`
   box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
 
   &::placeholder {
-    color: ${lighten(0.7, "black")};
+    color: ${lighten(0.7, colors.black)};
   }
 `;
 const Nav = styled.nav`
