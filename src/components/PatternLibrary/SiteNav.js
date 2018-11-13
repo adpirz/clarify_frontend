@@ -18,7 +18,6 @@ const Styled = styled.section`
 const Container = styled.div`
   display: flex;
   height: 100%;
-  max-width: 1000px;
   margin: 0 auto;
   flex-direction: row;
   justify-content: space-between;
