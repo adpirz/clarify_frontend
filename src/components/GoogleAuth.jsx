@@ -84,9 +84,7 @@ class GoogleAuth extends React.Component {
     const options = {
       prompt: "select_account",
     };
-    auth2
-      .signIn(options)
-      .then(res => this.handleSigninSuccess(res), err => onFailure(err));
+    auth2.signIn(options).then(res => this.handleSigninSuccess(res), err => onFailure(err));
   }
 
   handleSigninSuccess(res) {

@@ -8,12 +8,7 @@ import find from "lodash/find";
 import posed from "react-pose";
 
 import { DataConsumer } from "../DataProvider";
-import {
-  ActionCard,
-  EmptyState,
-  MainContentBody,
-  PageHeading,
-} from "./PatternLibrary/";
+import { ActionCard, EmptyState, MainContentBody, PageHeading } from "./PatternLibrary/";
 
 const PosedP = posed.p({
   enter: {
@@ -69,8 +64,7 @@ class StudentDetail extends React.Component {
             <span role="img" aria-label="thinking">
               🤔
             </span>{" "}
-            Looks like you haven't logged any actions for {student.first_name}{" "}
-            yet.
+            Looks like you haven't logged any actions for {student.first_name} yet.
           </PosedP>
           <PosedP>
             Go ahead and pick one from{" "}
@@ -94,8 +88,6 @@ class StudentDetail extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({ students, actions }) => (
-      <StudentDetail students={students} {...props} actions={actions} />
-    )}
+    {({ students, actions }) => <StudentDetail students={students} {...props} actions={actions} />}
   </DataConsumer>
 );

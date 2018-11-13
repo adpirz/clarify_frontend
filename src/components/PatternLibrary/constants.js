@@ -27,10 +27,8 @@ const colors = {
 };
 
 const effects = {
-  cardBoxShadow:
-    "0 2px 11px rgba(0, 0, 0, 0.17), 0 3px 6px rgba(0, 0, 0, 0.23)",
-  cardBoxShadowHover:
-    "0 7px 11px rgba(0, 0, 0, 0.17), 0 3px 6px rgba(0, 0, 0, 0.23)",
+  cardBoxShadow: "0 2px 11px rgba(0, 0, 0, 0.17), 0 3px 6px rgba(0, 0, 0, 0.23)",
+  cardBoxShadowHover: "0 7px 11px rgba(0, 0, 0, 0.17), 0 3px 6px rgba(0, 0, 0, 0.23)",
 };
 
 const layout = {

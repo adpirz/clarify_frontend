@@ -13,9 +13,7 @@ const ActionIconContainer = styled.div`
     return typeof isSelected === "undefined" ? "initial" : "pointer";
   }};
   background-color: ${({ isSelected }) => {
-    return typeof isSelected === "undefined" || isSelected === true
-      ? colors.accent
-      : colors.white;
+    return typeof isSelected === "undefined" || isSelected === true ? colors.accent : colors.white;
   }};
   position: relative;
 
@@ -53,13 +51,7 @@ const ActionIconListDiv = styled.div`
   justify-content: space-between;
 `;
 
-const ActionIconImage = ({
-  imageFileName,
-  actionAlt,
-  children,
-  isSelected,
-  onClick,
-}) => (
+const ActionIconImage = ({ imageFileName, actionAlt, children, isSelected, onClick }) => (
   <ActionIconContainer isSelected={isSelected} onClick={onClick}>
     <ActionIconImg src={`/${imageFileName}`} actionAlt={actionAlt} />
     {isSelected ? <Caret /> : null}
@@ -73,12 +65,7 @@ const ActionIcon = ({ className, isSelected, onClick, children }) => (
   </ActionIconContainer>
 );
 
-const ActionIconList = ({
-  type,
-  handleTypeSelection,
-  className,
-  isSelected,
-}) => {
+const ActionIconList = ({ type, handleTypeSelection, className, isSelected }) => {
   return (
     <ActionIconListDiv className={className}>
       <ActionIconImage
