@@ -1,18 +1,13 @@
 import { getCookie } from "./utils";
 
 const BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.REACT_APP_BASE_URL
-    : "http://localhost:8000/";
+  process.env.NODE_ENV === "production" ? process.env.REACT_APP_BASE_URL : "http://localhost:8000/";
 
 class ApiFetcher {
   static get(modelName, objectId) {
-    const apiRequest = new Request(
-      `${BASE_URL}api/${modelName}/${objectId || ""}`,
-      {
-        credentials: "include",
-      }
-    );
+    const apiRequest = new Request(`${BASE_URL}api/${modelName}/${objectId || ""}`, {
+      credentials: "include",
+    });
 
     return fetch(apiRequest).then(resp => {
       if (resp.status !== 404 && resp.status !== 400 && resp.status !== 500) {
@@ -83,14 +78,11 @@ class ApiFetcher {
       "x-csrftoken": csrfCookie,
     });
 
-    const apiRequest = new Request(
-      `${BASE_URL}api/${modelName}/${objectId || ""}`,
-      {
-        credentials: "include",
-        method: "DELETE",
-        headers,
-      }
-    );
+    const apiRequest = new Request(`${BASE_URL}api/${modelName}/${objectId || ""}`, {
+      credentials: "include",
+      method: "DELETE",
+      headers,
+    });
 
     return fetch(apiRequest).then(resp => {
       const response = {

@@ -8,22 +8,17 @@ import get from "lodash/get";
 import find from "lodash/find";
 
 import { DataConsumer } from "../DataProvider";
-import {
-  ActionCard,
-  EmptyState,
-  MainContentBody,
-  PageHeading
-} from "./PatternLibrary/";
+import { ActionCard, EmptyState, MainContentBody, PageHeading } from "./PatternLibrary/";
 
 const Posed = posed.div({
   enter: {
     x: 0,
-    opacity: 1
+    opacity: 1,
   },
   exit: {
     x: -50,
-    opacity: 0
-  }
+    opacity: 0,
+  },
 });
 
 const LineStyled = styled(Posed)`
@@ -84,15 +79,10 @@ class StudentDetail extends React.Component {
               {/* eslint-disable-next-line */}
               🤔
             </EmojiSpan>{" "}
-            <p>
-              Looks like you haven't logged any actions for this student yet.
-            </p>
+            <p>Looks like you haven't logged any actions for this student yet.</p>
           </LineStyled>
           <LineStyled>
-            <p>
-              Go ahead and pick one from when you've got an action you want to
-              log.
-            </p>
+            <p>Go ahead and pick one from when you've got an action you want to log.</p>
             <EmojiSpan role="img" aria-label="pointing up at actions list">
               {/* eslint-disable-next-line */}
               👆
@@ -114,8 +104,6 @@ class StudentDetail extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({ students, actions }) => (
-      <StudentDetail students={students} {...props} actions={actions} />
-    )}
+    {({ students, actions }) => <StudentDetail students={students} {...props} actions={actions} />}
   </DataConsumer>
 );

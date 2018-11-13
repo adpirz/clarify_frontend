@@ -13,7 +13,6 @@ import { colors, effects, fontSizes } from "./constants";
 import { ActionTextArea, ActionIcon, ActionIconImage, Button } from ".";
 import { getReminders } from "../../utils";
 
-
 const ActionCardContainer = styled.section`
   width: calc(80% - 50px);
   min-height: 160px;
@@ -29,7 +28,6 @@ const ActionCardContainer = styled.section`
   color: ${colors.black};
 `;
 
-
 const PosedActionCardContainer = posed(ActionCardContainer)({
   enter: {
     scale: 1,
@@ -44,7 +42,6 @@ const PosedActionCardContainer = posed(ActionCardContainer)({
     },
   },
 });
-
 
 const ActionCardHeading = styled.div`
   display: flex;
@@ -222,11 +219,7 @@ class ActionCard extends React.Component {
         {map(REMINDERS, (r, i) => {
           return (
             <ReminderOption
-              onClick={this.handleFormSubmission.bind(
-                this,
-                false,
-                r.reminderDate
-              )}
+              onClick={this.handleFormSubmission.bind(this, false, r.reminderDate)}
               key={i}
             >
               {r.copy}
@@ -253,12 +246,7 @@ class ActionCard extends React.Component {
         iconNode = <ActionIcon className="fa-comment-alt" />;
         break;
       default:
-        iconNode = (
-          <ActionIconImage
-            imageFileName="note_icon.png"
-            actionAlt="Make a Note icon"
-          />
-        );
+        iconNode = <ActionIconImage imageFileName="note_icon.png" actionAlt="Make a Note icon" />;
     }
     return iconNode;
   };
@@ -282,14 +270,10 @@ class ActionCard extends React.Component {
           placeholderText = `I called home about...?`;
           break;
         case "message":
-          placeholderText = `I sent an email to ${
-            student.first_name
-          }'s other teachers about...`;
+          placeholderText = `I sent an email to ${student.first_name}'s other teachers about...`;
           break;
         default:
-          placeholderText = `Today, I noticed ${
-            student.first_name
-          } was really good at...`;
+          placeholderText = `Today, I noticed ${student.first_name} was really good at...`;
       }
     }
 
@@ -338,9 +322,7 @@ class ActionCard extends React.Component {
               {student.first_name} {student.last_name[0]}
             </StudentHeading>
           ) : null}
-          {deleteAction ? (
-            <DeleteIcon className="fas fa-trash" onClick={deleteAction} />
-          ) : null}
+          {deleteAction ? <DeleteIcon className="fas fa-trash" onClick={deleteAction} /> : null}
           {closeActionForm ? (
             <CloseIcon className="fas fa-times" onClick={closeActionForm} />
           ) : null}
@@ -353,10 +335,7 @@ class ActionCard extends React.Component {
           </span>
         </ErrorField>
         <ActionButtons visible={!!saveAction}>
-          <Button
-            onClick={this.handleFormSubmission.bind(this, true, null)}
-            primary
-          >
+          <Button onClick={this.handleFormSubmission.bind(this, true, null)} primary>
             Save
           </Button>
           <Divider>-- or --</Divider>

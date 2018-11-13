@@ -20,7 +20,6 @@ const StudentRow = styled.div`
   padding: 0 1.2em;
 `;
 
-
 const StudentRowHeading = styled.div`
   display: flex;
   justify-content: space-between;
@@ -56,17 +55,13 @@ class Home extends React.Component {
   handleActionFormClick = (newStudentId = null) => {
     this.setState(prevState => {
       return {
-        selectedStudentId:
-          newStudentId === prevState.selectedStudentId ? null : newStudentId,
+        selectedStudentId: newStudentId === prevState.selectedStudentId ? null : newStudentId,
       };
     });
   };
 
   handleTypeSelection = (newStudentId = null, newType = null) => {
-    const {
-      type: oldType,
-      selectedStudentId: oldSelectedStudentId,
-    } = this.state;
+    const { type: oldType, selectedStudentId: oldSelectedStudentId } = this.state;
     // If both type and student are same, then the user clicked the same action
     // icon they used to open the form, so we should close it.
     if (oldType === newType && oldSelectedStudentId === newStudentId) {
@@ -80,9 +75,7 @@ class Home extends React.Component {
         return {
           type: oldType !== newType ? newType : oldType,
           selectedStudentId:
-            oldSelectedStudentId !== newStudentId
-              ? newStudentId
-              : oldSelectedStudentId,
+            oldSelectedStudentId !== newStudentId ? newStudentId : oldSelectedStudentId,
         };
       });
     }
@@ -132,9 +125,7 @@ class Home extends React.Component {
         accumulator.push({
           student,
           actions_list: sortedActions,
-          most_recent_action: sortedActions.length
-            ? sortedActions[0].created_on
-            : null,
+          most_recent_action: sortedActions.length ? sortedActions[0].created_on : null,
         });
         return accumulator;
       },
@@ -166,10 +157,7 @@ class Home extends React.Component {
                   <StudentActionIconList
                     isSelected={isSelected}
                     type={this.state.type}
-                    handleTypeSelection={this.handleTypeSelection.bind(
-                      this,
-                      student.id
-                    )}
+                    handleTypeSelection={this.handleTypeSelection.bind(this, student.id)}
                   />
                 </StudentRowHeading>
                 {this.getStudentDeltaList(student)}
@@ -185,12 +173,7 @@ class Home extends React.Component {
 export default props => (
   <DataConsumer>
     {({ students, actions, saveAction }) => (
-      <Home
-        students={students}
-        actions={actions}
-        saveAction={saveAction}
-        {...props}
-      />
+      <Home students={students} actions={actions} saveAction={saveAction} {...props} />
     )}
   </DataConsumer>
 );
