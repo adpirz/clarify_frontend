@@ -12,6 +12,7 @@ import {
   MainContentBody,
   ActionIconList,
   ActionCard,
+  DeltaContainer,
   EmptyState,
   PageHeading,
 } from "./PatternLibrary";
@@ -44,6 +45,10 @@ const StudentActionIconList = styled(ActionIconList)`
 const StudentActionsEmptyState = styled(EmptyState)`
   width: 25%;
   margin: auto 0;
+`;
+
+const ActionAndDeltaContainer = styled.div`
+  display: flex;
 `;
 
 class Home extends React.Component {
@@ -109,25 +114,15 @@ class Home extends React.Component {
     }
 
     return (
-      <div>
+      <ActionAndDeltaContainer>
         {map(actionsAndDeltas.slice(0, 3), (node, i) => {
           if (node.note) {
             return <ActionCard showTitle={false} student={student} action={node} key={i} />;
           } else {
-            return (
-              <div key={i}>
-                <div>DELTA: {node.type}</div>
-                <div>
-                  node:{" "}
-                  {node.score
-                    ? node.score.assignment_name
-                    : node.missing_assignments[0].assignment_name}
-                </div>
-              </div>
-            );
+            return <DeltaContainer delta={node} key={i} />;
           }
         })}
-      </div>
+      </ActionAndDeltaContainer>
     );
   };
 

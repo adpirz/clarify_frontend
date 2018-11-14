@@ -24,6 +24,9 @@ const colors = {
   errorOrange: "#FDA428",
   warningRed: "#BF114B",
   googleBlue: "#4688f1",
+
+  deltaRed: "#FF0800",
+  deltaGreen: "#42DA13",
 };
 
 const effects = {
