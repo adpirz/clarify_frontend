@@ -123,8 +123,6 @@ class Home extends React.Component {
             return <ActionCard showTitle={false} student={student} action={node} key={i} />;
           } else {
             const isSelectable = this.state.selectedStudentId === student.id;
-            console.debug(this.state.deltaIDsForAction);
-            console.debug(this.state.deltaIDsForAction.indexOf);
             return (
               <DeltaContainer
                 delta={node}

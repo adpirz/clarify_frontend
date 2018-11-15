@@ -28,20 +28,20 @@ const ActionCardContainer = styled.section`
   color: ${colors.black};
 `;
 
-const PosedActionCardContainer = posed(ActionCardContainer)({
-  enter: {
-    scale: 1,
-    opacity: 1,
-    delay: 200,
-  },
-  exit: {
-    scale: 0.9,
-    opacity: 0,
-    transition: {
-      duration: 100,
-    },
-  },
-});
+// const PosedActionCardContainer = posed(ActionCardContainer)({
+//   enter: {
+//     scale: 1,
+//     opacity: 1,
+//     delay: 200,
+//   },
+//   exit: {
+//     scale: 0.9,
+//     opacity: 0,
+//     transition: {
+//       duration: 100,
+//     },
+//   },
+// });
 
 const ActionCardHeading = styled.div`
   display: flex;
@@ -314,7 +314,7 @@ class ActionCard extends React.Component {
     } = this.props;
 
     return (
-      <PosedActionCardContainer>
+      <ActionCardContainer>
         <ActionCardHeading>
           {this.getActionIcon()}
           {showTitle ? (
@@ -354,7 +354,7 @@ class ActionCard extends React.Component {
             {this.getDate(completedOn)}
           </ActionDate>
         </ActionDateWrapper>
-      </PosedActionCardContainer>
+      </ActionCardContainer>
     );
   }
 }
