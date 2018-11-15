@@ -4,7 +4,7 @@ import styled from "styled-components";
 import isSameDay from "date-fns/is_same_day";
 import filter from "lodash/filter";
 
-import { effects, colors } from "./constants";
+import { effects, colors, fontSizes } from "./constants";
 
 const PosedContainer = posed.div({
   enter: {
@@ -19,16 +19,62 @@ const PosedContainer = posed.div({
 
 const Card = styled.div`
   margin: 15px;
-  padding: 15px;
+  padding: 20px;
+  width: 200px;
+  height: 100px;
   box-shadow: ${effects.cardBoxShadow};
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+
+  cursor: ${({ onClick }) => {
+    return onClick ? "pointer;" : "inherit;";
+  }};
+`;
+
+const SelectedIconContainer = styled.span`
+  border-radius: 50%;
+  padding 10px;
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: ${({ isSelected }) => {
+    return isSelected ? colors.googleBlue : colors.textGrey;
+  }};
+
+  opacity: ${({ isSelected }) => {
+    return isSelected ? "1;" : ".2;";
+  }};
+
+  visibility: ${({ isSelectable }) => {
+    return isSelectable ? "visible;" : "hidden;";
+  }};
+
+`;
+
+const SelectedIcon = styled.i`
+  font-size: ${fontSizes.large};
+  color: ${colors.white};
 `;
 
 const Content = styled.span`
   display: block;
-`;
-
-const Statistic = styled.span`
-  font-weight: bold;
+  font-size: ${fontSizes.large};
+  color: ${({ improvement }) => {
+    if (typeof improvement === "undefined") {
+      return colors.black;
+    } else if (improvement) {
+      return colors.deltaGreen;
+    } else {
+      return colors.deltaRed;
+    }
+  }};
 `;
 
 class Delta extends React.Component {
@@ -40,56 +86,31 @@ class Delta extends React.Component {
   };
 
   render() {
-    const { delta } = this.props;
+    const { delta, isSelectable, isSelected, handleDeltaClick } = this.props;
 
     let header = "";
-    let meta = "";
-    let value = null;
-    let color = null;
     let content = null;
-    let extra = null;
+    let value = null;
 
     switch (delta.type) {
       case "missing":
-        header = "Missing Assignment";
-        meta = delta.gradebook_name;
+        header = "Missing Assignments";
         value = this.getNewMissingAssignmentsCount(delta);
-        color = value > 0 ? colors.deltaRed : colors.deltaGreen;
         content = (
-          <div>
-            {delta.missing_assignments.map(ma => (
-              <div key={ma.assignment_id}>
-                <p>{ma.assignment_name}</p>
-              </div>
-            ))}
-          </div>
+          <Content improvement={value < 0}>
+            {value < 0 ? <i className="fas fa-arrow-down" /> : <i className="fas fa-arrow-up" />}
+            {value}
+          </Content>
         );
         break;
       case "category":
-        header = delta.gradebook_name;
-        meta = delta.context_record.category_name;
+        header = delta.score.assignment_name;
         value = Math.round((delta.category_average_after - delta.category_average_before) * 100);
-        color = value > 0 ? "green" : "red";
-        extra = (
-          <div>
-            <p>Student's Current Average: {Math.round(delta.category_average_after * 100)}</p>
-            <p>
-              Class Average at this point:{" "}
-              {Math.round(
-                (delta.context_record.average_points_earned /
-                  delta.context_record.total_points_possible) *
-                  100
-              )}
-            </p>
-          </div>
-        );
         content = (
-          <div>
-            <p>Last Assignment: {delta.last_assignment}</p>
-            <p>
-              Score: {delta.last_assignment_score} / {delta.last_assignment_points}
-            </p>
-          </div>
+          <Content improvement={value > 0}>
+            {value < 0 ? <i className="fas fa-arrow-down" /> : <i className="fas fa-arrow-up" />}
+            {value}%
+          </Content>
         );
         break;
       default:
@@ -98,14 +119,12 @@ class Delta extends React.Component {
 
     return (
       <PosedContainer>
-        <Card>
-          <Content header={header} meta={meta} />
-          <Content style={{ textAlign: "center" }}>
-            <Statistic value={value} color={color} />
-            <p>{delta.sort_date}</p>
-          </Content>
-          <Content>{content}</Content>
-          <Content>{extra}</Content>
+        <Card onClick={handleDeltaClick && handleDeltaClick.bind(this, delta.delta_id)}>
+          <Content>{header}</Content>
+          {content}
+          <SelectedIconContainer isSelectable={isSelectable} isSelected={isSelected}>
+            <SelectedIcon className="fas fa-check" />
+          </SelectedIconContainer>
         </Card>
       </PosedContainer>
     );

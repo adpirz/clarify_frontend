@@ -4,6 +4,7 @@ import map from "lodash/map";
 import filter from "lodash/filter";
 import orderBy from "lodash/orderBy";
 import reduce from "lodash/reduce";
+import without from "lodash/without";
 import { NavLink } from "react-router-dom";
 
 import { DataConsumer } from "../DataProvider";
@@ -18,7 +19,7 @@ import {
 } from "./PatternLibrary";
 
 const StudentRow = styled.div`
-  padding: 0 1.2em;
+  margin: 0 1.2em;
 `;
 
 const StudentRowHeading = styled.div`
@@ -49,19 +50,33 @@ const StudentActionsEmptyState = styled(EmptyState)`
 
 const ActionAndDeltaContainer = styled.div`
   display: flex;
+  overflow: scroll;
 `;
 
 class Home extends React.Component {
   state = {
     selectedStudent: null,
     type: "",
+    deltaIDsForAction: [],
   };
 
-  handleActionFormClick = (newStudentId = null) => {
-    this.setState(prevState => {
-      return {
-        selectedStudentId: newStudentId === prevState.selectedStudentId ? null : newStudentId,
-      };
+  closeActionForm = () => {
+    this.setState({ selectedStudentId: null });
+  };
+
+  handleDeltaClick = deltaID => {
+    this.setState(({ deltaIDsForAction }) => {
+      if (deltaIDsForAction.indexOf(deltaID) > -1) {
+        const newDeltaIDsForAction = without(deltaIDsForAction, deltaID);
+        return {
+          deltaIDsForAction: newDeltaIDsForAction,
+        };
+      } else {
+        deltaIDsForAction.push(deltaID);
+        return {
+          deltaIDsForAction,
+        };
+      }
     });
   };
 
@@ -73,6 +88,7 @@ class Home extends React.Component {
       this.setState({
         type: "",
         selectedStudentId: null,
+        deltaIDsForAction: [],
       });
     } else {
       // it not, update whatever's new
@@ -87,21 +103,9 @@ class Home extends React.Component {
   };
 
   getStudentDeltaList = studentViewModel => {
-    const { saveAction } = this.props;
     const { actionsAndDeltas, student } = studentViewModel;
 
-    if (!actionsAndDeltas.length && this.state.selectedStudentId === student.id) {
-      return (
-        <ActionCard
-          closeActionForm={this.handleActionFormClick}
-          showTitle={false}
-          student={student}
-          saveAction={saveAction}
-          reminderButtonCopy="Remind Me"
-          action={{ type: this.state.type }}
-        />
-      );
-    } else if (!actionsAndDeltas.length) {
+    if (!actionsAndDeltas.length) {
       return (
         <StudentActionsEmptyState>
           Click an icon up there{" "}
@@ -112,14 +116,24 @@ class Home extends React.Component {
         </StudentActionsEmptyState>
       );
     }
-
     return (
       <ActionAndDeltaContainer>
         {map(actionsAndDeltas.slice(0, 3), (node, i) => {
           if (node.note) {
             return <ActionCard showTitle={false} student={student} action={node} key={i} />;
           } else {
-            return <DeltaContainer delta={node} key={i} />;
+            const isSelectable = this.state.selectedStudentId === student.id;
+            console.debug(this.state.deltaIDsForAction);
+            console.debug(this.state.deltaIDsForAction.indexOf);
+            return (
+              <DeltaContainer
+                delta={node}
+                key={i}
+                isSelected={this.state.deltaIDsForAction.indexOf(node.delta_id) > -1}
+                isSelectable={isSelectable}
+                handleDeltaClick={isSelectable ? this.handleDeltaClick : null}
+              />
+            );
           }
         })}
       </ActionAndDeltaContainer>
@@ -174,7 +188,22 @@ class Home extends React.Component {
         <PageHeading />
         <MainContentBody>
           {map(studentViewModels.slice(0, 3), (studentViewModel, i) => {
+            let actionFormNode = null;
             const { student } = studentViewModel;
+
+            if (this.state.selectedStudentId === student.id) {
+              const { saveAction } = this.props;
+              actionFormNode = (
+                <ActionCard
+                  closeActionForm={this.closeActionForm}
+                  showTitle={false}
+                  student={student}
+                  saveAction={saveAction}
+                  reminderButtonCopy="Remind Me"
+                  action={{ type: this.state.type }}
+                />
+              );
+            }
             const isSelected = this.state.selectedStudentId === student.id;
             return (
               <StudentRow key={i}>
@@ -188,6 +217,7 @@ class Home extends React.Component {
                     handleTypeSelection={this.handleTypeSelection.bind(this, student.id)}
                   />
                 </StudentRowHeading>
+                {actionFormNode}
                 {this.getStudentDeltaList(studentViewModel)}
               </StudentRow>
             );

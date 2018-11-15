@@ -38,7 +38,7 @@ const PosedActionCardContainer = posed(ActionCardContainer)({
     scale: 0.9,
     opacity: 0,
     transition: {
-      duration: 150,
+      duration: 100,
     },
   },
 });
