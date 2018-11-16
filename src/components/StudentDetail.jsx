@@ -58,7 +58,18 @@ class StudentDetail extends React.Component {
       mainContentBodyNode = (
         <MainContentBody>
           {map(studentsActions, (a, i) => {
-            return <ActionCard showTitle={false} action={a} key={i} student={student} />;
+            const contextDeltas = filter(this.props.deltas, delta => {
+              return a.delta_ids.indexOf(delta.delta_id) > -1;
+            });
+            return (
+              <ActionCard
+                showTitle={false}
+                action={a}
+                key={i}
+                student={student}
+                contextDeltas={contextDeltas}
+              />
+            );
           })}
         </MainContentBody>
       );
@@ -107,6 +118,8 @@ class StudentDetail extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({ students, actions }) => <StudentDetail students={students} {...props} actions={actions} />}
+    {({ students, actions, deltas }) => (
+      <StudentDetail students={students} {...props} actions={actions} deltas={deltas} />
+    )}
   </DataConsumer>
 );

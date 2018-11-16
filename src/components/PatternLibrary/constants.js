@@ -3,6 +3,7 @@ const fontSizes = {
   large: "1.5em",
   medium: "1.25em",
   small: "1em",
+  tiny: ".8em",
 };
 
 const fontFamilies = {

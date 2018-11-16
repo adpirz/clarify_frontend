@@ -4,6 +4,7 @@ import ActionCard from "./ActionCard.js";
 import { ActionIcon, ActionIconImage, ActionIconList } from "./ActionItems.js";
 import Button from "./Button.js";
 import DeltaContainer from "./DeltaContainer";
+import ContextDelta from "./ContextDelta";
 import Error from "./Error.js";
 import EmptyState from "./EmptyState.js";
 import GoogleLogo from "./GoogleLogo.js";
@@ -23,11 +24,10 @@ const MainContentBody = styled.div`
 `;
 
 const ActionTextArea = styled.textarea`
+  resize: vertical;
   width: calc(100% - 20px);
-  margin: 15px 0px;
-  height: 100%;
+  height: 80px;
   padding: 10px;
-  border-radius: 10px;
   border: ${({ error }) => {
     return error ? `1px solid ${colors.errorOrange};` : "initial;";
   }};
@@ -41,6 +41,7 @@ export {
   ActionTextArea,
   Button,
   DeltaContainer,
+  ContextDelta,
   EmptyState,
   Error,
   GoogleLogo,

@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import map from "lodash/map";
 import get from "lodash/get";
-import posed from "react-pose";
+import posed, { PoseGroup } from "react-pose";
 import isToday from "date-fns/is_today";
 import isYesterday from "date-fns/is_yesterday";
 import isAfter from "date-fns/is_after";
@@ -13,13 +13,15 @@ import { colors, effects, fontSizes } from "./constants";
 import { ActionTextArea, ActionIcon, ActionIconImage, Button } from ".";
 import { getReminders } from "../../utils";
 
+var ContextDelta = require("./ContextDelta").default;
+
 const ActionCardContainer = styled.section`
   width: calc(80% - 50px);
   min-height: 160px;
   margin: 10px auto;
   padding: 15px;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   flex-direction: column;
   background-color: ${colors.backgroundAccent};
@@ -28,25 +30,21 @@ const ActionCardContainer = styled.section`
   color: ${colors.black};
 `;
 
-// const PosedActionCardContainer = posed(ActionCardContainer)({
-//   enter: {
-//     scale: 1,
-//     opacity: 1,
-//     delay: 200,
-//   },
-//   exit: {
-//     scale: 0.9,
-//     opacity: 0,
-//     transition: {
-//       duration: 100,
-//     },
-//   },
-// });
-
-const ActionCardHeading = styled.div`
+const ActionHeading = styled.section`
   display: flex;
   align-items: center;
   width: 100%;
+`;
+
+const ActionCopy = styled.p`
+  font-size: ${fontSizes.medium};
+  margin: 0 0 20px 0;
+`;
+
+const ActionBody = styled.section`
+  flex-grow: 1;
+  width: 100%;
+  display: flex;
 `;
 
 const StudentHeading = styled.h2`
@@ -69,13 +67,54 @@ const CloseIcon = styled(BaseIcon)`
   right: 10px;
 `;
 
-const ActionTextAreaContainer = styled.div`
-  width: 80%;
+const ActionLeftPanel = styled.section`
+  width: 70%;
+`;
+
+const ActionContextPanel = styled.section`
   display: flex;
-  align-items: top;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+  width: 40%;
+  margin-left: 20px;
+`;
+
+const PosedParagraph = posed.p();
+
+const ContextHeading = styled.h3`
+  font-size: ${fontSizes.large};
+  margin: 0;
+  font-weight: 400;
+`;
+
+const ContextPoseGroup = styled(PoseGroup)`
+  overflow: scroll;
+`;
+
+const ContextHr = styled.hr`
+  width: 75%;
+  margin: 0 auto;
+  border: 0.5px solid ${colors.textGrey};
+`;
+
+const PosedContextDelta = posed(ContextDelta)({
+  enter: {
+    opacity: 1,
+    delay: 200,
+  },
+  exit: {
+    opacity: 0,
+  },
+});
+
+const ActionTextAreaContainer = styled.div`
+  display: flex;
+  margin: auto;
 `;
 
 const ErrorField = styled.h4`
+  font-size: ${fontSizes.tiny};
   color: ${colors.errorOrange};
   margin: ${({ visible }) => {
     return visible ? "10px 0px;" : "0px;";
@@ -85,17 +124,18 @@ const ErrorField = styled.h4`
   }}
 `;
 
-const ActionButtons = styled.div`
+const ActionButtonGroup = styled.div`
   display: ${({ visible }) => {
     return visible ? "flex;" : "none;";
   }};
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
+  flex-wrap: wrap;
 `;
 
 const Divider = styled.span`
-  margin: 15px 0px;
+  margin: 15px 10px;
 `;
 
 const ReminderList = styled(
@@ -129,7 +169,7 @@ const ActionNote = styled.p`
   font-size: ${fontSizes.large};
 `;
 
-const ActionDateWrapper = styled.div`
+const ActionFooter = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -189,6 +229,7 @@ class ActionCard extends React.Component {
       type,
       student: { id: studentId },
       action,
+      contextDeltas,
     } = this.props;
     const actionPayload = {
       type,
@@ -196,6 +237,7 @@ class ActionCard extends React.Component {
       studentId,
       dueOn,
       completed,
+      deltaIDs: map(contextDeltas, "delta_id"),
     };
 
     if (action && action.id) {
@@ -289,6 +331,26 @@ class ActionCard extends React.Component {
     );
   };
 
+  getActionCopy = () => {
+    const {
+      student,
+      saveAction,
+      action: { type },
+    } = this.props;
+
+    if (!saveAction) {
+      return null;
+    }
+    switch (type) {
+      case "call":
+        return `Make a note about what you talked about when you called, or what you want to remember when you do.`;
+      case "message":
+        return `Make a note about what your message was, or what it will be if you're setting a reminder.`;
+      default:
+        return `Make a note about what you want to remember about ${student.first_name}`;
+    }
+  };
+
   getDate = date => {
     if (isToday(date)) {
       return "Today";
@@ -300,6 +362,43 @@ class ActionCard extends React.Component {
     } else {
       return format(date, "MM/DD/YYYY");
     }
+  };
+
+  getContextDeltasOrEmptyState = () => {
+    const { contextDeltas, action } = this.props;
+
+    if (!contextDeltas || !contextDeltas.length) {
+      if (action.id || typeof contextDeltas === "undefined") {
+        // The action's either been saved with no deltas, so this section should be blank, or
+        // context deltas weren't even offered, so this section should be blank.
+        return null;
+      } else {
+        // The action's not been saved, which means this is just the context empty state.
+        return (
+          <ActionContextPanel>
+            <ContextHeading>Context</ContextHeading>
+            <ContextHr />
+            <ContextPoseGroup>
+              <PosedParagraph key="emptyState">
+                Select deltas to save them as context for this action
+              </PosedParagraph>
+            </ContextPoseGroup>
+          </ActionContextPanel>
+        );
+      }
+    }
+
+    return (
+      <ActionContextPanel>
+        <ContextHeading>Context</ContextHeading>
+        <ContextHr />
+        <ContextPoseGroup>
+          {map(contextDeltas, (delta, i) => {
+            return <PosedContextDelta delta={delta} key={i} />;
+          })}
+        </ContextPoseGroup>
+      </ActionContextPanel>
+    );
   };
 
   render() {
@@ -315,7 +414,7 @@ class ActionCard extends React.Component {
 
     return (
       <ActionCardContainer>
-        <ActionCardHeading>
+        <ActionHeading>
           {this.getActionIcon()}
           {showTitle ? (
             <StudentHeading>
@@ -326,25 +425,31 @@ class ActionCard extends React.Component {
           {closeActionForm ? (
             <CloseIcon className="fas fa-times" onClick={closeActionForm} />
           ) : null}
-        </ActionCardHeading>
-        <ActionTextAreaContainer>{this.getNoteField()}</ActionTextAreaContainer>
-        <ErrorField visible={this.state.noteError}>
-          Please add a note describing the action you're taking{" "}
-          <span role="img" aria-label="pointing up at note field">
-            👆
-          </span>
-        </ErrorField>
-        <ActionButtons visible={!!saveAction}>
-          <Button onClick={this.handleFormSubmission.bind(this, true, null)} primary>
-            Save
-          </Button>
-          <Divider>-- or --</Divider>
-          {this.state.pose === "hideReminders" ? (
-            <Button onClick={this.showReminders}>{reminderButtonCopy}</Button>
-          ) : null}
-          {this.getReminderButtons()}
-        </ActionButtons>
-        <ActionDateWrapper>
+        </ActionHeading>
+        <ActionBody>
+          <ActionLeftPanel>
+            <ActionCopy>{this.getActionCopy()}</ActionCopy>
+            <ActionTextAreaContainer>{this.getNoteField()}</ActionTextAreaContainer>
+            <ErrorField visible={this.state.noteError}>
+              Please add a note describing the action you're taking{" "}
+              <span role="img" aria-label="pointing up at note field">
+                👆
+              </span>
+            </ErrorField>
+            <ActionButtonGroup visible={!!saveAction}>
+              <Button onClick={this.handleFormSubmission.bind(this, true, null)} primary>
+                Save
+              </Button>
+              <Divider>or</Divider>
+              {this.state.pose === "hideReminders" ? (
+                <Button onClick={this.showReminders}>{reminderButtonCopy}</Button>
+              ) : null}
+              {this.getReminderButtons()}
+            </ActionButtonGroup>
+          </ActionLeftPanel>
+          {this.getContextDeltasOrEmptyState()}
+        </ActionBody>
+        <ActionFooter>
           <ActionDate visible={!!dueOn}>
             <label>Due: </label>
             {this.getDate(dueOn)}
@@ -353,7 +458,7 @@ class ActionCard extends React.Component {
             <label>Completed: </label>
             {this.getDate(completedOn)}
           </ActionDate>
-        </ActionDateWrapper>
+        </ActionFooter>
       </ActionCardContainer>
     );
   }

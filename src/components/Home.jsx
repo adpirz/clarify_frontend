@@ -92,11 +92,12 @@ class Home extends React.Component {
       });
     } else {
       // it not, update whatever's new
-      this.setState(prevState => {
+      this.setState(({ deltaIDsForAction }) => {
         return {
           type: oldType !== newType ? newType : oldType,
           selectedStudentId:
             oldSelectedStudentId !== newStudentId ? newStudentId : oldSelectedStudentId,
+          deltaIDsForAction: oldSelectedStudentId !== newStudentId ? [] : deltaIDsForAction,
         };
       });
     }
@@ -187,10 +188,13 @@ class Home extends React.Component {
         <MainContentBody>
           {map(studentViewModels.slice(0, 3), (studentViewModel, i) => {
             let actionFormNode = null;
-            const { student } = studentViewModel;
+            const { student, actionsAndDeltas } = studentViewModel;
 
             if (this.state.selectedStudentId === student.id) {
               const { saveAction } = this.props;
+              const contextDeltas = filter(actionsAndDeltas, d => {
+                return this.state.deltaIDsForAction.indexOf(d.delta_id) > -1;
+              });
               actionFormNode = (
                 <ActionCard
                   closeActionForm={this.closeActionForm}
@@ -199,6 +203,7 @@ class Home extends React.Component {
                   saveAction={saveAction}
                   reminderButtonCopy="Remind Me"
                   action={{ type: this.state.type }}
+                  contextDeltas={contextDeltas}
                 />
               );
             }

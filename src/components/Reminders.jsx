@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import map from "lodash/map";
 import find from "lodash/find";
+import filter from "lodash/filter";
 import { DataConsumer } from "../DataProvider";
 
 import { MainContentBody, ActionCard, EmptyState, PageHeading } from "./PatternLibrary";
@@ -13,7 +14,7 @@ const RemindersDetailEmptyState = styled(EmptyState)`
 
 class Reminders extends React.Component {
   render() {
-    const { getReminderActions, saveAction, deleteAction, students } = this.props;
+    const { getReminderActions, saveAction, deleteAction, students, deltas } = this.props;
     const actionReminders = getReminderActions();
     let mainContentBodyNode = null;
     if (!actionReminders || !actionReminders.length) {
@@ -37,9 +38,13 @@ class Reminders extends React.Component {
         <MainContentBody>
           {map(actionReminders, (a, i) => {
             const studentForAction = find(students, { id: a.student_id });
+            const contextDeltas = filter(deltas, delta => {
+              return a.delta_ids.indexOf(delta.delta_id) > -1;
+            });
             return (
               <ActionCard
                 action={a}
+                contextDeltas={contextDeltas}
                 saveAction={saveAction}
                 deleteAction={deleteAction.bind(this, a.id)}
                 student={studentForAction}
@@ -64,9 +69,10 @@ class Reminders extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({ saveAction, deleteAction, getReminderActions, students }) => (
+    {({ saveAction, deleteAction, deltas, getReminderActions, students }) => (
       <Reminders
         saveAction={saveAction}
+        deltas={deltas}
         deleteAction={deleteAction}
         getReminderActions={getReminderActions}
         students={students}

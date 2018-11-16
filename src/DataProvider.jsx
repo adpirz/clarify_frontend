@@ -141,7 +141,7 @@ export class DataProvider extends React.Component {
   };
 
   saveAction = payload => {
-    const { type, note, dueOn, completed, studentId, actionId } = payload;
+    const { type, note, dueOn, completed, studentId, actionId, deltaIDs } = payload;
     if (!dueOn && !completed) {
       return;
     }
@@ -151,6 +151,7 @@ export class DataProvider extends React.Component {
       note,
       student_id: studentId,
       private: true,
+      delta_ids: deltaIDs,
       due_on: dueOn ? format(dueOn, "MM/DD/YYYY HH:mm") : null,
       completed_on: completed ? format(new Date(), "MM/DD/YYYY HH:mm") : null,
     };

@@ -6,8 +6,9 @@ import { colors, fontFamilies } from "./constants";
 const ThemedButton = styled.button`
   background-color: ${props => (props.primary ? colors.primaryPink : colors.secondaryMidnightBlue)};
   color: ${colors.white};
+  padding: 10px;
   font-size: 1.1em;
-  border-radius: 20px;
+  border-radius: 5px;
   cursor: pointer;
   min-width: 120px;
   min-height: 40px;
