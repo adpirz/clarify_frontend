@@ -12,14 +12,15 @@ const ContextCard = styled.div`
   justify-content: space-between;
   font-size: ${fontSizes.small};
   background-color: ${colors.white};
-  padding: 10px;
   margin: 5px 0px;
+  padding: 0 10px;
   border-radius: 10px;
+  width: 230px;
 `;
 
 const Content = styled.span`
-  display: flex;
   font-size: ${fontSizes.small};
+  display: block;
   color: ${({ improvement }) => {
     if (typeof improvement === "undefined") {
       return colors.black;
@@ -32,13 +33,15 @@ const Content = styled.span`
 `;
 
 const ContextDate = styled.span`
-  font-size: ${fontSizes.tiny};
+  font-size: ${fontSizes.xxsmall};
+  white-space: nowrap;
   opacity: 0.5;
 `;
 
 const ContextIconContainer = styled.span`
   border-radius: 50%;
   padding 10px;
+  margin: 10px 10px 10px;
   width: 20px;
   height: 20px;
   display: flex;
@@ -53,10 +56,7 @@ const ContextIcon = styled.i`
 `;
 
 const ContextDetails = styled.section`
-  width: 80%;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
+  width: 50%;
 `;
 
 class ContextDelta extends React.Component {
@@ -65,6 +65,16 @@ class ContextDelta extends React.Component {
     return filter(missingAssignments, a => {
       return isSameDay(a.missing_on, deltaCreatedDate);
     }).length;
+  };
+
+  handleHoverEnter = e => {
+    e.stopPropagation();
+    console.debug("bloop");
+  };
+
+  handleHoverLeave = e => {
+    e.stopPropagation();
+    console.debug("NO BLOOP");
   };
 
   render() {
@@ -100,7 +110,11 @@ class ContextDelta extends React.Component {
     }
 
     return (
-      <ContextCard {...this.props}>
+      <ContextCard
+        {...this.props}
+        onMouseOver={this.handleHoverEnter}
+        onMouseLeave={this.handleHoverLeave}
+      >
         <ContextIconContainer>
           <ContextIcon className="fas fa-chart-line" />
         </ContextIconContainer>

@@ -19,8 +19,8 @@ import { colors } from "./constants";
 const MainContentBody = styled.div`
   display: flex;
   flex-direction: column;
-  overflow: scroll;
-  padding-bottom: 25px;
+  overflow: hidden;
+  padding-bottom: 100px;
 `;
 
 const ActionTextArea = styled.textarea`

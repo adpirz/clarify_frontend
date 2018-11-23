@@ -1,9 +1,10 @@
 const fontSizes = {
-  huge: "2em",
+  xlarge: "2em",
   large: "1.5em",
   medium: "1.25em",
   small: "1em",
-  tiny: ".8em",
+  xsmall: ".8em",
+  xxsmall: ".6em",
 };
 
 const fontFamilies = {
@@ -15,6 +16,7 @@ const colors = {
   black: "#292929",
   textGrey: "#62667A",
   borderGrey: "#979797",
+  backgroundGrey: "#e8e8e8",
 
   mainTheme: "#7F4FFF",
   accent: "#7E98FF",

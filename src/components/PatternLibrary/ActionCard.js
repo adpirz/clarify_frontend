@@ -67,16 +67,14 @@ const CloseIcon = styled(BaseIcon)`
   right: 10px;
 `;
 
-const ActionLeftPanel = styled.section`
-  width: 70%;
-`;
+const ActionLeftPanel = styled.section``;
 
 const ActionContextPanel = styled.section`
+  width: 40%;
   display: flex;
   flex-direction: column;
   align-items: center;
   flex-grow: 1;
-  width: 40%;
   margin-left: 20px;
 `;
 
@@ -105,6 +103,7 @@ const PosedContextDelta = posed(ContextDelta)({
   },
   exit: {
     opacity: 0,
+    delay: 300,
   },
 });
 
@@ -114,7 +113,7 @@ const ActionTextAreaContainer = styled.div`
 `;
 
 const ErrorField = styled.h4`
-  font-size: ${fontSizes.tiny};
+  font-size: ${fontSizes.xsmall};
   color: ${colors.errorOrange};
   margin: ${({ visible }) => {
     return visible ? "10px 0px;" : "0px;";
@@ -171,7 +170,7 @@ const ActionNote = styled.p`
 
 const ActionFooter = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   width: 100%;
 `;
@@ -332,23 +331,12 @@ class ActionCard extends React.Component {
   };
 
   getActionCopy = () => {
-    const {
-      student,
-      saveAction,
-      action: { type },
-    } = this.props;
+    const { student, saveAction } = this.props;
 
     if (!saveAction) {
       return null;
     }
-    switch (type) {
-      case "call":
-        return `Make a note about what you talked about when you called, or what you want to remember when you do.`;
-      case "message":
-        return `Make a note about what your message was, or what it will be if you're setting a reminder.`;
-      default:
-        return `Make a note about what you want to remember about ${student.first_name}`;
-    }
+    return `What's the latest on ${student.first_name}?`;
   };
 
   getDate = date => {
@@ -365,7 +353,11 @@ class ActionCard extends React.Component {
   };
 
   getContextDeltasOrEmptyState = () => {
-    const { contextDeltas, action } = this.props;
+    const { contextDeltas, action, showContextSection } = this.props;
+
+    if (!showContextSection) {
+      return null;
+    }
 
     if (!contextDeltas || !contextDeltas.length) {
       if (action.id || typeof contextDeltas === "undefined") {

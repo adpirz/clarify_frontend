@@ -33,7 +33,7 @@ const StudentName = styled(NavLink)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  font-size: ${fontSizes.huge};
+  font-size: ${fontSizes.xlarge};
   color: ${colors.black};
   font-weight: bold;
   text-decoration: none;
@@ -50,7 +50,7 @@ const StudentActionsEmptyState = styled(EmptyState)`
 
 const ActionAndDeltaContainer = styled.div`
   display: flex;
-  overflow: scroll;
+  overflow: visible;
 `;
 
 class Home extends React.Component {
@@ -191,13 +191,14 @@ class Home extends React.Component {
             const { student, actionsAndDeltas } = studentViewModel;
 
             if (this.state.selectedStudentId === student.id) {
-              const { saveAction } = this.props;
+              const { saveAction, deltas } = this.props;
               const contextDeltas = filter(actionsAndDeltas, d => {
-                return this.state.deltaIDsForAction.indexOf(d.delta_id) > -1;
+                return d.delta_id && this.state.deltaIDsForAction.indexOf(d.delta_id) > -1;
               });
               actionFormNode = (
                 <ActionCard
                   closeActionForm={this.closeActionForm}
+                  showContextSection={!!deltas.length}
                   showTitle={false}
                   student={student}
                   saveAction={saveAction}
