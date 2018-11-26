@@ -3,6 +3,8 @@ import { ApiFetcher } from "./fetchModule";
 import filter from "lodash/filter";
 import format from "date-fns/format";
 
+import clever from "./CleverAuth";
+
 const Context = React.createContext();
 
 export class DataProvider extends React.Component {
@@ -28,6 +30,7 @@ export class DataProvider extends React.Component {
       saveAction: this.saveAction,
       deleteAction: this.deleteAction,
       getReminderActions: this.getReminderActions,
+      clever: this.clever,
     };
   }
 
@@ -62,6 +65,11 @@ export class DataProvider extends React.Component {
       this.setState(newState);
       return resp;
     });
+  };
+
+  clever = code => {
+    const { id, token } = clever.runOAuthFlow(code);
+    clever.getMySectionsWithStudents(id, token).then(d => console.log(d));
   };
 
   logUserIn = googleIdToken => {
