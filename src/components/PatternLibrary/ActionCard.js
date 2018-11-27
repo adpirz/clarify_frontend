@@ -13,7 +13,7 @@ import { colors, effects, fontSizes } from "./constants";
 import { ActionTextArea, ActionIcon, ActionIconImage, Button } from ".";
 import { getReminders } from "../../utils";
 
-var ContextDelta = require("./ContextDelta").default;
+var ContextDelta = require("./DeltaContainer").ContextDelta;
 
 const ActionCardContainer = styled.section`
   width: calc(80% - 50px);
@@ -87,7 +87,7 @@ const ContextHeading = styled.h3`
 `;
 
 const ContextPoseGroup = styled(PoseGroup)`
-  overflow: scroll;
+  overflow: visible;
 `;
 
 const ContextHr = styled.hr`
@@ -103,7 +103,6 @@ const PosedContextDelta = posed(ContextDelta)({
   },
   exit: {
     opacity: 0,
-    delay: 300,
   },
 });
 

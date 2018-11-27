@@ -27,12 +27,12 @@ const Card = styled.div`
   margin: 15px;
   padding: 20px;
   height: 100px;
+  width: 250px;
   box-shadow: ${effects.cardBoxShadow};
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: flex-start;
-  position: relative;
 
   cursor: ${({ onClick }) => {
     return onClick ? "pointer;" : "inherit;";
@@ -43,24 +43,20 @@ const SelectedIconContainer = styled.span`
   border-radius: 50%;
   padding 10px;
   position: absolute;
-  right: 15px;
-  bottom: 15px;
+  right: 25px;
+  bottom: 25px;
   display: flex;
   align-items: center;
   justify-content: center;
-
   background-color: ${({ isSelected }) => {
     return isSelected ? colors.googleBlue : colors.textGrey;
   }};
-
   opacity: ${({ isSelected }) => {
     return isSelected ? "1;" : ".2;";
   }};
-
   visibility: ${({ isSelectable }) => {
     return isSelectable ? "visible;" : "hidden;";
   }};
-
 `;
 
 const SelectedIcon = styled.i`
@@ -70,6 +66,7 @@ const SelectedIcon = styled.i`
 
 const Content = styled.span`
   font-size: ${fontSizes.medium};
+  white-space: nowrap;
   color: ${({ improvement }) => {
     if (typeof improvement === "undefined") {
       return colors.black;
@@ -81,9 +78,17 @@ const Content = styled.span`
   }};
 `;
 
+const ContextContent = styled(Content)`
+  font-size: ${fontSizes.small};
+`;
+
 const posedPopoverContent = posed.div({
   visible: {
     opacity: 1,
+    delay: 700,
+    transition: {
+      duration: 200,
+    },
   },
   hidden: { opacity: 0 },
 });
@@ -136,9 +141,53 @@ const ContextRecord = styled.span`
   font-size: ${fontSizes.xsmall};
 `;
 
-class Delta extends React.Component {
+const ContextCard = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: ${fontSizes.small};
+  background-color: ${colors.white};
+  margin: 15px;
+  padding: 5px;
+  border-radius: 10px;
+  min-width: 230px;
+  position: relative;
+`;
+
+const ContextDate = styled.span`
+  font-size: ${fontSizes.xxsmall};
+  white-space: nowrap;
+  opacity: 0.5;
+`;
+
+const ContextIconContainer = styled.span`
+  border-radius: 50%;
+  padding 10px;
+  margin: 10px 10px 10px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${colors.textGrey};
+`;
+
+const ContextIcon = styled.i`
+  font-size: ${fontSizes.large};
+  color: ${colors.white};
+`;
+
+const ContextDetails = styled.section`
+  width: 50%;
+  margin: 0 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+class DeltaContainer extends React.Component {
   state = {
-    pose: "hidden",
+    popoverPose: "hidden",
   };
 
   getNewMissingAssignments = delta => {
@@ -149,97 +198,137 @@ class Delta extends React.Component {
   };
 
   handleMouseEvent = (pose, e) => {
-    this.setState({ pose });
+    this.setState({ popoverPose: pose });
   };
 
+  getDeltaValue = () => {
+    const { delta } = this.props;
+    if (delta.type === "missing") {
+      const missingAssignments = this.getNewMissingAssignments(delta);
+      return (
+        <Content improvement={missingAssignments.length < 0}>
+          {missingAssignments.length < 0 ? (
+            <i className="fas fa-arrow-down" />
+          ) : (
+            <i className="fas fa-arrow-up" />
+          )}
+          {missingAssignments.length}
+        </Content>
+      );
+    } else if (delta.type === "category") {
+      const categoryChange = Math.round(
+        (delta.category_average_after - delta.category_average_before) * 100
+      );
+      return (
+        <Content improvement={categoryChange > 0}>
+          {categoryChange < 0 ? (
+            <i className="fas fa-arrow-down" />
+          ) : (
+            <i className="fas fa-arrow-up" />
+          )}
+          {categoryChange}%
+        </Content>
+      );
+    }
+    return null;
+  };
+
+  getPopoverContent = () => {
+    const { delta } = this.props;
+    if (delta.type === "missing") {
+      const missingAssignments = this.getNewMissingAssignments(delta);
+      return (
+        <StyledPopoverContent pose={this.state.popoverPose}>
+          <AssignmentGrid>
+            <ContextHeading>Assignment Name</ContextHeading>
+            <ContextHeading>Due</ContextHeading>
+            {map(missingAssignments, (a, i) => {
+              return [
+                <ContextRecord key={1}>{a.assignment_name}</ContextRecord>,
+                <ContextRecord key={2}>{format(a.due_date, "MM/DD")}</ContextRecord>,
+              ];
+            })}
+          </AssignmentGrid>
+          <PopoverCaret />
+        </StyledPopoverContent>
+      );
+    } else if (delta.type === "category") {
+      return (
+        <StyledPopoverContent pose={this.state.popoverPose}>
+          <CategoryGrid>
+            <ContextHeading>Assignment Name</ContextHeading>
+            <ContextHeading>Due</ContextHeading>
+            <ContextHeading>%</ContextHeading>
+            <ContextRecord>{delta.score.assignment_name}</ContextRecord>
+            <ContextRecord>{format(delta.score.due_date, "MM/DD")}</ContextRecord>
+            <ContextRecord>
+              {Math.round((delta.score.score / delta.score.possible_points) * 100)}
+            </ContextRecord>
+          </CategoryGrid>
+          <PopoverCaret />
+        </StyledPopoverContent>
+      );
+    }
+  };
+
+  getHeader = () => {
+    const { delta } = this.props;
+
+    if (delta.type === "missing") {
+      return "Missing Assignments";
+    } else if (delta.type === "category") {
+      return delta.score.assignment_name;
+    }
+    return null;
+  };
+}
+
+class DeltaCard extends DeltaContainer {
   render() {
     const { delta, isSelectable, isSelected, handleDeltaClick } = this.props;
 
-    let header = "";
-    let content = null;
-    let popoverContent = null;
-
-    switch (delta.type) {
-      case "missing":
-        header = "Missing Assignments";
-        const missingAssignments = this.getNewMissingAssignments(delta);
-        content = (
-          <Content improvement={missingAssignments.length < 0}>
-            {missingAssignments.length < 0 ? (
-              <i className="fas fa-arrow-down" />
-            ) : (
-              <i className="fas fa-arrow-up" />
-            )}
-            {missingAssignments.length}
-          </Content>
-        );
-        popoverContent = (
-          <StyledPopoverContent pose={this.state.pose}>
-            <AssignmentGrid>
-              <ContextHeading>Assignment Name</ContextHeading>
-              <ContextHeading>Due</ContextHeading>
-              {map(missingAssignments, (a, i) => {
-                return [
-                  <ContextRecord key={1}>{a.assignment_name}</ContextRecord>,
-                  <ContextRecord key={2}>{format(a.due_date, "MM/DD")}</ContextRecord>,
-                ];
-              })}
-            </AssignmentGrid>
-            <PopoverCaret />
-          </StyledPopoverContent>
-        );
-        break;
-      case "category":
-        header = delta.context_record.category_name;
-        const categoryChange = Math.round(
-          (delta.category_average_after - delta.category_average_before) * 100
-        );
-        content = (
-          <Content improvement={categoryChange > 0}>
-            {categoryChange < 0 ? (
-              <i className="fas fa-arrow-down" />
-            ) : (
-              <i className="fas fa-arrow-up" />
-            )}
-            {categoryChange}%
-          </Content>
-        );
-        popoverContent = (
-          <StyledPopoverContent pose={this.state.pose}>
-            <CategoryGrid>
-              <ContextHeading>Assignment Name</ContextHeading>
-              <ContextHeading>Due</ContextHeading>
-              <ContextHeading>%</ContextHeading>
-              <ContextRecord>{delta.score.assignment_name}</ContextRecord>
-              <ContextRecord>{format(delta.score.due_date, "MM/DD")}</ContextRecord>
-              <ContextRecord>
-                {Math.round((delta.score.score / delta.score.possible_points) * 100)}
-              </ContextRecord>
-            </CategoryGrid>
-            <PopoverCaret />
-          </StyledPopoverContent>
-        );
-        break;
-      default:
-        return;
-    }
-
     return (
-      <PosedContainer
-        onMouseEnter={this.handleMouseEvent.bind(this, "visible")}
-        onMouseLeave={this.handleMouseEvent.bind(this, "hidden")}
-      >
-        <Card onClick={handleDeltaClick && handleDeltaClick.bind(this, delta.delta_id)}>
-          <Content>{header}</Content>
-          {content}
+      <PosedContainer>
+        <Card
+          onClick={handleDeltaClick && handleDeltaClick.bind(this, delta.delta_id)}
+          onMouseEnter={this.handleMouseEvent.bind(this, "visible")}
+          onMouseLeave={this.handleMouseEvent.bind(this, "hidden")}
+        >
+          <Content>{this.getHeader()}</Content>
+          {this.getDeltaValue()}
           <SelectedIconContainer isSelectable={isSelectable} isSelected={isSelected}>
             <SelectedIcon className="fas fa-check" />
           </SelectedIconContainer>
         </Card>
-        {popoverContent}
+        {this.getPopoverContent()}
       </PosedContainer>
     );
   }
 }
 
-export default Delta;
+class ContextDelta extends DeltaContainer {
+  render() {
+    const { delta } = this.props;
+    return (
+      <PosedContainer>
+        <ContextCard
+          {...this.props}
+          onMouseEnter={this.handleMouseEvent.bind(this, "visible")}
+          onMouseLeave={this.handleMouseEvent.bind(this, "hidden")}
+        >
+          <ContextIconContainer>
+            <ContextIcon className="fas fa-chart-line" />
+          </ContextIconContainer>
+          <ContextDetails>
+            <ContextContent>{this.getHeader()}</ContextContent>
+            <ContextDate>{format(delta.sort_date, "MMMM Do, YYYY")}</ContextDate>
+          </ContextDetails>
+          {this.getDeltaValue()}
+        </ContextCard>
+        {this.getPopoverContent()}
+      </PosedContainer>
+    );
+  }
+}
+
+export { ContextDelta, DeltaCard };

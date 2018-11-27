@@ -3,8 +3,7 @@ import styled from "styled-components";
 import ActionCard from "./ActionCard.js";
 import { ActionIcon, ActionIconImage, ActionIconList } from "./ActionItems.js";
 import Button from "./Button.js";
-import DeltaContainer from "./DeltaContainer";
-import ContextDelta from "./ContextDelta";
+import { DeltaCard, ContextDelta } from "./DeltaContainer";
 import Error from "./Error.js";
 import EmptyState from "./EmptyState.js";
 import GoogleLogo from "./GoogleLogo.js";
@@ -40,7 +39,7 @@ export {
   ActionIconList,
   ActionTextArea,
   Button,
-  DeltaContainer,
+  DeltaCard,
   ContextDelta,
   EmptyState,
   Error,

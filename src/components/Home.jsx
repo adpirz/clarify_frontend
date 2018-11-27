@@ -13,13 +13,13 @@ import {
   MainContentBody,
   ActionIconList,
   ActionCard,
-  DeltaContainer,
+  DeltaCard,
   EmptyState,
   PageHeading,
 } from "./PatternLibrary";
 
 const StudentRow = styled.div`
-  margin: 0 1.2em;
+  margin: 0 1.8em;
 `;
 
 const StudentRowHeading = styled.div`
@@ -48,7 +48,7 @@ const StudentActionsEmptyState = styled(EmptyState)`
   margin: auto 0;
 `;
 
-const ActionAndDeltaContainer = styled.div`
+const ActionAndDeltaCard = styled.div`
   display: flex;
   overflow: visible;
 `;
@@ -118,14 +118,14 @@ class Home extends React.Component {
       );
     }
     return (
-      <ActionAndDeltaContainer>
+      <ActionAndDeltaCard>
         {map(actionsAndDeltas.slice(0, 3), (node, i) => {
           if (node.note) {
             return <ActionCard showTitle={false} student={student} action={node} key={i} />;
           } else {
             const isSelectable = this.state.selectedStudentId === student.id;
             return (
-              <DeltaContainer
+              <DeltaCard
                 delta={node}
                 key={i}
                 isSelected={this.state.deltaIDsForAction.indexOf(node.delta_id) > -1}
@@ -135,7 +135,7 @@ class Home extends React.Component {
             );
           }
         })}
-      </ActionAndDeltaContainer>
+      </ActionAndDeltaCard>
     );
   };
 
