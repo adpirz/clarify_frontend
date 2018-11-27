@@ -68,6 +68,7 @@ class StudentDetail extends React.Component {
                 key={i}
                 student={student}
                 contextDeltas={contextDeltas}
+                showContextSection={!!contextDeltas.length}
               />
             );
           })}
