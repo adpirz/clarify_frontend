@@ -13,7 +13,7 @@ const LogoLink = styled(Link)`
   text-decoration: none;
   font-weight: 500;
   font-family: ${fontFamilies.base};
-  font-size: ${fontSizes.huge};
+  font-size: ${fontSizes.xlarge};
   color: ${colors.accent};
 `;
 

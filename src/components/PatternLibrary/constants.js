@@ -1,8 +1,10 @@
 const fontSizes = {
-  huge: "2em",
+  xlarge: "2em",
   large: "1.5em",
   medium: "1.25em",
   small: "1em",
+  xsmall: ".8em",
+  xxsmall: ".6em",
 };
 
 const fontFamilies = {
@@ -14,6 +16,7 @@ const colors = {
   black: "#292929",
   textGrey: "#62667A",
   borderGrey: "#979797",
+  backgroundGrey: "#e8e8e8",
 
   mainTheme: "#7F4FFF",
   accent: "#7E98FF",
@@ -24,6 +27,9 @@ const colors = {
   errorOrange: "#FDA428",
   warningRed: "#BF114B",
   googleBlue: "#4688f1",
+
+  deltaRed: "#FF0800",
+  deltaGreen: "#42DA13",
 };
 
 const effects = {
@@ -33,7 +39,7 @@ const effects = {
 
 const layout = {
   siteNavHeight: "60px",
-  leftNavWidth: "200px",
+  leftNavWidth: "250px",
   indent: "15",
 };
 

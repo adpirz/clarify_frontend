@@ -5,7 +5,7 @@ import { withRouter } from "react-router-dom";
 import posed, { PoseGroup } from "react-pose";
 
 import { DataConsumer } from "../../DataProvider";
-import { colors } from "./constants";
+import { colors, fontSizes } from "./constants";
 import { ActionIconList, ActionCard } from ".";
 
 const PageHeadingContainer = styled.div`
@@ -17,10 +17,10 @@ const PageHeadingContainer = styled.div`
   justify-content: space-between;
   flex-wrap: wrap;
   color: ${colors.white};
-  min-height: 80px;
+  min-height: 50px;
 `;
 
-const PageHeadingPosed = posed.div({
+const PageHeadingPosed = posed.h2({
   before: {
     scale: 1.2,
     opacity: 0,
@@ -42,7 +42,8 @@ const PageHeadingPosed = posed.div({
 const PageHeadingCopy = styled(PageHeadingPosed)`
   min-width: 200px;
   text-align: center;
-  font-size: 1.2em;
+  margin: 0;
+  font-size: ${fontSizes.large};
 `;
 
 class PageHeading extends React.Component {
@@ -111,7 +112,7 @@ class PageHeading extends React.Component {
       <PageHeadingContainer>
         <PoseGroup animateOnMount preEnterPose="before">
           <PageHeadingCopy key={this.props.location.key || "start"}>
-            <h2>{pageHeadingCopy}</h2>
+            {pageHeadingCopy}
           </PageHeadingCopy>
         </PoseGroup>
         {actionIconListNode}

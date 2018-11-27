@@ -9,6 +9,7 @@ import find from "lodash/find";
 
 import { DataConsumer } from "../DataProvider";
 import { ActionCard, EmptyState, MainContentBody, PageHeading } from "./PatternLibrary/";
+import { fontSizes } from "./PatternLibrary/constants";
 
 const LinePosed = posed.div({
   enter: {
@@ -22,9 +23,8 @@ const LinePosed = posed.div({
 });
 
 const LineStyled = styled(LinePosed)`
-  display: flex;
   justify-content: center;
-  font-size: 1.2em;
+  font-size: ${fontSizes.medium};
   align-items: center;
   margin: 15px auto;
   text-align: center;
@@ -58,14 +58,17 @@ class StudentDetail extends React.Component {
       mainContentBodyNode = (
         <MainContentBody>
           {map(studentsActions, (a, i) => {
+            const contextDeltas = filter(this.props.deltas, delta => {
+              return a.delta_ids.indexOf(delta.delta_id) > -1;
+            });
             return (
               <ActionCard
-                closeActionForm={this.handleActionFormClick}
-                reminderButtonCopy="Remind Me"
                 showTitle={false}
                 action={a}
                 key={i}
                 student={student}
+                contextDeltas={contextDeltas}
+                showContextSection={!!contextDeltas.length}
               />
             );
           })}
@@ -75,18 +78,31 @@ class StudentDetail extends React.Component {
       mainContentBodyNode = (
         <StudentDetailEmptyState>
           <LineStyled>
-            <EmojiSpan role="img" aria-label="thinking">
-              {/* eslint-disable-next-line */}
-              🤔
-            </EmojiSpan>{" "}
+            <p>
+              <EmojiSpan role="img" aria-label="thinking">
+                {/* eslint-disable-next-line */}
+                🤔
+              </EmojiSpan>
+              <EmojiSpan role="img" aria-label="thinking">
+                {/* eslint-disable-next-line */}
+                🤔
+              </EmojiSpan>
+              <EmojiSpan role="img" aria-label="thinking">
+                {/* eslint-disable-next-line */}
+                🤔
+              </EmojiSpan>
+            </p>
             <p>Looks like you haven't logged any actions for this student yet.</p>
           </LineStyled>
           <LineStyled>
-            <p>Go ahead and pick one from when you've got an action you want to log.</p>
-            <EmojiSpan role="img" aria-label="pointing up at actions list">
-              {/* eslint-disable-next-line */}
-              👆
-            </EmojiSpan>{" "}
+            <p>
+              Go ahead and pick one{" "}
+              <EmojiSpan role="img" aria-label="pointing up at actions list">
+                {/* eslint-disable-next-line */}
+                👆
+              </EmojiSpan>{" "}
+              when you've got an action you want to log.
+            </p>
           </LineStyled>
         </StudentDetailEmptyState>
       );
@@ -103,6 +119,8 @@ class StudentDetail extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({ students, actions }) => <StudentDetail students={students} {...props} actions={actions} />}
+    {({ students, actions, deltas }) => (
+      <StudentDetail students={students} {...props} actions={actions} deltas={deltas} />
+    )}
   </DataConsumer>
 );

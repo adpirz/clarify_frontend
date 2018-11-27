@@ -3,6 +3,7 @@ import styled from "styled-components";
 import ActionCard from "./ActionCard.js";
 import { ActionIcon, ActionIconImage, ActionIconList } from "./ActionItems.js";
 import Button from "./Button.js";
+import { DeltaCard, ContextDelta } from "./DeltaContainer";
 import Error from "./Error.js";
 import EmptyState from "./EmptyState.js";
 import GoogleLogo from "./GoogleLogo.js";
@@ -17,16 +18,15 @@ import { colors } from "./constants";
 const MainContentBody = styled.div`
   display: flex;
   flex-direction: column;
-  overflow: scroll;
-  padding-bottom: 25px;
+  overflow: hidden;
+  padding-bottom: 100px;
 `;
 
 const ActionTextArea = styled.textarea`
+  resize: vertical;
   width: calc(100% - 20px);
-  margin: 15px 0px;
-  height: 100%;
+  height: 80px;
   padding: 10px;
-  border-radius: 10px;
   border: ${({ error }) => {
     return error ? `1px solid ${colors.errorOrange};` : "initial;";
   }};
@@ -39,6 +39,8 @@ export {
   ActionIconList,
   ActionTextArea,
   Button,
+  DeltaCard,
+  ContextDelta,
   EmptyState,
   Error,
   GoogleLogo,
