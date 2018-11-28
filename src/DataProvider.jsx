@@ -1,9 +1,9 @@
 import React from "react";
-import { ApiFetcher } from "./fetchModule";
 import filter from "lodash/filter";
 import format from "date-fns/format";
+import { withRouter } from "react-router-dom";
 
-import clever from "./CleverAuth";
+import { ApiFetcher } from "./fetchModule";
 
 const Context = React.createContext();
 
@@ -11,9 +11,12 @@ export class DataProvider extends React.Component {
   constructor(props) {
     super(props);
 
+    this.clever = this.clever.bind(this);
+
     this.state = {
       user: null,
       isLoading: false,
+      cleverLoading: false,
       errors: {
         queryError: null,
         loginError: null,
@@ -68,8 +71,23 @@ export class DataProvider extends React.Component {
   };
 
   clever = code => {
-    const { id, token } = clever.runOAuthFlow(code);
-    clever.getMySectionsWithStudents(id, token).then(d => console.log(d));
+    if (this.state.cleverLoading) {
+      this.setState({ isLoading: true });
+      return Promise.resolve();
+    }
+    this.setState({ cleverLoading: true });
+    return ApiFetcher.post("clever", { code }).then(resp => {
+      return this.initializeUser().then(resp => {
+        this.setState({ isLoading: true });
+        if (resp.status !== 404) {
+          return this.hydrateUserData().then(() => {
+            this.setState({ cleverLoading: false });
+          });
+        } else {
+          return Promise.resolve();
+        }
+      });
+    });
   };
 
   logUserIn = googleIdToken => {
@@ -127,6 +145,7 @@ export class DataProvider extends React.Component {
     promises.push(
       ApiFetcher.get("student").then(resp => {
         if (resp.status !== 404) {
+          console.log("STUDENTS RESP", resp);
           this.setState({ students: resp.data });
         }
       })
@@ -202,7 +221,7 @@ export class DataProvider extends React.Component {
 
   render() {
     const { children } = this.props;
-
+    window.superstate = this.state;
     return <Context.Provider value={this.state}>{children}</Context.Provider>;
   }
 }
