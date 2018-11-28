@@ -6,7 +6,9 @@ import styled from "styled-components";
 import { lighten } from "polished";
 
 import { colors } from "./PatternLibrary/constants";
-import clever from "../CleverAuth";
+
+const CLEVER_CLIENT_ID = process.env.REACT_APP_CLEVER_CLIENT_ID;
+const CLEVER_REDIRECT_URL = process.env.REACT_APP_CLEVER_REDIRECT_URL || "http://localhost:3000";
 
 const LoginFormContainer = styled.div`
   width: 400px;
@@ -67,9 +69,9 @@ class Login extends React.Component {
       "https://clever.com/oauth/authorize?" +
       "response_type=code" +
       "&redirect_uri=" +
-      encodeURIComponent(clever.redirectURL) +
+      encodeURIComponent(CLEVER_REDIRECT_URL) +
       "&client_id=" +
-      clever.clientId +
+      CLEVER_CLIENT_ID +
       // IMPORTANT: We use this in the demo to always send the user to log in via the Clever SSO demo district. In your app, remove this!
       "&district_id=5b2ad81a709e300001e2cd7a";
 
@@ -89,7 +91,7 @@ class Login extends React.Component {
               <EmailLink href="mailto:help@clarify.school">help@clarify.school</EmailLink>.
             </strong>
             <a href={URL}>
-              <button>CLEVER TEST: {clever.clientId}</button>
+              <button>CLEVER TEST: {CLEVER_CLIENT_ID}</button>
             </a>
           </LoginHelperText>
         </LoginFormContainer>
@@ -100,14 +102,8 @@ class Login extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({ isLoading, logUserIn, errors, clever }) => (
-      <Login
-        isLoading={isLoading}
-        logUserIn={logUserIn}
-        errors={errors}
-        clever={clever}
-        {...props}
-      />
+    {({ isLoading, logUserIn, errors }) => (
+      <Login isLoading={isLoading} logUserIn={logUserIn} errors={errors} {...props} />
     )}
   </DataConsumer>
 );

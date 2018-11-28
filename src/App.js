@@ -9,7 +9,6 @@ import { Error, Loading, SiteNav, NotFound } from "./components/PatternLibrary";
 import { fontFamilies, layout } from "./components/PatternLibrary/constants";
 
 import { LeftNavigation, LoginForm, Home, StudentDetail, Reminders } from "./components";
-import clever from "./CleverAuth";
 
 const Window = styled.section`
   display: flex;
@@ -40,19 +39,23 @@ const RouteContainer = posed.div();
 class App extends React.Component {
   getOAuthCode = () => {
     const search = this.props.location.search;
-    const code = search.match(/code=([\d\w]+)\&/);
+    const code = search.match(/code=([\d\w]+)&/);
     return code ? code[1] : undefined;
   };
 
   getPageBody = () => {
-    const { isLoading, user } = this.props;
+    const { isLoading, user, clever } = this.props;
     if (isLoading) {
       return <Loading />;
     }
 
+    const code = this.getOAuthCode();
+
+    if (code && !user) {
+      clever(code).then(() => this.props.history.push("/"));
+    }
+
     if (!user) {
-      const code = this.getOAuthCode();
-      code && clever.runOAuthFlow(code);
       return <LoginForm />;
     }
 
@@ -97,8 +100,15 @@ class App extends React.Component {
 
 export default withRouter(props => (
   <DataConsumer>
-    {({ isLoading, user, errors, logUserOut }) => (
-      <App user={user} logUserOut={logUserOut} isLoading={isLoading} errors={errors} {...props} />
+    {({ isLoading, user, errors, logUserOut, clever }) => (
+      <App
+        user={user}
+        logUserOut={logUserOut}
+        isLoading={isLoading}
+        errors={errors}
+        clever={clever}
+        {...props}
+      />
     )}
   </DataConsumer>
 ));
