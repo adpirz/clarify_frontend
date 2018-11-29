@@ -1,7 +1,6 @@
 import React from "react";
 import filter from "lodash/filter";
 import format from "date-fns/format";
-import { withRouter } from "react-router-dom";
 
 import { ApiFetcher } from "./fetchModule";
 
@@ -10,8 +9,6 @@ const Context = React.createContext();
 export class DataProvider extends React.Component {
   constructor(props) {
     super(props);
-
-    this.clever = this.clever.bind(this);
 
     this.state = {
       user: null,
@@ -33,7 +30,7 @@ export class DataProvider extends React.Component {
       saveAction: this.saveAction,
       deleteAction: this.deleteAction,
       getReminderActions: this.getReminderActions,
-      clever: this.clever,
+      startCleverOAuth: this.startCleverOAuth,
     };
   }
 
@@ -70,7 +67,7 @@ export class DataProvider extends React.Component {
     });
   };
 
-  clever = code => {
+  startCleverOAuth = code => {
     if (this.state.cleverLoading) {
       this.setState({ isLoading: true });
       return Promise.resolve();
@@ -145,7 +142,6 @@ export class DataProvider extends React.Component {
     promises.push(
       ApiFetcher.get("student").then(resp => {
         if (resp.status !== 404) {
-          console.log("STUDENTS RESP", resp);
           this.setState({ students: resp.data });
         }
       })
@@ -221,7 +217,6 @@ export class DataProvider extends React.Component {
 
   render() {
     const { children } = this.props;
-    window.superstate = this.state;
     return <Context.Provider value={this.state}>{children}</Context.Provider>;
   }
 }
