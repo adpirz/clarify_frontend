@@ -1,6 +1,6 @@
 import map from "lodash/map";
 import React from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, withRouter } from "react-router-dom";
 import styled from "styled-components";
 import posed, { PoseGroup } from "react-pose";
 
@@ -37,10 +37,22 @@ const MainContent = styled.section`
 const RouteContainer = posed.div();
 
 class App extends React.Component {
+  getOAuthCode = () => {
+    const search = this.props.location.search;
+    const code = search.match(/code=([\d\w]+)&/);
+    return code ? code[1] : undefined;
+  };
+
   getPageBody = () => {
-    const { isLoading, user } = this.props;
+    const { isLoading, user, startCleverOAuth } = this.props;
     if (isLoading) {
       return <Loading />;
+    }
+
+    const code = this.getOAuthCode();
+
+    if (code && !user) {
+      startCleverOAuth(code).then(() => this.props.history.push("/"));
     }
 
     if (!user) {
@@ -86,10 +98,17 @@ class App extends React.Component {
   }
 }
 
-export default props => (
+export default withRouter(props => (
   <DataConsumer>
-    {({ isLoading, user, errors, logUserOut }) => (
-      <App user={user} logUserOut={logUserOut} isLoading={isLoading} errors={errors} {...props} />
+    {({ isLoading, user, errors, logUserOut, startCleverOAuth }) => (
+      <App
+        user={user}
+        logUserOut={logUserOut}
+        isLoading={isLoading}
+        errors={errors}
+        startCleverOAuth={startCleverOAuth}
+        {...props}
+      />
     )}
   </DataConsumer>
-);
+));

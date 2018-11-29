@@ -1,7 +1,8 @@
 import React from "react";
-import { ApiFetcher } from "./fetchModule";
 import filter from "lodash/filter";
 import format from "date-fns/format";
+
+import { ApiFetcher } from "./fetchModule";
 
 const Context = React.createContext();
 
@@ -12,6 +13,7 @@ export class DataProvider extends React.Component {
     this.state = {
       user: null,
       isLoading: false,
+      cleverLoading: false,
       errors: {
         queryError: null,
         loginError: null,
@@ -28,6 +30,7 @@ export class DataProvider extends React.Component {
       saveAction: this.saveAction,
       deleteAction: this.deleteAction,
       getReminderActions: this.getReminderActions,
+      startCleverOAuth: this.startCleverOAuth,
     };
   }
 
@@ -61,6 +64,26 @@ export class DataProvider extends React.Component {
       }
       this.setState(newState);
       return resp;
+    });
+  };
+
+  startCleverOAuth = code => {
+    if (this.state.cleverLoading) {
+      this.setState({ isLoading: true });
+      return Promise.resolve();
+    }
+    this.setState({ cleverLoading: true });
+    return ApiFetcher.post("clever", { code }).then(resp => {
+      return this.initializeUser().then(resp => {
+        this.setState({ isLoading: true });
+        if (resp.status !== 404) {
+          return this.hydrateUserData().then(() => {
+            this.setState({ cleverLoading: false });
+          });
+        } else {
+          return Promise.resolve();
+        }
+      });
     });
   };
 
@@ -194,7 +217,6 @@ export class DataProvider extends React.Component {
 
   render() {
     const { children } = this.props;
-
     return <Context.Provider value={this.state}>{children}</Context.Provider>;
   }
 }
