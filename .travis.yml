@@ -14,6 +14,8 @@ jobs:
       script: npm run build
       env:
         - REACT_APP_BASE_URL=https://api.clarify.school/
+        - REACT_APP_CLEVER_CLIENT_ID=0e7e4366758852e8c894
+        - REACT_APP_CLEVER_REDIRECT_URL=https://app.clarify.school
         - secure: TDF0q5VjXKN3OChWx/pa0UsI9BAtmoyuvd5Se3YU5oQyWTkxHBvXob5N1/5Oefc8jBoxfDgDoQVJPxfElK9g5iFVoMNetLABcfaZr2FV3q8KuiYScFhigBDHRN0uTy1jQ11GOT/1UQloWCF4AmhNFxxeokjPGCvHQb2Hv5kTsmkx5perekr530IgJhGvjb7jLPTjplIriNDPsfzf3jIXbQAetsla/xn2LDsUF+a/T1Fz6uTVbaxnybforEQ1eMlopEus6y22sbOkR0eBZyZUVgeejTn/pOez4+M2owSpML8L0BM+cdTRcKHmUokgJ3bVWDebbRqsvyneIOKkuGfSYzKgAhiRlXk7U9ZcO1EBASw15micQ4fosog6rS0uhzjRYtheem3swe4c6w035Ba6HDgMCNUOTZksyyds5NMRgpmnA4k7D+G3axaiOugJi/uk7hTyr/NiYaPmSeolfpDxWBD7/XEnfsNag6aYtaugDKmJjRoCpH+QB8SEvEXQPIi2E9ljaDdzpDZyJ+vXlpX5Fv5M3UzMV+B+GQI8jvlhKQXPvCH3HqJLlLGDx9ijWsmCohLM847yh+DUHKl6YML7siPtxdI3pi9KZWmG9DQ3nCiRQ57VLlIjU4UXlJ5b2wvZZe/9s+D50hefPBB3liL+NUd6hH6IJa2SQSsEMNLW4M4=
       deploy:
         provider: s3
