@@ -125,9 +125,7 @@ const ErrorField = styled.h4`
 `;
 
 const ActionButtonGroup = styled.div`
-  display: ${({ visible }) => {
-    return visible ? "flex;" : "none;";
-  }};
+  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
@@ -474,14 +472,32 @@ class ActionCard extends React.Component {
     return <ActionAudience visible>Created By: {label}</ActionAudience>;
   };
 
+  getActionButtonGroup = () => {
+    const { reminderButtonCopy, saveAction } = this.props;
+    if (!saveAction) {
+      return null;
+    }
+    return (
+      <ActionButtonGroup>
+        {this.getPublicPrivateToggle()}
+        <Button onClick={this.handleFormSubmission.bind(this, true, null)} primary>
+          Save
+        </Button>
+        <Divider>or</Divider>
+        {this.state.pose === "hideReminders" ? (
+          <Button onClick={this.showReminders}>{reminderButtonCopy}</Button>
+        ) : null}
+        {this.getReminderButtons()}
+      </ActionButtonGroup>
+    );
+  };
+
   render() {
     const {
       student,
       showTitle,
-      saveAction,
       deleteAction,
       closeActionForm,
-      reminderButtonCopy,
       action: { completed_on: completedOn, due_on: dueOn },
     } = this.props;
 
@@ -509,17 +525,7 @@ class ActionCard extends React.Component {
                 👆
               </span>
             </ErrorField>
-            <ActionButtonGroup visible={!!saveAction}>
-              {this.getPublicPrivateToggle()}
-              <Button onClick={this.handleFormSubmission.bind(this, true, null)} primary>
-                Save
-              </Button>
-              <Divider>or</Divider>
-              {this.state.pose === "hideReminders" ? (
-                <Button onClick={this.showReminders}>{reminderButtonCopy}</Button>
-              ) : null}
-              {this.getReminderButtons()}
-            </ActionButtonGroup>
+            {this.getActionButtonGroup()}
           </ActionLeftPanel>
           {this.getContextDeltasOrEmptyState()}
         </ActionBody>
