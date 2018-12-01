@@ -12,6 +12,7 @@ import format from "date-fns/format";
 import { colors, effects, fontSizes } from "./constants";
 import { ActionTextArea, ActionIcon, ActionIconImage, Button } from ".";
 import { getReminders } from "../../utils";
+import { DataConsumer } from "../../DataProvider";
 
 var ContextDelta = require("./DeltaContainer").ContextDelta;
 
@@ -184,6 +185,24 @@ const ActionDate = styled.p`
   }};
 `;
 
+const AudienceGroup = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 0 15px;
+`;
+
+const ToggleGroup = styled.div`
+  display: flex;
+  border: 1px solid ${colors.black};
+  border-radius: 15px;
+  padding: 5px;
+  margin: 0px 5px;
+`;
+
+const Toggle = styled.input`
+  margin: 0px 10px;
+`;
+
 const REMINDERS = getReminders();
 
 class ActionCard extends React.Component {
@@ -193,6 +212,7 @@ class ActionCard extends React.Component {
       noteError: false,
       pose: "hideReminders",
       note: props.action.note || "",
+      audience: "public",
     };
   }
 
@@ -217,7 +237,7 @@ class ActionCard extends React.Component {
   };
 
   handleFormSubmission = (completed = false, dueOn = null) => {
-    const { note } = this.state;
+    const { note, audience } = this.state;
     if (!note) {
       this.setState({ noteError: true });
       return;
@@ -237,6 +257,7 @@ class ActionCard extends React.Component {
       dueOn,
       completed,
       deltaIDs: map(contextDeltas, "delta_id"),
+      audience,
     };
 
     if (action && action.id) {
@@ -393,6 +414,40 @@ class ActionCard extends React.Component {
     );
   };
 
+  selectAudience = audience => {
+    this.setState({ audience });
+  };
+
+  getPublicPrivateToggle = () => {
+    if (!this.props.user.sis_enabled) {
+      return null;
+    }
+    return (
+      <AudienceGroup>
+        <label htmlFor="public">Public</label>
+        <ToggleGroup>
+          <Toggle
+            type="radio"
+            id="public"
+            name="audience"
+            value="public"
+            checked={this.state.audience === "public"}
+            onChange={this.selectAudience.bind(this, "public")}
+          />
+          <Toggle
+            type="radio"
+            id="private"
+            name="audience"
+            value="private"
+            checked={this.state.audience === "private"}
+            onChange={this.selectAudience.bind(this, "private")}
+          />
+        </ToggleGroup>
+        <label htmlFor="private">Private</label>
+      </AudienceGroup>
+    );
+  };
+
   render() {
     const {
       student,
@@ -429,6 +484,7 @@ class ActionCard extends React.Component {
               </span>
             </ErrorField>
             <ActionButtonGroup visible={!!saveAction}>
+              {this.getPublicPrivateToggle()}
               <Button onClick={this.handleFormSubmission.bind(this, true, null)} primary>
                 Save
               </Button>
@@ -463,4 +519,6 @@ ActionCard.defaultProps = {
   },
 };
 
-export default ActionCard;
+export default props => (
+  <DataConsumer>{({ user }) => <ActionCard {...props} user={user} />}</DataConsumer>
+);
