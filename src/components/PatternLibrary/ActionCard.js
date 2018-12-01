@@ -203,6 +203,8 @@ const Toggle = styled.input`
   margin: 0px 10px;
 `;
 
+const ActionAudience = styled(ActionDate)``;
+
 const REMINDERS = getReminders();
 
 class ActionCard extends React.Component {
@@ -422,6 +424,10 @@ class ActionCard extends React.Component {
     if (!this.props.user.sis_enabled) {
       return null;
     }
+    // Because there can be multiple ActionCards on the page, we need a unique name for the radio
+    // buttons to work correctly
+    const radioName = `audience-${this.props.student.id}`;
+
     return (
       <AudienceGroup>
         <label htmlFor="public">Public</label>
@@ -429,7 +435,7 @@ class ActionCard extends React.Component {
           <Toggle
             type="radio"
             id="public"
-            name="audience"
+            name={radioName}
             value="public"
             checked={this.state.audience === "public"}
             onChange={this.selectAudience.bind(this, "public")}
@@ -437,7 +443,7 @@ class ActionCard extends React.Component {
           <Toggle
             type="radio"
             id="private"
-            name="audience"
+            name={radioName}
             value="private"
             checked={this.state.audience === "private"}
             onChange={this.selectAudience.bind(this, "private")}
@@ -446,6 +452,26 @@ class ActionCard extends React.Component {
         <label htmlFor="private">Private</label>
       </AudienceGroup>
     );
+  };
+
+  getCreatedByLabel = () => {
+    if (!this.props.action.id) {
+      return null;
+    }
+    const {
+      action: {
+        created_by: { user_profile_id: createdById, first_name: firstName, last_name: lastName },
+        public: audienceIsPublic,
+      },
+      user,
+    } = this.props;
+    let label = "";
+    if (createdById === user.user_profile_id) {
+      label = `You (${audienceIsPublic ? "Public" : "Private"})`;
+    } else {
+      label = `${firstName[0]}. ${lastName}`;
+    }
+    return <ActionAudience visible>Created By: {label}</ActionAudience>;
   };
 
   render() {
@@ -498,6 +524,7 @@ class ActionCard extends React.Component {
           {this.getContextDeltasOrEmptyState()}
         </ActionBody>
         <ActionFooter>
+          {this.getCreatedByLabel()}
           <ActionDate visible={!!dueOn}>
             <label>Due: </label>
             {this.getDate(dueOn)}

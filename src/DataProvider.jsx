@@ -21,12 +21,10 @@ export class DataProvider extends React.Component {
       students: null,
       actions: null,
       sections: null,
-      staff: [],
       deltas: null,
       initializeUser: this.initializeUser,
       logUserIn: this.logUserIn,
       logUserOut: this.logUserOut,
-      getStaff: this.getStaff,
       saveAction: this.saveAction,
       deleteAction: this.deleteAction,
       getReminderActions: this.getReminderActions,
@@ -155,12 +153,6 @@ export class DataProvider extends React.Component {
     );
 
     return Promise.all(promises);
-  };
-
-  getStaff = () => {
-    return ApiFetcher.get("staff").then(resp => {
-      this.setState({ staff: resp.data });
-    });
   };
 
   saveAction = payload => {
