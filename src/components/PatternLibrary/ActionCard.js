@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import map from "lodash/map";
 import get from "lodash/get";
+import { Link } from "react-router-dom";
 import posed, { PoseGroup } from "react-pose";
 import isToday from "date-fns/is_today";
 import isYesterday from "date-fns/is_yesterday";
@@ -33,7 +34,8 @@ const ActionCardContainer = styled.section`
 
 const ActionHeading = styled.section`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
   width: 100%;
 `;
 
@@ -43,8 +45,7 @@ const ActionCopy = styled.p`
 `;
 
 const ActionBody = styled.section`
-  flex-grow: 1;
-  width: 100%;
+  width: 80%;
   display: flex;
   justify-content: center;
 `;
@@ -54,19 +55,25 @@ const StudentHeading = styled.h2`
   margin-left: 25px;
 `;
 
+const ActionIcons = styled.div`
+  display: flex;
+  width: 75px;
+  justify-content: flex-end;
+  align-items: center;
+`;
+
 const BaseIcon = styled.i`
-  position: absolute;
   font-size: 18px;
-  top: 10px;
   cursor: pointer;
 `;
 
-const DeleteIcon = styled(BaseIcon)`
-  right: 30px;
-`;
+const DeleteIcon = styled(BaseIcon)``;
 
-const CloseIcon = styled(BaseIcon)`
-  right: 10px;
+const CloseIcon = styled(BaseIcon)``;
+
+const EditIcon = styled(BaseIcon)`
+  text-decoration: none;
+  color: black;
 `;
 
 const ActionLeftPanel = styled.section``;
@@ -165,6 +172,7 @@ const ReminderOption = styled.li`
 
 const ActionNote = styled.p`
   font-size: ${fontSizes.large};
+  margin: 0 auto;
 `;
 
 const ActionFooter = styled.div`
@@ -316,12 +324,12 @@ class ActionCard extends React.Component {
   getNoteField = () => {
     const {
       student,
-      saveAction,
-      action: { type },
+      action: { type, id: actionId },
+      inEditMode,
     } = this.props;
     const { note } = this.state;
 
-    if (!saveAction) {
+    if (actionId && !inEditMode) {
       return <ActionNote>{note}</ActionNote>;
     }
 
@@ -340,14 +348,16 @@ class ActionCard extends React.Component {
     }
 
     return (
-      <ActionTextArea
-        name="ActionTextArea"
-        onChange={this.handleNoteUpdate}
-        rows="10"
-        error={!!this.state.noteError}
-        placeholder={placeholderText}
-        value={note}
-      />
+      <ActionTextAreaContainer>
+        <ActionTextArea
+          name="ActionTextArea"
+          onChange={this.handleNoteUpdate}
+          rows="10"
+          error={!!this.state.noteError}
+          placeholder={placeholderText}
+          value={note}
+        />
+      </ActionTextAreaContainer>
     );
   };
 
@@ -357,7 +367,7 @@ class ActionCard extends React.Component {
     if (!saveAction) {
       return null;
     }
-    return `What's the latest on ${student.first_name}?`;
+    return <ActionCopy>What's the latest on {student.first_name}?</ActionCopy>;
   };
 
   getDate = date => {
@@ -473,8 +483,8 @@ class ActionCard extends React.Component {
   };
 
   getActionButtonGroup = () => {
-    const { reminderButtonCopy, saveAction } = this.props;
-    if (!saveAction) {
+    const { reminderButtonCopy, inEditMode } = this.props;
+    if (!inEditMode) {
       return null;
     }
     return (
@@ -498,8 +508,19 @@ class ActionCard extends React.Component {
       showTitle,
       deleteAction,
       closeActionForm,
-      action: { completed_on: completedOn, due_on: dueOn },
+      action: {
+        completed_on: completedOn,
+        due_on: dueOn,
+        id: actionId,
+        created_by: { user_profile_id },
+      },
+      user: { user_profile_id: currentUserProfileID },
     } = this.props;
+
+    let userIsAuthor = false;
+    if (actionId) {
+      userIsAuthor = user_profile_id === currentUserProfileID;
+    }
 
     return (
       <ActionCardContainer>
@@ -510,15 +531,28 @@ class ActionCard extends React.Component {
               {student.first_name} {student.last_name[0]}
             </StudentHeading>
           ) : null}
-          {deleteAction ? <DeleteIcon className="fas fa-trash" onClick={deleteAction} /> : null}
-          {closeActionForm ? (
-            <CloseIcon className="fas fa-times" onClick={closeActionForm} />
-          ) : null}
+          <ActionIcons>
+            {actionId && userIsAuthor ? (
+              <DeleteIcon
+                className="fas fa-trash"
+                onClick={deleteAction.bind(this, actionId)}
+                alt="Delete Icon"
+              />
+            ) : null}
+            {actionId && userIsAuthor ? (
+              <Link to={`action/${actionId}/edit`}>
+                <EditIcon className="fas fa-edit" />
+              </Link>
+            ) : null}
+            {closeActionForm ? (
+              <CloseIcon className="fas fa-times" onClick={closeActionForm} alt="Close Form Icon" />
+            ) : null}
+          </ActionIcons>
         </ActionHeading>
         <ActionBody>
           <ActionLeftPanel>
-            <ActionCopy>{this.getActionCopy()}</ActionCopy>
-            <ActionTextAreaContainer>{this.getNoteField()}</ActionTextAreaContainer>
+            {this.getActionCopy()}
+            {this.getNoteField()}
             <ErrorField visible={this.state.noteError}>
               Please add a note describing the action you're taking{" "}
               <span role="img" aria-label="pointing up at note field">
@@ -553,5 +587,7 @@ ActionCard.defaultProps = {
 };
 
 export default props => (
-  <DataConsumer>{({ user }) => <ActionCard {...props} user={user} />}</DataConsumer>
+  <DataConsumer>
+    {({ user, deleteAction }) => <ActionCard {...props} user={user} deleteAction={deleteAction} />}
+  </DataConsumer>
 );

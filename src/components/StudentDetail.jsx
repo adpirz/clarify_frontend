@@ -61,12 +61,17 @@ class StudentDetail extends React.Component {
             const contextDeltas = filter(this.props.deltas, delta => {
               return a.delta_ids.indexOf(delta.delta_id) > -1;
             });
+
+            const inEditMode = this.props.location.pathname.indexOf("edit") > -1;
+            const thisActionSelected = parseInt(this.props.match.params.actionId, 10) === a.id;
+
             return (
               <ActionCard
                 showTitle={false}
                 action={a}
                 key={i}
                 student={student}
+                inEditMode={thisActionSelected && inEditMode}
                 contextDeltas={contextDeltas}
                 showContextSection={!!contextDeltas.length}
               />
