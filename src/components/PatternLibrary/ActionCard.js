@@ -12,6 +12,7 @@ import format from "date-fns/format";
 import { colors, effects, fontSizes } from "./constants";
 import { ActionTextArea, ActionIcon, ActionIconImage, Button } from ".";
 import { getReminders } from "../../utils";
+import { DataConsumer } from "../../DataProvider";
 
 var ContextDelta = require("./DeltaContainer").ContextDelta;
 
@@ -124,9 +125,7 @@ const ErrorField = styled.h4`
 `;
 
 const ActionButtonGroup = styled.div`
-  display: ${({ visible }) => {
-    return visible ? "flex;" : "none;";
-  }};
+  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
@@ -184,6 +183,26 @@ const ActionDate = styled.p`
   }};
 `;
 
+const AudienceGroup = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 0 15px;
+`;
+
+const ToggleGroup = styled.div`
+  display: flex;
+  border: 1px solid ${colors.black};
+  border-radius: 15px;
+  padding: 5px;
+  margin: 0px 5px;
+`;
+
+const Toggle = styled.input`
+  margin: 0px 10px;
+`;
+
+const ActionAudience = styled(ActionDate)``;
+
 const REMINDERS = getReminders();
 
 class ActionCard extends React.Component {
@@ -193,6 +212,7 @@ class ActionCard extends React.Component {
       noteError: false,
       pose: "hideReminders",
       note: props.action.note || "",
+      audience: "public",
     };
   }
 
@@ -217,7 +237,7 @@ class ActionCard extends React.Component {
   };
 
   handleFormSubmission = (completed = false, dueOn = null) => {
-    const { note } = this.state;
+    const { note, audience } = this.state;
     if (!note) {
       this.setState({ noteError: true });
       return;
@@ -237,6 +257,7 @@ class ActionCard extends React.Component {
       dueOn,
       completed,
       deltaIDs: map(contextDeltas, "delta_id"),
+      audience,
     };
 
     if (action && action.id) {
@@ -393,14 +414,90 @@ class ActionCard extends React.Component {
     );
   };
 
+  selectAudience = audience => {
+    this.setState({ audience });
+  };
+
+  getPublicPrivateToggle = () => {
+    if (!this.props.user.sis_enabled) {
+      return null;
+    }
+    // Because there can be multiple ActionCards on the page, we need a unique name for the radio
+    // buttons to work correctly
+    const radioName = `audience-${this.props.student.id}`;
+
+    return (
+      <AudienceGroup>
+        <label htmlFor="public">Public</label>
+        <ToggleGroup>
+          <Toggle
+            type="radio"
+            id="public"
+            name={radioName}
+            value="public"
+            checked={this.state.audience === "public"}
+            onChange={this.selectAudience.bind(this, "public")}
+          />
+          <Toggle
+            type="radio"
+            id="private"
+            name={radioName}
+            value="private"
+            checked={this.state.audience === "private"}
+            onChange={this.selectAudience.bind(this, "private")}
+          />
+        </ToggleGroup>
+        <label htmlFor="private">Private</label>
+      </AudienceGroup>
+    );
+  };
+
+  getCreatedByLabel = () => {
+    if (!this.props.action.id) {
+      return null;
+    }
+    const {
+      action: {
+        created_by: { user_profile_id: createdById, first_name: firstName, last_name: lastName },
+        public: audienceIsPublic,
+      },
+      user,
+    } = this.props;
+    let label = "";
+    if (createdById === user.user_profile_id) {
+      label = `You (${audienceIsPublic ? "Public" : "Private"})`;
+    } else {
+      label = `${firstName[0]}. ${lastName}`;
+    }
+    return <ActionAudience visible>Created By: {label}</ActionAudience>;
+  };
+
+  getActionButtonGroup = () => {
+    const { reminderButtonCopy, saveAction } = this.props;
+    if (!saveAction) {
+      return null;
+    }
+    return (
+      <ActionButtonGroup>
+        {this.getPublicPrivateToggle()}
+        <Button onClick={this.handleFormSubmission.bind(this, true, null)} primary>
+          Save
+        </Button>
+        <Divider>or</Divider>
+        {this.state.pose === "hideReminders" ? (
+          <Button onClick={this.showReminders}>{reminderButtonCopy}</Button>
+        ) : null}
+        {this.getReminderButtons()}
+      </ActionButtonGroup>
+    );
+  };
+
   render() {
     const {
       student,
       showTitle,
-      saveAction,
       deleteAction,
       closeActionForm,
-      reminderButtonCopy,
       action: { completed_on: completedOn, due_on: dueOn },
     } = this.props;
 
@@ -428,20 +525,12 @@ class ActionCard extends React.Component {
                 👆
               </span>
             </ErrorField>
-            <ActionButtonGroup visible={!!saveAction}>
-              <Button onClick={this.handleFormSubmission.bind(this, true, null)} primary>
-                Save
-              </Button>
-              <Divider>or</Divider>
-              {this.state.pose === "hideReminders" ? (
-                <Button onClick={this.showReminders}>{reminderButtonCopy}</Button>
-              ) : null}
-              {this.getReminderButtons()}
-            </ActionButtonGroup>
+            {this.getActionButtonGroup()}
           </ActionLeftPanel>
           {this.getContextDeltasOrEmptyState()}
         </ActionBody>
         <ActionFooter>
+          {this.getCreatedByLabel()}
           <ActionDate visible={!!dueOn}>
             <label>Due: </label>
             {this.getDate(dueOn)}
@@ -463,4 +552,6 @@ ActionCard.defaultProps = {
   },
 };
 
-export default ActionCard;
+export default props => (
+  <DataConsumer>{({ user }) => <ActionCard {...props} user={user} />}</DataConsumer>
+);

@@ -21,12 +21,10 @@ export class DataProvider extends React.Component {
       students: null,
       actions: null,
       sections: null,
-      staff: [],
       deltas: null,
       initializeUser: this.initializeUser,
       logUserIn: this.logUserIn,
       logUserOut: this.logUserOut,
-      getStaff: this.getStaff,
       saveAction: this.saveAction,
       deleteAction: this.deleteAction,
       getReminderActions: this.getReminderActions,
@@ -157,14 +155,8 @@ export class DataProvider extends React.Component {
     return Promise.all(promises);
   };
 
-  getStaff = () => {
-    return ApiFetcher.get("staff").then(resp => {
-      this.setState({ staff: resp.data });
-    });
-  };
-
   saveAction = payload => {
-    const { type, note, dueOn, completed, studentId, actionId, deltaIDs } = payload;
+    const { type, note, dueOn, completed, studentId, actionId, deltaIDs, audience } = payload;
     if (!dueOn && !completed) {
       return;
     }
@@ -173,7 +165,7 @@ export class DataProvider extends React.Component {
       type,
       note,
       student_id: studentId,
-      private: true,
+      public: audience === "public",
       delta_ids: deltaIDs,
       due_on: dueOn ? format(dueOn, "MM/DD/YYYY HH:mm") : null,
       completed_on: completed ? format(new Date(), "MM/DD/YYYY HH:mm") : null,
