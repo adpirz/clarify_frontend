@@ -12,7 +12,7 @@ const CLEVER_REDIRECT_URL = process.env.REACT_APP_CLEVER_REDIRECT_URL || "http:/
 
 const LoginFormContainer = styled.div`
   width: 400px;
-  height: 300px;
+  min-height: 300px;
   border-radius: 20px;
   background: linear-gradient(180deg, ${lighten(0.6, "grey")} 70%, ${lighten(0.47, "grey")});
   display: flex;
@@ -36,7 +36,7 @@ const LoginHeader = styled.h1`
   font-weight: 400;
   color: ${lighten(0.45, colors.black)};
   font-size: 1.8em;
-  margin: auto auto 20px;
+  margin: 20px auto;
 `;
 
 const EmailLink = styled.a`
@@ -52,9 +52,37 @@ const EmailLink = styled.a`
   }
 `;
 
+const CleverImage = styled.img`
+  width: 250px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+
+  &:hover {
+    box-shadow: 0 0 3px 3px rgba(66, 133, 244, 0.3);
+  }
+`;
+
 class Login extends React.Component {
+  state = {
+    username: "",
+    password: "",
+  };
+
   googleLogin = accessToken => {
-    this.props.logUserIn(accessToken, true);
+    this.props.logUserIn(accessToken);
+  };
+
+  handleUsernameUpdate = e => {
+    const { value } = e.target;
+    this.setState({ username: value });
+  };
+
+  handlePasswordUpdate = e => {
+    const { value } = e.target;
+    this.setState({ password: value });
+  };
+
+  initiateClarifyLogin = () => {
+    this.props.logUserIn(this.state.username, this.state.password);
   };
 
   render() {
@@ -80,6 +108,26 @@ class Login extends React.Component {
         <LoginFormContainer>
           <LoginHeader>Login with Google</LoginHeader>
           <GoogleAuth onSuccess={this.googleLogin} onFailure={err => console.log(err)} />
+          <LoginHeader>Login with Clever</LoginHeader>
+          <a href={URL}>
+            <CleverImage src="./clever_login_button.png" />
+          </a>
+          <LoginHeader>Login with Clarify</LoginHeader>
+          <label htmlFor="username-input">Username</label>
+          <input
+            type="text"
+            id="username-input"
+            value={this.state.username}
+            onChange={this.handleUsernameUpdate}
+          />
+          <label htmlFor="password-input">Password</label>
+          <input
+            type="password"
+            id="password-input"
+            value={this.state.password}
+            onChange={this.handlePasswordUpdate}
+          />
+          <button onClick={this.initiateClarifyLogin}>Log in</button>
           <Error>{errorNode}</Error>
           <LoginHelperText>
             This should be the same account you use to login with <strong>Illuminate</strong>.
@@ -90,9 +138,6 @@ class Login extends React.Component {
             <strong>
               <EmailLink href="mailto:help@clarify.school">help@clarify.school</EmailLink>.
             </strong>
-            <a href={URL}>
-              <button>CLEVER TEST: {CLEVER_CLIENT_ID}</button>
-            </a>
           </LoginHelperText>
         </LoginFormContainer>
       </div>
