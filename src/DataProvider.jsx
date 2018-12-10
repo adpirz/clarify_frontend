@@ -85,9 +85,15 @@ export class DataProvider extends React.Component {
     });
   };
 
-  logUserIn = googleIdToken => {
+  logUserIn = (username, password, googleIdToken = null) => {
     this.setState({ isLoading: true });
-    const payload = { google_token: googleIdToken };
+    let payload = {};
+    if (googleIdToken) {
+      payload.google_token = googleIdToken;
+    } else {
+      payload.username = username;
+      payload.password = password;
+    }
     ApiFetcher.post("session", payload).then(resp => {
       const newState = {};
       if (resp.data) {
