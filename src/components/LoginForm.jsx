@@ -80,7 +80,7 @@ class Login extends React.Component {
   };
 
   googleLogin = accessToken => {
-    this.props.logUserIn(accessToken);
+    this.props.logUserIn(null, null, accessToken);
   };
 
   handleUsernameUpdate = e => {

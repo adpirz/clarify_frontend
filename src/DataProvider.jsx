@@ -90,9 +90,11 @@ export class DataProvider extends React.Component {
     let payload = {};
     if (googleIdToken) {
       payload.google_token = googleIdToken;
-    } else {
+    } else if (username && password) {
       payload.username = username;
       payload.password = password;
+    } else {
+      return;
     }
     ApiFetcher.post("session", payload).then(resp => {
       const newState = {};
