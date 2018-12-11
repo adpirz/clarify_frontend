@@ -3,6 +3,7 @@ import React from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import styled from "styled-components";
 import posed, { PoseGroup } from "react-pose";
+import get from "lodash/get";
 
 import { DataConsumer } from "./DataProvider";
 import { Error, Loading, SiteNav, NotFound } from "./components/PatternLibrary";
@@ -37,6 +38,29 @@ const MainContent = styled.section`
 const RouteContainer = posed.div();
 
 class App extends React.Component {
+  componentDidMount = () => {
+    window.Intercom("boot", {
+      app_id: "imkydqhm",
+    });
+  };
+
+  componentWillReceiveProps = nextProps => {
+    if (this.props.location.pathname !== nextProps.location.pathname) {
+      window.Intercom("update");
+    }
+
+    const oldUserId = get(this.props, "user.id");
+    const newUserId = get(nextProps, "user.id");
+    if (newUserId && oldUserId !== newUserId) {
+      window.Intercom("boot", {
+        app_id: "imkydqhm",
+        name: `${nextProps.user.first_name} ${nextProps.user.last_name}`,
+        email: nextProps.user.username,
+        id: nextProps.user.id,
+      });
+    }
+  };
+
   getOAuthCode = () => {
     const search = this.props.location.search;
     const code = search.match(/code=([\d\w]+)&/);
