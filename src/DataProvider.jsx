@@ -167,22 +167,22 @@ export class DataProvider extends React.Component {
   };
 
   saveAction = payload => {
-    const { type, note, dueOn, completed, studentId, actionId, deltaIDs, audience } = payload;
+    const { type, note, dueOn, completed, studentID, actionID, deltaIDs, audience } = payload;
     if (!dueOn && !completed) {
       return;
     }
     const actionPayload = {
-      action_id: actionId,
+      action_id: actionID,
       type,
       note,
-      student_id: studentId,
+      student_id: studentID,
       public: audience === "public",
       delta_ids: deltaIDs,
       due_on: dueOn ? format(dueOn, "MM/DD/YYYY HH:mm") : null,
       completed_on: completed ? format(new Date(), "MM/DD/YYYY HH:mm") : null,
     };
     let actionPromise = null;
-    if (!actionId) {
+    if (!actionID) {
       actionPromise = ApiFetcher.post("action", actionPayload);
     } else {
       actionPromise = ApiFetcher.put("action", actionPayload);
@@ -199,8 +199,8 @@ export class DataProvider extends React.Component {
     });
   };
 
-  deleteAction = actionId => {
-    return ApiFetcher.delete(`action/${actionId}`).then(resp => {
+  deleteAction = actionID => {
+    return ApiFetcher.delete(`action/${actionID}`).then(resp => {
       if (resp.status === 204) {
         ApiFetcher.get("action").then(resp => {
           if (resp.status !== 404) {

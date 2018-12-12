@@ -64,6 +64,7 @@ class PageHeading extends React.Component {
         type={type}
         student={student}
         reminderButtonCopy="Remind Me"
+        inEditMode={true}
         showTitle={false}
         saveAction={saveAction}
       />
@@ -80,17 +81,17 @@ class PageHeading extends React.Component {
 
   render() {
     const { location, students } = this.props;
-    const studentIdRegex = /\/student\/([0-9]*)/;
+    const studentIDRegex = /\/student\/([0-9]*)/;
     let pageHeadingCopy = "Loading";
     let currentStudent = null;
     let actionIconListNode = null;
     if (students) {
       pageHeadingCopy = "Next Steps";
 
-      const studentIdRegexResults = location.pathname.match(studentIdRegex);
-      if (studentIdRegexResults) {
+      const studentIDRegexResults = location.pathname.match(studentIDRegex);
+      if (studentIDRegexResults) {
         currentStudent = find(students, {
-          id: parseInt(studentIdRegexResults[1], 10),
+          id: parseInt(studentIDRegexResults[1], 10),
         });
         pageHeadingCopy = `${currentStudent.first_name}'s Timeline`;
         const { type } = this.state;

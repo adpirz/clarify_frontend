@@ -79,6 +79,8 @@ const Content = styled.span`
 
 const ContextContent = styled(Content)`
   font-size: ${fontSizes.small};
+  text-overflow: ellipsis;
+  overflow: hidden;
 `;
 
 const posedPopoverContent = posed.div({
@@ -146,10 +148,10 @@ const ContextCard = styled.div`
   justify-content: space-between;
   font-size: ${fontSizes.small};
   background-color: ${colors.white};
-  margin: 15px;
+  margin: 10px;
   padding: 5px;
   border-radius: 10px;
-  width: 300px;
+  width: 250px;
   position: relative;
 `;
 
@@ -178,7 +180,7 @@ const ContextIcon = styled.i`
 
 const ContextDetails = styled.section`
   width: 50%;
-  margin: 0 10px;
+  margin: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

@@ -47,10 +47,10 @@ class StudentDetail extends React.Component {
       return null;
     }
 
-    const studentId = parseInt(get(this.props, "match.params.studentId"), 10);
-    const student = find(students, { id: studentId });
+    const studentID = parseInt(get(this.props, "match.params.studentID"), 10);
+    const student = find(students, { id: studentID });
     const studentsActions = filter(actions, a => {
-      return a.student_id === studentId && !!a.completed_on;
+      return a.student_id === studentID && !!a.completed_on;
     });
 
     let mainContentBodyNode = null;
@@ -63,7 +63,8 @@ class StudentDetail extends React.Component {
             });
 
             const inEditMode = this.props.location.pathname.indexOf("edit") > -1;
-            const thisActionSelected = parseInt(this.props.match.params.actionId, 10) === a.id;
+            const thisActionSelected = parseInt(this.props.match.params.actionID, 10) === a.id;
+            const editRoute = `/student/${studentID}/action/${a.id}/edit`;
 
             return (
               <ActionCard
@@ -71,7 +72,11 @@ class StudentDetail extends React.Component {
                 action={a}
                 key={i}
                 student={student}
+                doneEditingRoute={`/student/${studentID}/`}
+                push={this.props.history.push}
                 inEditMode={thisActionSelected && inEditMode}
+                editRoute={editRoute}
+                reminderButtonCopy="Remind Me"
                 contextDeltas={contextDeltas}
                 showContextSection={!!contextDeltas.length}
               />

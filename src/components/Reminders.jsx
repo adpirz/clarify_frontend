@@ -14,7 +14,7 @@ const RemindersDetailEmptyState = styled(EmptyState)`
 
 class Reminders extends React.Component {
   render() {
-    const { getReminderActions, saveAction, students, deltas } = this.props;
+    const { getReminderActions, students, deltas } = this.props;
     const actionReminders = getReminderActions();
     let mainContentBodyNode = null;
     if (!actionReminders || !actionReminders.length) {
@@ -41,19 +41,22 @@ class Reminders extends React.Component {
             const contextDeltas = filter(deltas, delta => {
               return a.delta_ids.indexOf(delta.delta_id) > -1;
             });
+
             const inEditMode = this.props.location.pathname.indexOf("edit") > -1;
-            const thisActionSelected = this.props.match.params.actionId === a.id;
+            const thisActionSelected = parseInt(this.props.match.params.actionID, 10) === a.id;
 
             return (
               <ActionCard
                 action={a}
                 contextDeltas={contextDeltas}
-                saveAction={saveAction}
+                editRoute={`/reminders/action/${a.id}/edit`}
+                doneEditingRoute="/reminders"
+                push={this.props.history.push}
                 student={studentForAction}
                 reminderButtonCopy="Snooze"
                 inEditMode={thisActionSelected && inEditMode}
-                showContextSection={!!contextDeltas.length}
                 showTitle={true}
+                showContextSection={!!contextDeltas.length}
                 key={i}
               />
             );
@@ -73,12 +76,12 @@ class Reminders extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({ saveAction, deltas, getReminderActions, students }) => (
+    {({ deltas, getReminderActions, students }) => (
       <Reminders
-        saveAction={saveAction}
         deltas={deltas}
         getReminderActions={getReminderActions}
         students={students}
+        {...props}
       />
     )}
   </DataConsumer>
