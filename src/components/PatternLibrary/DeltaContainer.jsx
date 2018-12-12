@@ -66,7 +66,6 @@ const SelectedIcon = styled.i`
 
 const Content = styled.span`
   font-size: ${fontSizes.medium};
-  white-space: nowrap;
   color: ${({ improvement }) => {
     if (typeof improvement === "undefined") {
       return colors.black;
@@ -277,7 +276,7 @@ class DeltaContainer extends React.Component {
     if (delta.type === "missing") {
       return "Missing Assignments";
     } else if (delta.type === "category") {
-      return delta.score.assignment_name;
+      return delta.context_record.category_name;
     }
     return null;
   };
