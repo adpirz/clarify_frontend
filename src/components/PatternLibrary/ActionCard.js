@@ -289,7 +289,7 @@ class ActionCard extends React.Component {
       actionPayload.actionID = action.id;
     }
     saveAction(actionPayload).then(resp => {
-      if (resp.status === 201) {
+      if (resp.status === 201 || resp.status === 200) {
         if (doneEditingRoute) {
           this.props.push(doneEditingRoute);
         } else if (closeActionForm) {
