@@ -12,7 +12,7 @@ const CLEVER_REDIRECT_URL = process.env.REACT_APP_CLEVER_REDIRECT_URL || "http:/
 
 const LoginFormContainer = styled.div`
   width: 450px;
-  min-height: 300px;
+  min-height: 200px;
   border-radius: 20px;
   background: linear-gradient(180deg, ${lighten(0.6, "grey")} 70%, ${lighten(0.47, "grey")});
   display: flex;
@@ -98,7 +98,7 @@ class Login extends React.Component {
   };
 
   render() {
-    const { errors } = this.props;
+    const { errors, isPasswordReset } = this.props;
 
     let errorNode = null;
     if (errors.loginError) {
@@ -115,45 +115,65 @@ class Login extends React.Component {
       // IMPORTANT: We use this in the demo to always send the user to log in via the Clever SSO demo district. In your app, remove this!
       "&district_id=5b2ad81a709e300001e2cd7a";
 
-    return (
-      <div style={{ margin: "20vh auto" }}>
-        <LoginFormContainer>
-          <LoginHeader>Login with Google</LoginHeader>
-          <GoogleAuth onSuccess={this.googleLogin} onFailure={err => console.log(err)} />
-          <LoginHeader>Login with Clever</LoginHeader>
-          <a href={URL}>
-            <CleverImage src="./clever_login_button.png" />
-          </a>
-          <LoginHeader>Login with Clarify</LoginHeader>
-          <LoginInput
-            type="text"
-            id="username-input"
-            placeholder="Username"
-            value={this.state.username}
-            onChange={this.handleUsernameUpdate}
-          />
-          <LoginInput
-            type="password"
-            id="password-input"
-            placeholder="Password"
-            value={this.state.password}
-            onChange={this.handlePasswordUpdate}
-          />
-          <Button onClick={this.initiateClarifyLogin}>Log in</Button>
-          <Error>{errorNode}</Error>
-          <LoginHelperText>
-            This should be the same account you use to login with <strong>Illuminate</strong>.
-            <br />
-            Contact your system administrator if you need account information.
-            <br />
-            Still not sure? Reach out to{" "}
-            <strong>
-              <EmailLink href="mailto:help@clarify.school">help@clarify.school</EmailLink>.
-            </strong>
-          </LoginHelperText>
-        </LoginFormContainer>
-      </div>
+    const baseLogin = (
+      <LoginFormContainer>
+        <LoginHeader>Login with Google</LoginHeader>
+        <GoogleAuth onSuccess={this.googleLogin} onFailure={err => console.log(err)} />
+        <LoginHeader>Login with Clever</LoginHeader>
+        <a href={URL}>
+          <CleverImage src="./clever_login_button.png" />
+        </a>
+        <LoginHeader>Login with Clarify</LoginHeader>
+        <LoginInput
+          type="text"
+          id="username-input"
+          placeholder="Username"
+          value={this.state.username}
+          onChange={this.handleUsernameUpdate}
+        />
+        <LoginInput
+          type="password"
+          id="password-input"
+          placeholder="Password"
+          value={this.state.password}
+          onChange={this.handlePasswordUpdate}
+        />
+        <Button onClick={this.initiateClarifyLogin}>Log in</Button>
+        <Error>{errorNode}</Error>
+        <LoginHelperText>
+          This should be the same account you use to login with <strong>Illuminate</strong>.
+          <br />
+          Contact your system administrator if you need account information.
+          <br />
+          Still not sure? Reach out to{" "}
+          <strong>
+            <EmailLink href="mailto:help@clarify.school">help@clarify.school</EmailLink>.
+          </strong>
+        </LoginHelperText>
+      </LoginFormContainer>
     );
+
+    const passwordReset = (
+      <LoginFormContainer>
+        <LoginHeader>Reset Password</LoginHeader>
+        <LoginInput
+          type="password"
+          id="password-change"
+          placeholder="Password"
+          value={this.state.password}
+          onChange={this.handlePasswordUpdate}
+        />
+        <LoginInput
+          type="password"
+          id="password-confirm"
+          placeholder="Confirm Password"
+          value={this.state.password}
+          onChange={this.handlePasswordUpdate}
+        />
+        <Button>Submit</Button>
+      </LoginFormContainer>
+    );
+    return <div style={{ margin: "10vh auto" }}>{isPasswordReset ? passwordReset : baseLogin}</div>;
   }
 }
 

@@ -6,7 +6,7 @@ import posed, { PoseGroup } from "react-pose";
 import get from "lodash/get";
 
 import { DataConsumer } from "./DataProvider";
-import { Error, Loading, SiteNav, NotFound } from "./components/PatternLibrary";
+import { Error, Message, Loading, SiteNav, NotFound } from "./components/PatternLibrary";
 import { fontFamilies, layout } from "./components/PatternLibrary/constants";
 
 import { LeftNavigation, LoginForm, Home, StudentDetail, Reminders } from "./components";
@@ -67,6 +67,11 @@ class App extends React.Component {
     return code ? code[1] : undefined;
   };
 
+  isPasswordReset = () => {
+    if (!this.props.location) return false;
+    return this.props.location.pathname === "/password-reset/";
+  };
+
   getPageBody = () => {
     const { isLoading, user, startCleverOAuth } = this.props;
     if (isLoading) {
@@ -74,9 +79,14 @@ class App extends React.Component {
     }
 
     const code = this.getOAuthCode();
+    const isPasswordReset = this.isPasswordReset();
 
     if (code && !user) {
       startCleverOAuth(code).then(() => this.props.history.push("/"));
+    }
+
+    if (isPasswordReset) {
+      return <LoginForm isPasswordReset={true} />;
     }
 
     if (!user) {
@@ -85,7 +95,7 @@ class App extends React.Component {
 
     return (
       <PageBody>
-        <LeftNavigation />
+        <LeftNavigation noLoad={isPasswordReset} />
         <MainContent>
           <Route
             render={({ location }) => (
@@ -107,7 +117,7 @@ class App extends React.Component {
   };
 
   render() {
-    const { user, errorMessages, logUserOut } = this.props;
+    const { user, errorMessages, messages, logUserOut } = this.props;
     return (
       <Window>
         <SiteNav user={user} logUserOut={logUserOut} />
@@ -116,6 +126,11 @@ class App extends React.Component {
             return <p>{message}</p>;
           })}
         </Error>
+        <Message>
+          {map(messages, (message, key) => {
+            return <p>{message}</p>;
+          })}
+        </Message>
         {this.getPageBody()}
       </Window>
     );
@@ -124,13 +139,14 @@ class App extends React.Component {
 
 export default withRouter(props => (
   <DataConsumer>
-    {({ isLoading, user, errors, logUserOut, startCleverOAuth }) => (
+    {({ isLoading, user, errors, logUserOut, startCleverOAuth, messages }) => (
       <App
         user={user}
         logUserOut={logUserOut}
         isLoading={isLoading}
         errors={errors}
         startCleverOAuth={startCleverOAuth}
+        messages={messages}
         {...props}
       />
     )}

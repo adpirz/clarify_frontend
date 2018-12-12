@@ -228,7 +228,9 @@ class LeftNavigation extends React.Component {
   }
 
   render() {
-    const { students } = this.props;
+    const { students, noLoad } = this.props;
+    if (noLoad) return null;
+
     if (!students || !students.length) {
       return <Loading />;
     }

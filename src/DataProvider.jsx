@@ -18,6 +18,7 @@ export class DataProvider extends React.Component {
         queryError: null,
         loginError: null,
       },
+      messages: [],
       students: null,
       actions: null,
       sections: null,
@@ -38,6 +39,7 @@ export class DataProvider extends React.Component {
       if (resp.status !== 404) {
         this.hydrateUserData();
       } else {
+        this.setState({ isLoading: false });
         return;
       }
     });
