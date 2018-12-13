@@ -4,6 +4,8 @@ import { Error, Button } from "./PatternLibrary";
 import GoogleAuth from "./GoogleAuth";
 import styled from "styled-components";
 import { lighten, darken } from "polished";
+import posed from "react-pose";
+import debounce from "lodash/debounce";
 
 import { colors } from "./PatternLibrary/constants";
 
@@ -61,8 +63,9 @@ const CleverImage = styled.img`
   }
 `;
 
+const INPUT_WIDTH = 60;
 const LoginInput = styled.input`
-  width: 60%;
+  width: ${INPUT_WIDTH}%;
   height: 30px;
   font-size: 0.9em;
   padding: 2px 0.7em;
@@ -73,25 +76,144 @@ const LoginInput = styled.input`
   box-shadow: inset 1px 1px 1px 0px rgba(0, 0, 0, 0.08);
 `;
 
+const transition = {
+  duration: 100,
+};
+const ResetEmailPosed = posed.div({
+  closed: {
+    height: "0",
+    transition,
+  },
+  open: {
+    height: "auto",
+    transition,
+  },
+});
+
+const ResetEmailContainer = styled(ResetEmailPosed)`
+  width: 100%;
+  background-color: ${darken(0.06, "white")};
+  box-shadow: inset 0px 3px 8px 0px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+  text-align: center;
+  overflow: hidden;
+`;
+
+const ResetErrorMessage = styled.div`
+  width: ${INPUT_WIDTH + 3}%;
+  display: flex;
+  height: 2em;
+  font-size: 0.72em;
+  font-weight: 500;
+  align-items: flex-start;
+  color: ${colors.warningRed};
+`;
+
+const ForgotPassword = styled.div`
+  margin: 20px auto 0;
+  cursor: pointer;
+  color: ${lighten(0.6, "black")};
+  text-align: center;
+  font-size: 0.9em;
+  font-weight: 400;
+  &:hover {
+    color: ${colors.errorOrange};
+  }
+
+  &:active {
+    color: ${colors.deltaRed};
+  }
+`;
+
 class Login extends React.Component {
   state = {
     username: "",
     password: "",
+    passwordChange: "",
+    passwordConfirm: "",
+    passwordResetError: "",
+    resetEmail: "",
+    validResetPassword: null,
+    resetEmailOpen: false,
   };
 
   googleLogin = accessToken => {
     this.props.logUserIn(null, null, accessToken);
   };
 
-  handleUsernameUpdate = e => {
+  handleUpdate = (e, key) => {
     const { value } = e.target;
-    this.setState({ username: value });
+    const { passwordChange, passwordConfirm } = this.state;
+    let resetValidation;
+    if (key === "passwordChange") {
+      resetValidation = this.validatePasswordReset(value, passwordConfirm);
+    } else if (key === "passwordConfirm") {
+      resetValidation = this.validatePasswordReset(passwordChange, value);
+    } else {
+      resetValidation = this.validatePasswordReset();
+    }
+
+    this.setState({ [key]: value, ...resetValidation });
+  };
+  handleUsernameUpdate = e => {
+    this.handleUpdate(e, "username");
   };
 
   handlePasswordUpdate = e => {
-    const { value } = e.target;
-    this.setState({ password: value });
+    this.handleUpdate(e, "password");
   };
+
+  handlePasswordChangeUpdate = e => {
+    this.handleUpdate(e, "passwordChange");
+  };
+
+  handlePasswordConfirmUpdate = e => {
+    this.handleUpdate(e, "passwordConfirm");
+  };
+
+  handleResetEmailChange = e => {
+    this.handleUpdate(e, "resetEmail");
+  };
+
+  handleResetSubmit = e => {
+    const { resetToken, postPasswordReset, history } = this.props;
+    e.preventDefault();
+    const { validResetPassword, passwordChange, resetEmail } = this.state;
+    if (resetEmail) {
+      return postPasswordReset({ email: resetEmail }).then(() => {
+        this.setState({ resetEmailOpen: false });
+      });
+    }
+    if (validResetPassword) {
+      return postPasswordReset({ reset_token: resetToken, password: passwordChange }).then(resp => {
+        history.push("/");
+      });
+    }
+  };
+
+  toggleResetEmailContainer = debounce(() => {
+    this.setState(({ resetEmailOpen }) => ({ resetEmailOpen: !resetEmailOpen }));
+  }, 100);
+
+  validatePasswordReset(passwordChange, passwordConfirm) {
+    let passwordResetError;
+    let validResetPassword;
+
+    if (!passwordChange && !passwordConfirm) {
+      passwordResetError = null;
+      validResetPassword = null;
+    } else if (passwordChange !== passwordConfirm) {
+      passwordResetError = "Passwords don't match";
+      validResetPassword = false;
+    } else if (passwordChange.length < 8) {
+      passwordResetError = "Password must be at least 8 characters.";
+      validResetPassword = false;
+    } else {
+      passwordResetError = null;
+      validResetPassword = true;
+    }
+    return { passwordResetError, validResetPassword };
+  }
 
   initiateClarifyLogin = () => {
     this.props.logUserIn(this.state.username, this.state.password);
@@ -139,6 +261,17 @@ class Login extends React.Component {
           onChange={this.handlePasswordUpdate}
         />
         <Button onClick={this.initiateClarifyLogin}>Log in</Button>
+        <ForgotPassword onClick={this.toggleResetEmailContainer}>Forgot password?</ForgotPassword>
+        <ResetEmailContainer pose={this.state.resetEmailOpen ? "open" : "closed"}>
+          <LoginInput
+            placeholder="Email address"
+            value={this.state.resetEmail}
+            onChange={this.handleResetEmailChange}
+          />
+          <Button style={{ margin: "5px auto" }} onClick={this.handleResetSubmit}>
+            Submit Email
+          </Button>
+        </ResetEmailContainer>
         <Error>{errorNode}</Error>
         <LoginHelperText>
           This should be the same account you use to login with <strong>Illuminate</strong>.
@@ -160,27 +293,38 @@ class Login extends React.Component {
           type="password"
           id="password-change"
           placeholder="Password"
-          value={this.state.password}
-          onChange={this.handlePasswordUpdate}
+          value={this.state.passwordChange}
+          onChange={this.handlePasswordChangeUpdate}
         />
         <LoginInput
           type="password"
           id="password-confirm"
           placeholder="Confirm Password"
-          value={this.state.password}
-          onChange={this.handlePasswordUpdate}
+          value={this.state.passwordConfirm}
+          onChange={this.handlePasswordConfirmUpdate}
         />
-        <Button>Submit</Button>
+        <ResetErrorMessage>{this.state.passwordResetError}</ResetErrorMessage>
+        <Button disabled={!this.state.validResetPassword} onClick={this.handleResetSubmit}>
+          Submit
+        </Button>
       </LoginFormContainer>
     );
-    return <div style={{ margin: "10vh auto" }}>{isPasswordReset ? passwordReset : baseLogin}</div>;
+    return <div style={{ margin: "5vh auto" }}>{isPasswordReset ? passwordReset : baseLogin}</div>;
   }
 }
 
 export default props => (
   <DataConsumer>
-    {({ isLoading, logUserIn, errors }) => (
-      <Login isLoading={isLoading} logUserIn={logUserIn} errors={errors} {...props} />
+    {({ isLoading, logUserIn, errors, postPasswordReset, resetToken, messages }) => (
+      <Login
+        isLoading={isLoading}
+        logUserIn={logUserIn}
+        errors={errors}
+        postPasswordReset={postPasswordReset}
+        resetToken={resetToken}
+        messages={messages}
+        {...props}
+      />
     )}
   </DataConsumer>
 );

@@ -14,6 +14,7 @@ export class DataProvider extends React.Component {
       user: null,
       isLoading: false,
       cleverLoading: false,
+      resetToken: null,
       errors: {
         queryError: null,
         loginError: null,
@@ -30,6 +31,8 @@ export class DataProvider extends React.Component {
       deleteAction: this.deleteAction,
       getReminderActions: this.getReminderActions,
       startCleverOAuth: this.startCleverOAuth,
+      postPasswordReset: this.postPasswordReset,
+      setResetToken: this.setResetToken,
     };
   }
 
@@ -215,6 +218,43 @@ export class DataProvider extends React.Component {
     return filter(this.state.actions, a => {
       return !a.completed_on && !!a.due_on;
     });
+  };
+
+  postPasswordReset = ({ email, password, reset_token }) => {
+    const endpoint = "user/password-reset";
+    if (email) {
+      console.log("EMAIL SENT", email);
+      return ApiFetcher.post(endpoint, { email }).then(resp => {
+        if (resp.ok) {
+          console.log("EMAIL SENDING OK");
+          return this.setState(({ messages }) => ({
+            messages: [].concat(messages, ["EMAIL SENT"]),
+          }));
+        } else {
+          console.log("EMAIL SENDING BAD");
+          return this.setState(({ errors }) => ({
+            errors: { resetError: "Error sending email.", ...errors },
+          }));
+        }
+      });
+    }
+    console.log("PASSWORD", password);
+    console.log("RESET_TOKEN", reset_token);
+    return ApiFetcher.post(endpoint, { password, reset_token }).then(resp => {
+      if (resp.ok) {
+        return this.setState(({ messages }) => ({
+          messages: [].concat(messages, ["Password successfully reset."]),
+        }));
+      } else {
+        return this.setState(({ errors }) => ({
+          errors: [].concat(errors, ["Error resetting password."]),
+        }));
+      }
+    });
+  };
+
+  setResetToken = resetToken => {
+    this.setState({ resetToken });
   };
 
   render() {

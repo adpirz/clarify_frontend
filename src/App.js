@@ -72,8 +72,13 @@ class App extends React.Component {
     return this.props.location.pathname === "/password-reset/";
   };
 
+  getResetToken = () => {
+    const token = this.props.locaton.search.match(/token=([\d\w]+)/);
+    return token ? token[1] : undefined;
+  };
+
   getPageBody = () => {
-    const { isLoading, user, startCleverOAuth } = this.props;
+    const { isLoading, user, startCleverOAuth, setResetToken } = this.props;
     if (isLoading) {
       return <Loading />;
     }
@@ -86,6 +91,7 @@ class App extends React.Component {
     }
 
     if (isPasswordReset) {
+      setResetToken(this.getResetToken());
       return <LoginForm isPasswordReset={true} />;
     }
 
@@ -123,14 +129,14 @@ class App extends React.Component {
         <SiteNav user={user} logUserOut={logUserOut} />
         <Error>
           {map(errorMessages, (key, message) => {
-            return <p>{message}</p>;
+            return <p key={key}>{message}</p>;
           })}
         </Error>
-        <Message>
+        <PoseGroup animateOnMount={true}>
           {map(messages, (message, key) => {
-            return <p>{message}</p>;
+            return <Message key={key}>{message}</Message>;
           })}
-        </Message>
+        </PoseGroup>
         {this.getPageBody()}
       </Window>
     );
@@ -139,7 +145,7 @@ class App extends React.Component {
 
 export default withRouter(props => (
   <DataConsumer>
-    {({ isLoading, user, errors, logUserOut, startCleverOAuth, messages }) => (
+    {({ isLoading, user, errors, logUserOut, startCleverOAuth, messages, setResetToken }) => (
       <App
         user={user}
         logUserOut={logUserOut}
@@ -147,6 +153,7 @@ export default withRouter(props => (
         errors={errors}
         startCleverOAuth={startCleverOAuth}
         messages={messages}
+        setResetToken={setResetToken}
         {...props}
       />
     )}
