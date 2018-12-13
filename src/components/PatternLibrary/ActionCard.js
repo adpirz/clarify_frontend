@@ -34,7 +34,7 @@ const ActionCardContainer = styled.section`
 
 const ActionHeading = styled.section`
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   width: 100%;
 `;
@@ -53,7 +53,7 @@ const ActionBody = styled.section`
 
 const StudentHeading = styled.h2`
   font-size: ${fontSizes.large};
-  margin-left: 25px;
+  margin: 0 0 0 25px;
 `;
 
 const ActionIcons = styled.div`

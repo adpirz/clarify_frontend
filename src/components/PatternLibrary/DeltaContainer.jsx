@@ -151,7 +151,7 @@ const ContextCard = styled.div`
   margin: 10px;
   padding: 5px;
   border-radius: 10px;
-  width: 250px;
+  width: 300px;
   position: relative;
 `;
 
