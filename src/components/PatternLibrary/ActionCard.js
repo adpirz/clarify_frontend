@@ -139,11 +139,11 @@ const ErrorField = styled.h4`
   font-size: ${fontSizes.xsmall};
   color: ${colors.errorOrange};
   margin: ${({ visible }) => {
-    return visible ? "10px 0px;" : "0px;";
-  }}
+    return visible ? "10px 0px" : "0px";
+  }};
   visibility: ${({ visible }) => {
-    return visible ? "visible;" : "hidden";
-  }}
+    return visible ? "visible" : "hidden";
+  }};
 `;
 
 const ActionButtonGroup = styled.div`
