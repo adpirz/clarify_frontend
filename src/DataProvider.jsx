@@ -223,23 +223,18 @@ export class DataProvider extends React.Component {
   postPasswordReset = ({ email, password, reset_token }) => {
     const endpoint = "user/password-reset";
     if (email) {
-      console.log("EMAIL SENT", email);
       return ApiFetcher.post(endpoint, { email }).then(resp => {
         if (resp.ok) {
-          console.log("EMAIL SENDING OK");
           return this.setState(({ messages }) => ({
-            messages: [...messages, ["EMAIL SENT],
+            messages: [...messages, ["EMAIL SENT"]],
           }));
         } else {
-          console.log("EMAIL SENDING BAD");
           return this.setState(({ errors }) => ({
             errors: { resetError: "Error sending email.", ...errors },
           }));
         }
       });
     }
-    console.log("PASSWORD", password);
-    console.log("RESET_TOKEN", reset_token);
     return ApiFetcher.post(endpoint, { password, reset_token }).then(resp => {
       if (resp.ok) {
         return this.setState(({ messages }) => ({
