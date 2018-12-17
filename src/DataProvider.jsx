@@ -228,7 +228,7 @@ export class DataProvider extends React.Component {
         if (resp.ok) {
           console.log("EMAIL SENDING OK");
           return this.setState(({ messages }) => ({
-            messages: [].concat(messages, ["EMAIL SENT"]),
+            messages: [...messages, ["EMAIL SENT],
           }));
         } else {
           console.log("EMAIL SENDING BAD");
