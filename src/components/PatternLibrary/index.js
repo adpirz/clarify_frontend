@@ -5,6 +5,7 @@ import { ActionIcon, ActionIconImage, ActionIconList } from "./ActionItems.js";
 import Button from "./Button.js";
 import { DeltaCard, ContextDelta } from "./DeltaContainer";
 import Error from "./Error.js";
+import Message from "./Message.js";
 import EmptyState from "./EmptyState.js";
 import GoogleLogo from "./GoogleLogo.js";
 import Loading from "./Loading.js";
@@ -43,6 +44,7 @@ export {
   ContextDelta,
   EmptyState,
   Error,
+  Message,
   GoogleLogo,
   Loading,
   Logo,

@@ -6,7 +6,7 @@ import posed, { PoseGroup } from "react-pose";
 import get from "lodash/get";
 
 import { DataConsumer } from "./DataProvider";
-import { Error, Loading, SiteNav, NotFound } from "./components/PatternLibrary";
+import { Error, Message, Loading, SiteNav, NotFound } from "./components/PatternLibrary";
 import { fontFamilies, layout } from "./components/PatternLibrary/constants";
 
 import { LeftNavigation, LoginForm, Home, StudentDetail, Reminders } from "./components";
@@ -67,16 +67,32 @@ class App extends React.Component {
     return code ? code[1] : undefined;
   };
 
+  isPasswordReset = () => {
+    if (!this.props.location) return false;
+    return this.props.location.pathname === "/password-reset/";
+  };
+
+  getResetToken = () => {
+    const token = this.props.locaton.search.match(/token=([\d\w]+)/);
+    return token ? token[1] : undefined;
+  };
+
   getPageBody = () => {
-    const { isLoading, user, startCleverOAuth } = this.props;
+    const { isLoading, user, startCleverOAuth, setResetToken } = this.props;
     if (isLoading) {
       return <Loading />;
     }
 
     const code = this.getOAuthCode();
+    const isPasswordReset = this.isPasswordReset();
 
     if (code && !user) {
       startCleverOAuth(code).then(() => this.props.history.push("/"));
+    }
+
+    if (isPasswordReset) {
+      setResetToken(this.getResetToken());
+      return <LoginForm isPasswordReset={true} />;
     }
 
     if (!user) {
@@ -85,7 +101,7 @@ class App extends React.Component {
 
     return (
       <PageBody>
-        <LeftNavigation />
+        <LeftNavigation noLoad={isPasswordReset} />
         <MainContent>
           <Route
             render={({ location }) => (
@@ -107,15 +123,20 @@ class App extends React.Component {
   };
 
   render() {
-    const { user, errorMessages, logUserOut } = this.props;
+    const { user, errorMessages, messages, logUserOut } = this.props;
     return (
       <Window>
         <SiteNav user={user} logUserOut={logUserOut} />
         <Error>
           {map(errorMessages, (key, message) => {
-            return <p>{message}</p>;
+            return <p key={key}>{message}</p>;
           })}
         </Error>
+        <PoseGroup animateOnMount={true}>
+          {map(messages, (message, key) => {
+            return <Message key={key}>{message}</Message>;
+          })}
+        </PoseGroup>
         {this.getPageBody()}
       </Window>
     );
@@ -124,13 +145,15 @@ class App extends React.Component {
 
 export default withRouter(props => (
   <DataConsumer>
-    {({ isLoading, user, errors, logUserOut, startCleverOAuth }) => (
+    {({ isLoading, user, errors, logUserOut, startCleverOAuth, messages, setResetToken }) => (
       <App
         user={user}
         logUserOut={logUserOut}
         isLoading={isLoading}
         errors={errors}
         startCleverOAuth={startCleverOAuth}
+        messages={messages}
+        setResetToken={setResetToken}
         {...props}
       />
     )}
