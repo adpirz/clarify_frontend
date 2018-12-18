@@ -67,58 +67,53 @@ class App extends React.Component {
     return code ? code[1] : undefined;
   };
 
-  isPasswordReset = () => {
-    if (!this.props.location) return false;
-    return this.props.location.pathname === "/password-reset/";
-  };
-
-  getResetToken = () => {
-    const token = this.props.locaton.search.match(/token=([\d\w]+)/);
-    return token ? token[1] : undefined;
-  };
-
   getPageBody = () => {
-    const { isLoading, user, startCleverOAuth, setResetToken } = this.props;
+    const { isLoading, user, startCleverOAuth } = this.props;
     if (isLoading) {
       return <Loading />;
     }
 
     const code = this.getOAuthCode();
-    const isPasswordReset = this.isPasswordReset();
 
     if (code && !user) {
       startCleverOAuth(code).then(() => this.props.history.push("/"));
     }
 
-    if (isPasswordReset) {
-      setResetToken(this.getResetToken());
-      return <LoginForm isPasswordReset={true} />;
-    }
-
     if (!user) {
-      return <LoginForm />;
+      return (
+        <Switch>
+          <Route
+            path="/password-reset/"
+            render={props => <LoginForm isPasswordReset {...props} />}
+          />
+          <Route component={LoginForm} />
+        </Switch>
+      );
     }
 
     return (
-      <PageBody>
-        <LeftNavigation noLoad={isPasswordReset} />
-        <MainContent>
-          <Route
-            render={({ location }) => (
-              <PoseGroup animateOnMount>
-                <RouteContainer key={location.key || "start"}>
-                  <Switch location={location}>
-                    <Route path="/" exact component={Home} />
-                    <Route path="/student/:studentId" component={StudentDetail} />
-                    <Route path="/reminders/:studentId?" component={Reminders} />
-                    <Route component={NotFound} />
-                  </Switch>
-                </RouteContainer>
-              </PoseGroup>
-            )}
-          />
-        </MainContent>
-      </PageBody>
+      <Switch>
+        <Route path="/password-reset/" render={props => <LoginForm isPasswordReset {...props} />} />
+        <Route
+          render={({ location }) => (
+            <PageBody>
+              <LeftNavigation />
+              <MainContent>
+                <PoseGroup animateOnMount>
+                  <RouteContainer key={location.key || "start"}>
+                    <Switch location={location}>
+                      <Route path="/" exact component={Home} />
+                      <Route path="/student/:studentId" component={StudentDetail} />
+                      <Route path="/reminders/:studentId?" component={Reminders} />
+                      <Route component={NotFound} />
+                    </Switch>
+                  </RouteContainer>
+                </PoseGroup>
+              </MainContent>
+            </PageBody>
+          )}
+        />
+      </Switch>
     );
   };
 
@@ -145,7 +140,7 @@ class App extends React.Component {
 
 export default withRouter(props => (
   <DataConsumer>
-    {({ isLoading, user, errors, logUserOut, startCleverOAuth, messages, setResetToken }) => (
+    {({ isLoading, user, errors, logUserOut, startCleverOAuth, messages }) => (
       <App
         user={user}
         logUserOut={logUserOut}
@@ -153,7 +148,6 @@ export default withRouter(props => (
         errors={errors}
         startCleverOAuth={startCleverOAuth}
         messages={messages}
-        setResetToken={setResetToken}
         {...props}
       />
     )}

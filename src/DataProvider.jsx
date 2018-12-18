@@ -32,7 +32,6 @@ export class DataProvider extends React.Component {
       getReminderActions: this.getReminderActions,
       startCleverOAuth: this.startCleverOAuth,
       postPasswordReset: this.postPasswordReset,
-      setResetToken: this.setResetToken,
     };
   }
 
@@ -219,7 +218,7 @@ export class DataProvider extends React.Component {
     });
   };
 
-  postPasswordReset = ({ email, password, reset_token }) => {
+  postPasswordReset = ({ email, new_password, reset_token }) => {
     const endpoint = "user/password-reset";
     if (email) {
       return ApiFetcher.post(endpoint, { email }).then(resp => {
@@ -234,7 +233,7 @@ export class DataProvider extends React.Component {
         }
       });
     }
-    return ApiFetcher.post(endpoint, { password, reset_token }).then(resp => {
+    return ApiFetcher.post(endpoint, { new_password, reset_token }).then(resp => {
       if (resp.ok) {
         return this.setState(({ messages }) => ({
           messages: [].concat(messages, ["Password successfully reset."]),
@@ -245,10 +244,6 @@ export class DataProvider extends React.Component {
         }));
       }
     });
-  };
-
-  setResetToken = resetToken => {
-    this.setState({ resetToken });
   };
 
   render() {

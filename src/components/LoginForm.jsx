@@ -1,16 +1,13 @@
 import React from "react";
 import { DataConsumer } from "../DataProvider";
 import { Error, Button } from "./PatternLibrary";
-// import GoogleAuth from "./GoogleAuth";
+import queryString from "query-string";
 import styled from "styled-components";
 import { lighten, darken } from "polished";
 import posed from "react-pose";
 import debounce from "lodash/debounce";
 
 import { colors } from "./PatternLibrary/constants";
-
-// const CLEVER_CLIENT_ID = process.env.REACT_APP_CLEVER_CLIENT_ID;
-// const CLEVER_REDIRECT_URL = process.env.REACT_APP_CLEVER_REDIRECT_URL || "http://localhost:3000";
 
 const LoginFormContainer = styled.div`
   width: 450px;
@@ -53,15 +50,6 @@ const EmailLink = styled.a`
     color: ${lighten(0.2, colors.black)};
   }
 `;
-
-// const CleverImage = styled.img`
-//   width: 250px;
-//   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
-//
-//   &:hover {
-//     box-shadow: 0 0 3px 3px rgba(66, 133, 244, 0.3);
-//   }
-// `;
 
 const INPUT_WIDTH = 60;
 const LoginInput = styled.input`
@@ -176,7 +164,7 @@ class Login extends React.Component {
   };
 
   handleResetSubmit = e => {
-    const { resetToken, postPasswordReset, history } = this.props;
+    const { postPasswordReset, location, history } = this.props;
     e.preventDefault();
     const { validResetPassword, passwordChange, resetEmail } = this.state;
     if (resetEmail) {
@@ -185,9 +173,17 @@ class Login extends React.Component {
       });
     }
     if (validResetPassword) {
-      return postPasswordReset({ reset_token: resetToken, password: passwordChange }).then(resp => {
-        history.push("/");
-      });
+      const queryParams = queryString.parse(location.search);
+      if (queryParams.token) {
+        return postPasswordReset({
+          reset_token: queryParams.token,
+          new_password: passwordChange,
+        }).then(resp => {
+          history.push("/");
+        });
+      } else {
+        this.setState({ passwordResetError: "Invalid or missing token." });
+      }
     }
   };
 
@@ -227,25 +223,8 @@ class Login extends React.Component {
       errorNode = errors.loginError.text;
     }
 
-    // const URL =
-    //   "https://clever.com/oauth/authorize?" +
-    //   "response_type=code" +
-    //   "&redirect_uri=" +
-    //   encodeURIComponent(CLEVER_REDIRECT_URL) +
-    //   "&client_id=" +
-    //   CLEVER_CLIENT_ID +
-    //   // IMPORTANT: We use this in the demo to always send the user to log in via the Clever SSO demo district. In your app, remove this!
-    //   "&district_id=5b2ad81a709e300001e2cd7a";
-
     const baseLogin = (
       <LoginFormContainer>
-        {/*<LoginHeader>Login with Google</LoginHeader>
-        <GoogleAuth onSuccess={this.googleLogin} onFailure={err => console.log(err)} />
-        <LoginHeader>Login with Clever</LoginHeader>
-        <a href={URL}>
-          <CleverImage src="./clever_login_button.png" />
-        </a>
-        */}
         <LoginHeader>Login with Clarify</LoginHeader>
         <LoginInput
           type="text"
@@ -316,13 +295,12 @@ class Login extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({ isLoading, logUserIn, errors, postPasswordReset, resetToken, messages }) => (
+    {({ isLoading, logUserIn, errors, postPasswordReset, messages }) => (
       <Login
         isLoading={isLoading}
         logUserIn={logUserIn}
         errors={errors}
         postPasswordReset={postPasswordReset}
-        resetToken={resetToken}
         messages={messages}
         {...props}
       />
