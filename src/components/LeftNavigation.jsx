@@ -223,8 +223,8 @@ class LeftNavigation extends React.Component {
 
   displayStudentName = s => `${s.first_name} ${s.last_name[0]}`;
 
-  updateCurrentSelection(studentId) {
-    this.setState({ currentSelection: studentId });
+  updateCurrentSelection(studentID) {
+    this.setState({ currentSelection: studentID });
   }
 
   render() {

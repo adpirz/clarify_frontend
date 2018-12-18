@@ -25,9 +25,8 @@ const MainContentBody = styled.div`
 
 const ActionTextArea = styled.textarea`
   resize: vertical;
-  width: calc(100% - 20px);
-  height: 80px;
-  padding: 10px;
+  width: 100%
+  height: 75px;
   border: ${({ error }) => {
     return error ? `1px solid ${colors.errorOrange};` : "initial;";
   }};

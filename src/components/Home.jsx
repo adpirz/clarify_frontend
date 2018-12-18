@@ -191,7 +191,7 @@ class Home extends React.Component {
             const { student, actionsAndDeltas } = studentViewModel;
 
             if (this.state.selectedStudentId === student.id) {
-              const { saveAction, deltas } = this.props;
+              const { deltas } = this.props;
               const contextDeltas = filter(actionsAndDeltas, d => {
                 return d.delta_id && this.state.deltaIDsForAction.indexOf(d.delta_id) > -1;
               });
@@ -201,10 +201,10 @@ class Home extends React.Component {
                   showContextSection={!!deltas.length}
                   showTitle={false}
                   student={student}
-                  saveAction={saveAction}
                   reminderButtonCopy="Remind Me"
-                  action={{ type: this.state.type }}
+                  type={this.state.type}
                   contextDeltas={contextDeltas}
+                  inEditMode={true}
                 />
               );
             }
@@ -234,14 +234,8 @@ class Home extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({ students, actions, saveAction, deltas }) => (
-      <Home
-        students={students}
-        actions={actions}
-        saveAction={saveAction}
-        deltas={deltas}
-        {...props}
-      />
+    {({ students, actions, deltas }) => (
+      <Home students={students} actions={actions} deltas={deltas} {...props} />
     )}
   </DataConsumer>
 );

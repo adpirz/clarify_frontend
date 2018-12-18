@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { colors } from "./constants";
 
 const ActionIconContainer = styled.div`
-  display: inline-block;
+  display: inline-flex;
   padding: 10px;
   box-shadow: 0px 0px 2px #888;
   border-radius: 50%;

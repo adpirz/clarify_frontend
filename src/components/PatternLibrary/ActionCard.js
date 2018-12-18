@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import map from "lodash/map";
 import get from "lodash/get";
+import { NavLink } from "react-router-dom";
 import posed, { PoseGroup } from "react-pose";
 import isToday from "date-fns/is_today";
 import isYesterday from "date-fns/is_yesterday";
@@ -17,7 +18,7 @@ import { DataConsumer } from "../../DataProvider";
 var ContextDelta = require("./DeltaContainer").ContextDelta;
 
 const ActionCardContainer = styled.section`
-  width: calc(80% - 50px);
+  width: calc(90% - 50px);
   min-height: 160px;
   margin: 10px auto;
   padding: 15px;
@@ -34,6 +35,7 @@ const ActionCardContainer = styled.section`
 const ActionHeading = styled.section`
   display: flex;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
 `;
 
@@ -43,40 +45,58 @@ const ActionCopy = styled.p`
 `;
 
 const ActionBody = styled.section`
-  flex-grow: 1;
-  width: 100%;
   display: flex;
   justify-content: center;
+  margin: 10px;
+  width: 100%;
 `;
 
 const StudentHeading = styled.h2`
   font-size: ${fontSizes.large};
-  margin-left: 25px;
+  margin: 0 0 0 25px;
+`;
+
+const ActionIcons = styled.div`
+  display: flex;
+  width: 75px;
+  justify-content: flex-end;
+  align-items: center;
+  flex-grow: 1;
 `;
 
 const BaseIcon = styled.i`
-  position: absolute;
-  font-size: 18px;
-  top: 10px;
+  font-size: ${fontSizes.medium};
   cursor: pointer;
+  margin: 0px 10px;
 `;
 
-const DeleteIcon = styled(BaseIcon)`
-  right: 30px;
+const IconNavLink = styled(NavLink)`
+  color: ${colors.black};
 `;
+
+const DeleteIcon = styled(BaseIcon)``;
 
 const CloseIcon = styled(BaseIcon)`
-  right: 10px;
+  font-size: ${fontSizes.large};
+  line-height: ${fontSizes.large};
 `;
 
-const ActionLeftPanel = styled.section``;
+const EditIcon = styled(BaseIcon)`
+  text-decoration: none;
+  color: black;
+`;
+
+const ActionLeftPanel = styled.section`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+`;
 
 const ActionContextPanel = styled.section`
   width: 40%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex-grow: 1;
   margin-left: 20px;
 `;
 
@@ -110,18 +130,20 @@ const PosedContextDelta = posed(ContextDelta)({
 
 const ActionTextAreaContainer = styled.div`
   display: flex;
-  margin: auto;
+  background-color: ${colors.white};
+  border-radius: 10px;
+  padding: 10px;
 `;
 
 const ErrorField = styled.h4`
   font-size: ${fontSizes.xsmall};
   color: ${colors.errorOrange};
   margin: ${({ visible }) => {
-    return visible ? "10px 0px;" : "0px;";
-  }}
+    return visible ? "10px 0px" : "0px";
+  }};
   visibility: ${({ visible }) => {
-    return visible ? "visible;" : "hidden";
-  }}
+    return visible ? "visible" : "hidden";
+  }};
 `;
 
 const ActionButtonGroup = styled.div`
@@ -165,6 +187,8 @@ const ReminderOption = styled.li`
 
 const ActionNote = styled.p`
   font-size: ${fontSizes.large};
+  margin: 0;
+  min-height: 75px;
 `;
 
 const ActionFooter = styled.div`
@@ -211,7 +235,7 @@ class ActionCard extends React.Component {
     this.state = {
       noteError: false,
       pose: "hideReminders",
-      note: props.action.note || "",
+      note: props.action.note,
       audience: "public",
     };
   }
@@ -243,17 +267,18 @@ class ActionCard extends React.Component {
       return;
     }
     const {
+      doneEditingRoute,
       closeActionForm,
       saveAction,
       type,
-      student: { id: studentId },
+      student: { id: studentID },
       action,
       contextDeltas,
     } = this.props;
     const actionPayload = {
-      type,
+      type: type || action.type,
       note,
-      studentId,
+      studentID,
       dueOn,
       completed,
       deltaIDs: map(contextDeltas, "delta_id"),
@@ -261,11 +286,15 @@ class ActionCard extends React.Component {
     };
 
     if (action && action.id) {
-      actionPayload.actionId = action.id;
+      actionPayload.actionID = action.id;
     }
     saveAction(actionPayload).then(resp => {
-      if (resp.status === 201 && closeActionForm) {
-        closeActionForm();
+      if (resp.status === 201 || resp.status === 200) {
+        if (doneEditingRoute) {
+          this.props.push(doneEditingRoute);
+        } else if (closeActionForm) {
+          closeActionForm();
+        }
       }
     });
   };
@@ -314,50 +343,48 @@ class ActionCard extends React.Component {
   };
 
   getNoteField = () => {
-    const {
-      student,
-      saveAction,
-      action: { type },
-    } = this.props;
+    const { student, type, inEditMode } = this.props;
     const { note } = this.state;
-
-    if (!saveAction) {
-      return <ActionNote>{note}</ActionNote>;
-    }
-
-    let placeholderText = "";
-    if (!note) {
-      switch (type) {
-        case "call":
-          placeholderText = `I called home about...?`;
-          break;
-        case "message":
-          placeholderText = `I sent an email to ${student.first_name}'s other teachers about...`;
-          break;
-        default:
-          placeholderText = `Today, I noticed ${student.first_name} was really good at...`;
+    let noteNode = null;
+    if (!inEditMode) {
+      noteNode = <ActionNote>{note}</ActionNote>;
+    } else {
+      let placeholderText = "";
+      if (!note) {
+        switch (type) {
+          case "call":
+            placeholderText = `I called home about...?`;
+            break;
+          case "message":
+            placeholderText = `I sent an email to ${student.first_name}'s other teachers about...`;
+            break;
+          default:
+            placeholderText = `Today, I noticed ${student.first_name} was really good at...`;
+        }
       }
+
+      noteNode = (
+        <ActionTextArea
+          name="ActionTextArea"
+          onChange={this.handleNoteUpdate}
+          rows="10"
+          error={!!this.state.noteError}
+          placeholder={placeholderText}
+          value={note}
+        />
+      );
     }
 
-    return (
-      <ActionTextArea
-        name="ActionTextArea"
-        onChange={this.handleNoteUpdate}
-        rows="10"
-        error={!!this.state.noteError}
-        placeholder={placeholderText}
-        value={note}
-      />
-    );
+    return <ActionTextAreaContainer>{noteNode}</ActionTextAreaContainer>;
   };
 
   getActionCopy = () => {
-    const { student, saveAction } = this.props;
+    const { student, inEditMode } = this.props;
 
-    if (!saveAction) {
+    if (!inEditMode) {
       return null;
     }
-    return `What's the latest on ${student.first_name}?`;
+    return <ActionCopy>What's the latest on {student.first_name}?</ActionCopy>;
   };
 
   getDate = date => {
@@ -458,7 +485,11 @@ class ActionCard extends React.Component {
     }
     const {
       action: {
-        created_by: { user_profile_id: createdById, first_name: firstName, last_name: lastName },
+        created_by: {
+          user_profile_id: createdById = null,
+          first_name: firstName,
+          last_name: lastName,
+        },
         public: audienceIsPublic,
       },
       user,
@@ -473,8 +504,8 @@ class ActionCard extends React.Component {
   };
 
   getActionButtonGroup = () => {
-    const { reminderButtonCopy, saveAction } = this.props;
-    if (!saveAction) {
+    const { reminderButtonCopy, inEditMode } = this.props;
+    if (!inEditMode) {
       return null;
     }
     return (
@@ -492,14 +523,50 @@ class ActionCard extends React.Component {
     );
   };
 
+  getErrorField = () => {
+    if (!this.state.noteError) {
+      return null;
+    }
+    return (
+      <ErrorField visible={this.state.noteError}>
+        Please add a note describing the action you're taking{" "}
+        <span role="img" aria-label="pointing up at note field">
+          👆
+        </span>
+      </ErrorField>
+    );
+  };
+
+  getCloseIcon = () => {
+    const { inEditMode, doneEditingRoute, closeActionForm } = this.props;
+    if (!inEditMode) {
+      return null;
+    }
+
+    if (doneEditingRoute) {
+      return (
+        <IconNavLink to={doneEditingRoute}>
+          <CloseIcon className="fas fa-times" alt="Close Form Icon" />
+        </IconNavLink>
+      );
+    } else if (closeActionForm) {
+      return <CloseIcon onClick={closeActionForm} className="fas fa-times" alt="Close Form Icon" />;
+    }
+  };
+
   render() {
     const {
       student,
       showTitle,
       deleteAction,
-      closeActionForm,
-      action: { completed_on: completedOn, due_on: dueOn },
+      action: { completed_on: completedOn, due_on: dueOn, id: actionID, created_by: createdBy },
+      user: currentUserProfile,
+      editRoute,
+      inEditMode,
     } = this.props;
+
+    const userIsAuthor =
+      actionID && get(createdBy, "user_profile_id") === get(currentUserProfile, "user_profile_id");
 
     return (
       <ActionCardContainer>
@@ -510,21 +577,27 @@ class ActionCard extends React.Component {
               {student.first_name} {student.last_name[0]}
             </StudentHeading>
           ) : null}
-          {deleteAction ? <DeleteIcon className="fas fa-trash" onClick={deleteAction} /> : null}
-          {closeActionForm ? (
-            <CloseIcon className="fas fa-times" onClick={closeActionForm} />
-          ) : null}
+          <ActionIcons>
+            {actionID && userIsAuthor ? (
+              <DeleteIcon
+                className="fas fa-trash"
+                onClick={deleteAction.bind(this, actionID)}
+                alt="Delete Icon"
+              />
+            ) : null}
+            {actionID && userIsAuthor && !inEditMode ? (
+              <IconNavLink to={editRoute}>
+                <EditIcon className="fas fa-edit" />
+              </IconNavLink>
+            ) : null}
+            {this.getCloseIcon()}
+          </ActionIcons>
         </ActionHeading>
         <ActionBody>
           <ActionLeftPanel>
-            <ActionCopy>{this.getActionCopy()}</ActionCopy>
-            <ActionTextAreaContainer>{this.getNoteField()}</ActionTextAreaContainer>
-            <ErrorField visible={this.state.noteError}>
-              Please add a note describing the action you're taking{" "}
-              <span role="img" aria-label="pointing up at note field">
-                👆
-              </span>
-            </ErrorField>
+            {this.getActionCopy()}
+            {this.getNoteField()}
+            {this.getErrorField()}
             {this.getActionButtonGroup()}
           </ActionLeftPanel>
           {this.getContextDeltasOrEmptyState()}
@@ -553,5 +626,9 @@ ActionCard.defaultProps = {
 };
 
 export default props => (
-  <DataConsumer>{({ user }) => <ActionCard {...props} user={user} />}</DataConsumer>
+  <DataConsumer>
+    {({ user, deleteAction, saveAction }) => (
+      <ActionCard {...props} user={user} deleteAction={deleteAction} saveAction={saveAction} />
+    )}
+  </DataConsumer>
 );
