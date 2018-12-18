@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import posed from "react-pose";
+import { Route } from "react-router-dom";
 
 import filter from "lodash/filter";
 import map from "lodash/map";
@@ -42,12 +43,12 @@ const StudentDetailEmptyState = styled(EmptyState)`
 
 class StudentDetail extends React.Component {
   render() {
-    const { students, actions } = this.props;
+    const { students, actions, match } = this.props;
     if (!students || !students.length) {
       return null;
     }
 
-    const studentID = parseInt(get(this.props, "match.params.studentID"), 10);
+    const studentID = parseInt(get(match, "params.studentID"), 10);
     const student = find(students, { id: studentID });
     const studentsActions = filter(actions, a => {
       return a.student_id === studentID && !!a.completed_on;
@@ -62,25 +63,35 @@ class StudentDetail extends React.Component {
               return a.delta_ids.indexOf(delta.delta_id) > -1;
             });
 
-            const inEditMode = this.props.location.pathname.indexOf("edit") > -1;
-            const thisActionSelected = parseInt(this.props.match.params.actionID, 10) === a.id;
-            const editRoute = `/student/${studentID}/action/${a.id}/edit`;
+            const ActionCardContainer = ({ history, match, location }) => {
+              const inEditMode = location.pathname.indexOf("edit") > -1;
+              const thisActionSelected = parseInt(match.params.actionID, 10) === a.id;
+              const editRoute = `/student/${studentID}/action/${a.id}/edit`;
 
-            return (
-              <ActionCard
-                showTitle={false}
-                action={a}
-                key={i}
-                student={student}
-                doneEditingRoute={`/student/${studentID}/`}
-                push={this.props.history.push}
-                inEditMode={thisActionSelected && inEditMode}
-                editRoute={editRoute}
-                reminderButtonCopy="Remind Me"
-                contextDeltas={contextDeltas}
-                showContextSection={!!contextDeltas.length}
-              />
-            );
+              return (
+                <ActionCard
+                  showTitle={false}
+                  action={a}
+                  key={i}
+                  student={student}
+                  doneEditingRoute={`/student/${studentID}/`}
+                  push={history.push}
+                  inEditMode={thisActionSelected && inEditMode}
+                  editRoute={editRoute}
+                  reminderButtonCopy="Remind Me"
+                  contextDeltas={contextDeltas}
+                  showContextSection={!!contextDeltas.length}
+                />
+              );
+            };
+            return [
+              <Route key="1" path={match.url} exact component={ActionCardContainer} />,
+              <Route
+                key="2"
+                path={`${match.url}/action/:actionID/edit`}
+                component={ActionCardContainer}
+              />,
+            ];
           })}
         </MainContentBody>
       );

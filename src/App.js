@@ -103,8 +103,8 @@ class App extends React.Component {
                   <RouteContainer key={location.key || "start"}>
                     <Switch location={location}>
                       <Route path="/" exact component={Home} />
-                      <Route path="/student/:studentId" component={StudentDetail} />
-                      <Route path="/reminders/:studentId?" component={Reminders} />
+                      <Route path="/student/:studentID" component={StudentDetail} />
+                      <Route path="/reminders/:studentID" component={Reminders} />
                       <Route component={NotFound} />
                     </Switch>
                   </RouteContainer>
