@@ -113,16 +113,15 @@ export class DataProvider extends React.Component {
         };
         newState.errors = { ...this.state.errors, loginError };
         newState.isLoading = false;
-      } else {
+      } else if (resp.error === "invalid-credentials") {
         const loginError = {
-          text:
-            "There was a problem at Google's end 🤔. Shoot an email over to help@clarify.com and we'll take a look.",
+          text: "Those look like invalid credentials.",
         };
         newState.errors = {
           ...this.state.errors,
           loginError,
-          isLoading: false,
         };
+        newState.isLoading = false;
       }
       this.setState(newState);
     });
