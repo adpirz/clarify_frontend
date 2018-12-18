@@ -1,7 +1,7 @@
 import React from "react";
 import { DataConsumer } from "../DataProvider";
 import { Error, Button } from "./PatternLibrary";
-import GoogleAuth from "./GoogleAuth";
+// import GoogleAuth from "./GoogleAuth";
 import styled from "styled-components";
 import { lighten, darken } from "polished";
 import posed from "react-pose";
@@ -9,8 +9,8 @@ import debounce from "lodash/debounce";
 
 import { colors } from "./PatternLibrary/constants";
 
-const CLEVER_CLIENT_ID = process.env.REACT_APP_CLEVER_CLIENT_ID;
-const CLEVER_REDIRECT_URL = process.env.REACT_APP_CLEVER_REDIRECT_URL || "http://localhost:3000";
+// const CLEVER_CLIENT_ID = process.env.REACT_APP_CLEVER_CLIENT_ID;
+// const CLEVER_REDIRECT_URL = process.env.REACT_APP_CLEVER_REDIRECT_URL || "http://localhost:3000";
 
 const LoginFormContainer = styled.div`
   width: 450px;
@@ -54,14 +54,14 @@ const EmailLink = styled.a`
   }
 `;
 
-const CleverImage = styled.img`
-  width: 250px;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
-
-  &:hover {
-    box-shadow: 0 0 3px 3px rgba(66, 133, 244, 0.3);
-  }
-`;
+// const CleverImage = styled.img`
+//   width: 250px;
+//   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+//
+//   &:hover {
+//     box-shadow: 0 0 3px 3px rgba(66, 133, 244, 0.3);
+//   }
+// `;
 
 const INPUT_WIDTH = 60;
 const LoginInput = styled.input`
@@ -227,24 +227,25 @@ class Login extends React.Component {
       errorNode = errors.loginError.text;
     }
 
-    const URL =
-      "https://clever.com/oauth/authorize?" +
-      "response_type=code" +
-      "&redirect_uri=" +
-      encodeURIComponent(CLEVER_REDIRECT_URL) +
-      "&client_id=" +
-      CLEVER_CLIENT_ID +
-      // IMPORTANT: We use this in the demo to always send the user to log in via the Clever SSO demo district. In your app, remove this!
-      "&district_id=5b2ad81a709e300001e2cd7a";
+    // const URL =
+    //   "https://clever.com/oauth/authorize?" +
+    //   "response_type=code" +
+    //   "&redirect_uri=" +
+    //   encodeURIComponent(CLEVER_REDIRECT_URL) +
+    //   "&client_id=" +
+    //   CLEVER_CLIENT_ID +
+    //   // IMPORTANT: We use this in the demo to always send the user to log in via the Clever SSO demo district. In your app, remove this!
+    //   "&district_id=5b2ad81a709e300001e2cd7a";
 
     const baseLogin = (
       <LoginFormContainer>
-        <LoginHeader>Login with Google</LoginHeader>
+        {/*<LoginHeader>Login with Google</LoginHeader>
         <GoogleAuth onSuccess={this.googleLogin} onFailure={err => console.log(err)} />
         <LoginHeader>Login with Clever</LoginHeader>
         <a href={URL}>
           <CleverImage src="./clever_login_button.png" />
         </a>
+        */}
         <LoginHeader>Login with Clarify</LoginHeader>
         <LoginInput
           type="text"
