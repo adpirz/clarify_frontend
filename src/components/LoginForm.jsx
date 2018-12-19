@@ -1,6 +1,7 @@
 import React from "react";
 import { DataConsumer } from "../DataProvider";
 import { Error, Button } from "./PatternLibrary";
+import GoogleAuth from "./GoogleAuth";
 import queryString from "query-string";
 import styled from "styled-components";
 import { lighten, darken } from "polished";
@@ -241,6 +242,9 @@ class Login extends React.Component {
           onChange={this.handlePasswordUpdate}
         />
         <Button onClick={this.initiateClarifyLogin}>Log in</Button>
+        <LoginHeader>Login with Google</LoginHeader>
+        <GoogleAuth onSuccess={this.googleLogin} onFailure={err => console.log(err)} />
+
         <ForgotPassword onClick={this.toggleResetEmailContainer}>Forgot password?</ForgotPassword>
         <ResetEmailContainer pose={this.state.resetEmailOpen ? "open" : "closed"}>
           <LoginInput
