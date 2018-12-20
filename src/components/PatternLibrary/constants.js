@@ -38,7 +38,7 @@ const effects = {
 };
 
 const layout = {
-  siteNavHeight: "60px",
+  siteNavHeight: "44px",
   leftNavWidth: "250px",
   indent: "15",
 };

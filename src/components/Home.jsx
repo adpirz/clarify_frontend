@@ -44,7 +44,7 @@ const StudentActionIconList = styled(ActionIconList)`
 `;
 
 const StudentActionsEmptyState = styled(EmptyState)`
-  width: 25%;
+  width: 75%;
   margin: auto 0;
 `;
 

@@ -11,7 +11,7 @@ import { lighten } from "polished";
 const Styled = styled.section`
   padding: 10px 20px;
   border-bottom: 1px solid lightgrey;
-  height: ${layout.siteNavHeight};
+  min-height: ${layout.siteNavHeight};
   box-shadow: 0px 3px 23px -3px rgba(0, 0, 0, 0.27);
 `;
 
