@@ -24,6 +24,12 @@ const LoginFormContainer = styled.div`
   padding: 0 0 20px;
 `;
 
+const LoginForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 const LoginHelperText = styled.div`
   color: ${lighten(0.6, colors.black)};
   font-size: 0.75em;
@@ -54,7 +60,6 @@ const EmailLink = styled.a`
 
 const INPUT_WIDTH = 60;
 const LoginInput = styled.input`
-  width: ${INPUT_WIDTH}%;
   height: 30px;
   font-size: 0.9em;
   padding: 2px 0.7em;
@@ -91,7 +96,6 @@ const ResetEmailContainer = styled(ResetEmailPosed)`
 const ResetErrorMessage = styled.div`
   width: ${INPUT_WIDTH + 3}%;
   display: flex;
-  height: 2em;
   font-size: 0.72em;
   font-weight: 500;
   align-items: flex-start;
@@ -227,21 +231,23 @@ class Login extends React.Component {
     const baseLogin = (
       <LoginFormContainer>
         <LoginHeader>Login with Clarify</LoginHeader>
-        <LoginInput
-          type="text"
-          id="username-input"
-          placeholder="Username"
-          value={this.state.username}
-          onChange={this.handleUsernameUpdate}
-        />
-        <LoginInput
-          type="password"
-          id="password-input"
-          placeholder="Password"
-          value={this.state.password}
-          onChange={this.handlePasswordUpdate}
-        />
-        <Button onClick={this.initiateClarifyLogin}>Log in</Button>
+        <LoginForm onSubmit={this.initiateClarifyLogin}>
+          <LoginInput
+            type="text"
+            id="username-input"
+            placeholder="Username"
+            value={this.state.username}
+            onChange={this.handleUsernameUpdate}
+          />
+          <LoginInput
+            type="password"
+            id="password-input"
+            placeholder="Password"
+            value={this.state.password}
+            onChange={this.handlePasswordUpdate}
+          />
+          <Button>Log in</Button>
+        </LoginForm>
         <LoginHeader>Login with Google</LoginHeader>
         <GoogleAuth onSuccess={this.googleLogin} onFailure={err => console.log(err)} />
 
@@ -272,25 +278,25 @@ class Login extends React.Component {
 
     const passwordReset = (
       <LoginFormContainer>
-        <LoginHeader>Reset Password</LoginHeader>
-        <LoginInput
-          type="password"
-          id="password-change"
-          placeholder="Password"
-          value={this.state.passwordChange}
-          onChange={this.handlePasswordChangeUpdate}
-        />
-        <LoginInput
-          type="password"
-          id="password-confirm"
-          placeholder="Confirm Password"
-          value={this.state.passwordConfirm}
-          onChange={this.handlePasswordConfirmUpdate}
-        />
-        <ResetErrorMessage>{this.state.passwordResetError}</ResetErrorMessage>
-        <Button disabled={!this.state.validResetPassword} onClick={this.handleResetSubmit}>
-          Submit
-        </Button>
+        <LoginForm onSubmit={this.handleResetSubmit}>
+          <LoginHeader>Reset Password</LoginHeader>
+          <LoginInput
+            type="password"
+            id="password-change"
+            placeholder="Password"
+            value={this.state.passwordChange}
+            onChange={this.handlePasswordChangeUpdate}
+          />
+          <LoginInput
+            type="password"
+            id="password-confirm"
+            placeholder="Confirm Password"
+            value={this.state.passwordConfirm}
+            onChange={this.handlePasswordConfirmUpdate}
+          />
+          <ResetErrorMessage>{this.state.passwordResetError}</ResetErrorMessage>
+          <Button disabled={!this.state.validResetPassword}>Submit</Button>
+        </LoginForm>
       </LoginFormContainer>
     );
     return <div style={{ margin: "5vh auto" }}>{isPasswordReset ? passwordReset : baseLogin}</div>;
