@@ -179,9 +179,15 @@ export class DataProvider extends React.Component {
       student_id: studentID,
       public: audience === "public",
       delta_ids: deltaIDs,
-      due_on: dueOn ? format(dueOn, "MM/DD/YYYY HH:mm") : null,
-      completed_on: completed ? format(new Date(), "MM/DD/YYYY HH:mm") : null,
     };
+    if (dueOn) {
+      actionPayload.due_on = format(dueOn, "MM/DD/YYYY HH:mm");
+    }
+    if (completed === true) {
+      actionPayload.completed_on = format(new Date(), "MM/DD/YYYY HH:mm");
+    } else if (completed === false) {
+      actionPayload.completed_on = null;
+    }
     let actionPromise = null;
     if (!actionID) {
       actionPromise = ApiFetcher.post("action", actionPayload);
