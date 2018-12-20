@@ -1,5 +1,6 @@
 import React from "react";
 import filter from "lodash/filter";
+import orderBy from "lodash/orderBy";
 import format from "date-fns/format";
 
 import { ApiFetcher } from "./fetchModule";
@@ -213,9 +214,14 @@ export class DataProvider extends React.Component {
   };
 
   getReminderActions = () => {
-    return filter(this.state.actions, a => {
-      return !a.completed_on && !!a.due_on;
-    });
+    const a = orderBy(
+      filter(this.state.actions, a => {
+        return !a.completed_on && !!a.due_on;
+      }),
+      ["due_on"],
+      ["asc"]
+    );
+    return a;
   };
 
   postPasswordReset = ({ email, new_password, reset_token }) => {

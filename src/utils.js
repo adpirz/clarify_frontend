@@ -86,8 +86,6 @@ const getReminders = () => {
   return sortBy(REMINDERS, "order");
 };
 
-window.getReminders = getReminders;
-
 function getUserDisplay({ username, prefix, first_name, last_name }) {
   if (!first_name && !last_name) return username;
   if (!last_name) return first_name;

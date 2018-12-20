@@ -6,10 +6,8 @@ import { NavLink } from "react-router-dom";
 import posed, { PoseGroup } from "react-pose";
 import isToday from "date-fns/is_today";
 import isYesterday from "date-fns/is_yesterday";
-import isAfter from "date-fns/is_after";
-import subDays from "date-fns/sub_days";
 import format from "date-fns/format";
-
+import { DateInput } from "semantic-ui-calendar-react";
 import { colors, effects, fontSizes } from "./constants";
 import { ActionTextArea, ActionIcon, ActionIconImage, Button } from ".";
 import { getReminders } from "../../utils";
@@ -171,7 +169,10 @@ const ReminderList = styled(
   })
 )`
   list-style: none;
-  display: flex;
+  display: ${({ pose }) => {
+    return pose === "hideReminders" ? "none" : "inline-flex";
+  }};
+  align-items: center;
   margin: 0;
   padding: 0;
 `;
@@ -237,6 +238,7 @@ class ActionCard extends React.Component {
       pose: "hideReminders",
       note: props.action.note,
       audience: "public",
+      reminderDate: null,
     };
   }
 
@@ -301,12 +303,7 @@ class ActionCard extends React.Component {
 
   getReminderButtons = () => {
     return (
-      <ReminderList
-        pose={this.state.pose}
-        style={{
-          display: this.state.pose === "hideReminders" ? "none" : "inline-flex",
-        }}
-      >
+      <ReminderList pose={this.state.pose}>
         {map(REMINDERS, (r, i) => {
           return (
             <ReminderOption
@@ -317,8 +314,22 @@ class ActionCard extends React.Component {
             </ReminderOption>
           );
         })}
+        <DateInput
+          name="Date"
+          placeholder="Custom"
+          iconPosition="left"
+          dateFormat="YYYY-MM-DDTHH:MM:SS"
+          minDate={new Date()}
+          value={this.state.reminderDate}
+          onChange={this.handleChange}
+        />
       </ReminderList>
     );
+  };
+
+  handleChange = (e, { value }) => {
+    this.setState({ reminderDate: format(new Date(value), "MM/DD/YYYY") });
+    this.handleFormSubmission(false, new Date(value));
   };
 
   getActionIcon = () => {
@@ -392,9 +403,6 @@ class ActionCard extends React.Component {
       return "Today";
     } else if (isYesterday(date)) {
       return "Yesterday";
-    } else if (isAfter(date, subDays(new Date(), 7))) {
-      // Figure if it's within the last week we can helpfully use the name of the day.
-      return format(date, "dddd [the] Do");
     } else {
       return format(date, "MM/DD/YYYY");
     }
