@@ -41,51 +41,71 @@ const ButtonLabel = styled.span`
   flex-grow: 3;
 `;
 
+const SCOPES =
+  "https://www.googleapis.com/auth/classroom.courses.readonly " +
+  "https://www.googleapis.com/auth/classroom.rosters.readonly";
+
 class GoogleAuth extends React.Component {
   propTypes: {
     onSuccess: PropTypes.func.isRequired,
     onFailure: PropTypes.func,
   };
 
-  constructor(props) {
-    super(props);
-    this.signIn = this.signIn.bind(this);
-  }
-
   componentDidMount() {
-    ((document, script, id, callback) => {
-      const element = document.getElementsByTagName(script)[0];
-      const fjs = element;
-      let js = element;
-      js = document.createElement(script);
-      js.id = id;
-      js.src = "https://apis.google.com/js/client:platform.js";
-      if (fjs && fjs.parentNode) {
-        fjs.parentNode.insertBefore(js, fjs);
-      } else {
-        document.head.appendChild(js);
+    window.gapi.load("client:auth2", () => {
+      if (!window.gapi.auth2.getAuthInstance()) {
+        window.gapi.auth2.init({ client_id: GAPI_CLIENT_ID });
       }
-      js.onload = callback;
-    })(document, "script", "google-login", () => {
-      window.gapi.load("auth2", () => {
-        if (!window.gapi.auth2.getAuthInstance()) {
-          window.gapi.auth2.init({ clientId: GAPI_CLIENT_ID });
-        }
-      });
     });
   }
 
-  signIn(e) {
-    if (e) {
-      e.preventDefault(); // to prevent submit if used within form
-    }
-    const auth2 = window.gapi.auth2.getAuthInstance();
-    const { onFailure } = this.props;
-    const options = {
-      prompt: "select_account",
-    };
-    auth2.signIn(options).then(res => this.handleSigninSuccess(res), err => onFailure(err));
-  }
+  authenticate = () => {
+    return window.gapi.auth2
+      .getAuthInstance()
+      .signIn({
+        scope: SCOPES,
+      })
+      .then(
+        res => {
+          // this.handleSigninSuccess(res);
+          this.loadClient().then(this.loadCourses);
+          console.log("Sign-in successful");
+        },
+        err => {
+          console.error("Error signing in", err);
+        }
+      );
+  };
+
+  loadCourses = () => {
+    window.gapi.client.classroom.courses
+      .list({
+        courseStates: ["ACTIVE"],
+        teacherId: "105401676974496975663",
+      })
+      .then(
+        function(response) {
+          // Handle the results here (response.result has the parsed body).
+          console.log("Response", response);
+        },
+        function(err) {
+          console.error("Execute error", err);
+        }
+      );
+  };
+
+  loadClient = () => {
+    return window.gapi.client
+      .load("https://content.googleapis.com/discovery/v1/apis/classroom/v1/rest")
+      .then(
+        function() {
+          console.log("GAPI client loaded for API");
+        },
+        function(err) {
+          console.error("Error loading GAPI client for API", err);
+        }
+      );
+  };
 
   handleSigninSuccess(res) {
     const { id_token: accessToken } = res.getAuthResponse();
@@ -94,7 +114,7 @@ class GoogleAuth extends React.Component {
 
   render() {
     return (
-      <GoogleButton onClick={this.signIn}>
+      <GoogleButton onClick={this.authenticate}>
         <GoogleLogoContainer>
           <GoogleLogo />
         </GoogleLogoContainer>
