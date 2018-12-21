@@ -27,7 +27,7 @@ const Card = styled.div`
   margin: 15px;
   padding: 20px;
   height: 100px;
-  width: 250px;
+  width: 300px;
   box-shadow: ${effects.cardBoxShadow};
   display: flex;
   flex-direction: column;
