@@ -9,7 +9,7 @@ import isYesterday from "date-fns/is_yesterday";
 import format from "date-fns/format";
 import { DateInput } from "semantic-ui-calendar-react";
 import { colors, effects, fontSizes } from "./constants";
-import { ActionTextArea, ActionIcon, ActionIconImage, Button } from ".";
+import { ActionIcon, ActionIconImage, Button } from ".";
 import { getReminders } from "../../utils";
 import { DataConsumer } from "../../DataProvider";
 
@@ -47,6 +47,15 @@ const ActionBody = styled.section`
   justify-content: center;
   margin: 10px;
   width: 100%;
+`;
+
+const ActionTextArea = styled.textarea`
+  resize: vertical;
+  width: 100%
+  height: 75px;
+  border: ${({ error }) => {
+    return error ? `1px solid ${colors.errorOrange};` : "initial;";
+  }};
 `;
 
 const StudentHeading = styled.h2`

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { lighten } from "polished";
 
 import ActionCard from "./ActionCard.js";
 import { ActionIcon, ActionIconImage, ActionIconList } from "./ActionItems.js";
@@ -12,9 +13,10 @@ import Loading from "./Loading.js";
 import Logo from "./Logo.js";
 import PageHeading from "./PageHeading.js";
 import SiteNav from "./SiteNav";
+import ThirdPartyLoginButton from "./ThirdPartyLoginButton";
 import NotFound from "./404";
 
-import { colors } from "./constants";
+import { colors, effects } from "./constants";
 
 const MainContentBody = styled.div`
   display: flex;
@@ -23,13 +25,23 @@ const MainContentBody = styled.div`
   padding-bottom: 100px;
 `;
 
-const ActionTextArea = styled.textarea`
-  resize: vertical;
-  width: 100%
-  height: 75px;
-  border: ${({ error }) => {
-    return error ? `1px solid ${colors.errorOrange};` : "initial;";
-  }};
+const AuthFormContainer = styled.div`
+  width: 450px;
+  margin: 5vh auto;
+  min-height: 200px;
+  border-radius: 20px;
+  background: linear-gradient(
+    180deg,
+    ${lighten(0.6, colors.backgroundGrey)} 70%,
+    ${lighten(0.47, colors.backgroundGrey)}
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  box-shadow: ${effects.formBoxShadow};
+  padding: 50px 0 20px;
 `;
 
 export {
@@ -37,7 +49,7 @@ export {
   ActionIcon,
   ActionIconImage,
   ActionIconList,
-  ActionTextArea,
+  AuthFormContainer,
   Button,
   DeltaCard,
   ContextDelta,
@@ -50,5 +62,6 @@ export {
   MainContentBody,
   PageHeading,
   SiteNav,
+  ThirdPartyLoginButton,
   NotFound,
 };
