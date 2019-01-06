@@ -4,7 +4,7 @@ import { lighten } from "polished";
 import ActionCard from "./ActionCard.js";
 import { ActionIcon, ActionIconImage, ActionIconList } from "./ActionItems.js";
 import Button from "./Button.js";
-import { DeltaCard, ContextDelta } from "./DeltaContainer";
+import DeltaCard from "./DeltaCard";
 import Error from "./Error.js";
 import Message from "./Message.js";
 import EmptyState from "./EmptyState.js";
@@ -52,7 +52,6 @@ export {
   AuthFormContainer,
   Button,
   DeltaCard,
-  ContextDelta,
   EmptyState,
   Error,
   Message,
