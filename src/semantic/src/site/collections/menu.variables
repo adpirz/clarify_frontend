@@ -1,3 +1,9 @@
 /*******************************
     User Variable Overrides
 *******************************/
+
+@background: #DED9F0;
+@verticalBackground: #DED9F0;
+@hoverBackgroundColor: #8e90cd;
+@activeBackgroundColor: #1b1d74;
+@invertedArrowActiveColor: #926aff;
