@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import map from "lodash/map";
 import filter from "lodash/filter";
 import orderBy from "lodash/orderBy";
@@ -7,55 +6,15 @@ import reduce from "lodash/reduce";
 import without from "lodash/without";
 import { NavLink } from "react-router-dom";
 
+import { Segment, Header, Grid, Menu, Icon, Card, Transition, Form } from "semantic-ui-react";
+
+import { ActionCard, DeltaCard } from "../components/PatternLibrary";
+
 import { DataConsumer } from "../DataProvider";
-import { colors, fontSizes } from "./PatternLibrary/constants";
-import {
-  MainContentBody,
-  ActionIconList,
-  ActionCard,
-  DeltaCard,
-  EmptyState,
-  PageHeading,
-} from "./PatternLibrary";
-
-const StudentRow = styled.div`
-  margin: 0 1.8em;
-`;
-
-const StudentRowHeading = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin: 15px 0px;
-`;
-
-const StudentName = styled(NavLink)`
-  display: inline-flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  font-size: ${fontSizes.xlarge};
-  color: ${colors.black};
-  font-weight: bold;
-  text-decoration: none;
-`;
-
-const StudentActionIconList = styled(ActionIconList)`
-  width: 35%;
-`;
-
-const StudentActionsEmptyState = styled(EmptyState)`
-  width: 75%;
-  margin: auto 0;
-`;
-
-const ActionAndDeltaCard = styled.div`
-  display: flex;
-  overflow: visible;
-`;
 
 class Home extends React.Component {
   state = {
-    selectedStudent: null,
+    selectedStudentId: null,
     type: "",
     deltaIDsForAction: [],
   };
@@ -107,36 +66,19 @@ class Home extends React.Component {
     const { actionsAndDeltas, student } = studentViewModel;
 
     if (!actionsAndDeltas.length) {
-      return (
-        <StudentActionsEmptyState>
-          Click an icon up there{" "}
-          <span role="img" aria-label="pointing up at actions list">
-            👆
-          </span>{" "}
-          to create your first action for {student.first_name}
-        </StudentActionsEmptyState>
-      );
+      return <Segment placeholder>Add an action to this timeline</Segment>;
     }
-    return (
-      <ActionAndDeltaCard>
-        {map(actionsAndDeltas.slice(0, 3), (node, i) => {
-          if (node.note) {
-            return <ActionCard showTitle={false} student={student} action={node} key={i} />;
-          } else {
-            const isSelectable = this.state.selectedStudentId === student.id;
-            return (
-              <DeltaCard
-                delta={node}
-                key={i}
-                isSelected={this.state.deltaIDsForAction.indexOf(node.delta_id) > -1}
-                isSelectable={isSelectable}
-                handleDeltaClick={isSelectable ? this.handleDeltaClick : null}
-              />
-            );
-          }
-        })}
-      </ActionAndDeltaCard>
-    );
+
+    return map(actionsAndDeltas.slice(0, 3), (node, i) => {
+      if (node.note) {
+        return (
+          <ActionCard showTitle={false} student={student} action={node} key={node.action_id} />
+        );
+      } else {
+        debugger;
+        return <DeltaCard delta={node} key={node.delta_id} />;
+      }
+    });
   };
 
   getStudentViewModels = student => {
@@ -183,59 +125,103 @@ class Home extends React.Component {
     }
 
     return (
-      <div>
-        <PageHeading />
-        <MainContentBody>
+      <Grid columns={16}>
+        <Grid.Column width={14}>
+          <Menu color="red" inverted pointing size="massive">
+            <Menu.Item header>
+              <Header inverted as="h1">
+                Next Steps
+              </Header>
+            </Menu.Item>
+            <Menu.Menu position="right">
+              <Menu.Item>
+                <Icon name="sticky note" />
+                Note
+              </Menu.Item>
+              <Menu.Item>
+                <Icon name="phone" />
+                Call
+              </Menu.Item>
+              <Menu.Item>
+                <Icon name="chat" />
+                Message
+              </Menu.Item>
+            </Menu.Menu>
+          </Menu>
+        </Grid.Column>
+        <Grid.Column width={14}>
           {map(studentViewModels.slice(0, 3), (studentViewModel, i) => {
-            let actionFormNode = null;
-            const { student, actionsAndDeltas } = studentViewModel;
-
-            if (this.state.selectedStudentId === student.id) {
-              const { deltas } = this.props;
-              const contextDeltas = filter(actionsAndDeltas, d => {
-                return d.delta_id && this.state.deltaIDsForAction.indexOf(d.delta_id) > -1;
-              });
-              actionFormNode = (
-                <ActionCard
-                  closeActionForm={this.closeActionForm}
-                  showContextSection={!!deltas.length}
-                  showTitle={false}
-                  student={student}
-                  reminderButtonCopy="Remind Me"
-                  type={this.state.type}
-                  contextDeltas={contextDeltas}
-                  inEditMode={true}
-                />
-              );
-            }
-            const isSelected = this.state.selectedStudentId === student.id;
+            const { student } = studentViewModel;
+            const activeStudent = this.state.selectedStudentId === student.id;
             return (
-              <StudentRow key={i}>
-                <StudentRowHeading>
-                  <StudentName to={`/student/${student.id}`}>
-                    {student.first_name} {student.last_name[0]}
-                  </StudentName>
-                  <StudentActionIconList
-                    isSelected={isSelected}
-                    type={this.state.type}
-                    handleTypeSelection={this.handleTypeSelection.bind(this, student.id)}
-                  />
-                </StudentRowHeading>
-                {actionFormNode}
-                {this.getStudentDeltaList(studentViewModel)}
-              </StudentRow>
+              <Segment basic>
+                <Menu size="massive" inverted pointing attached="top">
+                  <Menu.Item header as={NavLink} to={`/student/${student.id}`}>
+                    <Header inverted as="h2">
+                      {student.first_name} {student.last_name[0]}
+                    </Header>
+                  </Menu.Item>
+                  <Menu.Menu position="right">
+                    {map(
+                      [
+                        { name: "Note", value: "note", icon: "sticky note" },
+                        { name: "Call", value: "call", icon: "phone" },
+                        { name: "Message", value: "message", icon: "chat" },
+                      ],
+                      action => (
+                        <Menu.Item
+                          link
+                          onClick={this.handleTypeSelection.bind(this, student.id, action.value)}
+                          active={
+                            this.state.type === action.value &&
+                            this.state.selectedStudentId === student.id
+                          }
+                        >
+                          <Icon name={action.icon} />
+                          {action.name}
+                        </Menu.Item>
+                      )
+                    )}
+                  </Menu.Menu>
+                </Menu>
+                <Transition.Group animation="slide down">
+                  {activeStudent ? (
+                    <Segment inverted attached="bottom">
+                      <Form inverted>
+                        <Form.Field
+                          control="textarea"
+                          label="Note"
+                          placeholder="I noticed that...."
+                        />
+                        <Form.Field control="input" type="checkbox" label="Publicly visible?" />
+                      </Form>
+                    </Segment>
+                  ) : null}
+                </Transition.Group>
+                <Segment basic attached="bottom">
+                  <Card.Group itemsPerRow={3}>
+                    {this.getStudentDeltaList(studentViewModel)}
+                  </Card.Group>
+                </Segment>
+              </Segment>
             );
           })}
-        </MainContentBody>
-      </div>
+        </Grid.Column>
+      </Grid>
     );
   }
 }
 
 export default props => (
   <DataConsumer>
-    {({ students, actions, deltas }) => (
-      <Home students={students} actions={actions} deltas={deltas} {...props} />
+    {({ students, actions, saveAction, deltas }) => (
+      <Home
+        students={students}
+        actions={actions}
+        saveAction={saveAction}
+        deltas={deltas}
+        {...props}
+      />
     )}
   </DataConsumer>
 );
