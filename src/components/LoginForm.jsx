@@ -152,7 +152,9 @@ class Login extends React.Component {
   };
 
   googleLogin = accessToken => {
-    this.props.logUserIn(null, null, accessToken);
+    this.props.logUserIn(null, null, accessToken).then(resp => {
+      this.props.history.push("/");
+    });
   };
 
   handleUpdate = (e, key) => {

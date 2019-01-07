@@ -6,7 +6,7 @@ import posed, { PoseGroup } from "react-pose";
 import get from "lodash/get";
 
 import { DataConsumer } from "./DataProvider";
-import { Error, Message, Loading, SiteNav } from "./components/PatternLibrary";
+import { Error, Message, Loading, SiteNav, NotFound } from "./components/PatternLibrary";
 import { fontFamilies, layout } from "./components/PatternLibrary/constants";
 
 import {
@@ -100,7 +100,7 @@ class App extends React.Component {
                       <Route path="/" exact component={Home} />
                       <Route path="/student/:studentID" component={StudentDetail} />
                       <Route path="/reminders/" component={Reminders} />
-                      <Redirect to="/" />
+                      <Route component={NotFound} />
                     </Switch>
                   </RouteContainer>
                 </PoseGroup>

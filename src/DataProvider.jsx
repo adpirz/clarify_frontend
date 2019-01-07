@@ -2,7 +2,6 @@ import React from "react";
 import filter from "lodash/filter";
 import orderBy from "lodash/orderBy";
 import format from "date-fns/format";
-
 import { ApiFetcher } from "./fetchModule";
 
 const Context = React.createContext();
@@ -108,11 +107,13 @@ export class DataProvider extends React.Component {
     } else {
       return;
     }
-    ApiFetcher.post("session", payload).then(resp => {
+    return ApiFetcher.post("session", payload).then(resp => {
       const newState = {};
       if (resp.data) {
         newState.user = resp.data;
-        this.hydrateUserData();
+        newState.isLoading = false;
+        this.setState(newState);
+        return this.hydrateUserData();
       } else if (resp.error === "user-lookup") {
         const loginError =
           "We couldn't find a user for that email. Send us a note at help@clarify.school and we'll get you sorted out.";
