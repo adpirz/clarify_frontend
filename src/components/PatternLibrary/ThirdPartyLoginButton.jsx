@@ -13,6 +13,7 @@ const IntegrationButton = styled.button`
   display: inline-flex;
   border: 1px solid ${colors.googleBlue}
   padding: 0;
+  margin: 0 15px;
   align-items: center;
   cursor: pointer;
   box-shadow: 0 2px 4px 0 rgba(0,0,0,.25);
