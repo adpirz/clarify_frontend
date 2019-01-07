@@ -1,4 +1,5 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 import queryString from "query-string";
 import styled from "styled-components";
 import { lighten, darken } from "polished";
@@ -6,9 +7,12 @@ import posed from "react-pose";
 import debounce from "lodash/debounce";
 
 import { DataConsumer } from "../DataProvider";
-import { Error, Button, AuthFormContainer } from "./PatternLibrary";
+import { Error, Button, ThirdPartyLoginButton, AuthFormContainer } from "./PatternLibrary";
 import { colors, effects } from "./PatternLibrary/constants";
 import { GoogleAuth } from ".";
+
+const CLEVER_CLIENT_ID = process.env.REACT_APP_CLEVER_CLIENT_ID;
+const CLEVER_REDIRECT_URL = process.env.REACT_APP_CLEVER_REDIRECT_URL || "http://localhost:3000";
 
 const LoginForm = styled.form`
   display: flex;
@@ -36,6 +40,17 @@ const IntegrationContainer = styled.div`
   width: 80%;
   justify-content: center;
   padding-top: 10px;
+`;
+
+const CleverLink = styled.a`
+  display: inline-block;
+  font-weight: bold;
+  color: ${colors.cleverBlue};
+  text-decoration: none;
+
+  &:hover {
+    color: ${darken(0.1, colors.cleverBlue)};
+  }
 `;
 
 const EmailLink = styled.a`
@@ -100,8 +115,28 @@ const ForgotPassword = styled.div`
   }
 `;
 
+const RegisterLink = styled(NavLink)`
+  margin: 20px auto 0;
+  cursor: pointer;
+  color: ${colors.textGrey};
+  font-size: 0.9em;
+  font-weight: 400;
+  &:hover {
+    color: ${lighten(0.6, colors.black)};
+  }
+
+  &:active {
+    color: ${colors.deltaRed};
+  }
+`;
+
 const DividOr = styled.span`
   margin: 15px 0px;
+`;
+
+const CleverIcon = styled.span`
+  color: ${colors.cleverBlue};
+  font-weight: bold;
 `;
 
 class Login extends React.Component {
@@ -211,6 +246,16 @@ class Login extends React.Component {
     if (errors.loginError) {
       errorNode = errors.loginError;
     }
+
+    const URL =
+      "https://clever.com/oauth/authorize?" +
+      "response_type=code" +
+      "&redirect_uri=" +
+      encodeURIComponent(CLEVER_REDIRECT_URL) +
+      "&client_id=" +
+      CLEVER_CLIENT_ID +
+      // IMPORTANT: We use this in the demo to always send the user to log in via the Clever SSO demo district. In your app, remove this!
+      "&district_id=5b2ad81a709e300001e2cd7a";
 
     return (
       <AuthFormContainer>
