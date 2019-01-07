@@ -1,45 +1,8 @@
 import React from "react";
-import styled from "styled-components";
 import PropTypes from "prop-types";
-import { GoogleLogo } from "./PatternLibrary";
-import { colors, fontSizes } from "./PatternLibrary/constants";
 
-const GAPI_CLIENT_ID =
-  process.env.REACT_APP_GAPI_CLIENT_ID ||
-  "729776830467-i92lfrj8sdj1ospq4rn349dvsu0jbjgi.apps.googleusercontent.com";
-
-const GoogleButton = styled.button`
-  border-radius: 0;
-  background-color: ${colors.googleBlue};
-  width: 250px;
-  height: 50px;
-  font-size: ${fontSizes.medium};
-  color: ${colors.white};
-  display: flex;
-  border: 1px solid ${colors.googleBlue}
-  margin: 0 auto;
-  padding: 0;
-  align-items: center;
-  cursor: pointer;
-  box-shadow: 0 2px 4px 0 rgba(0,0,0,.25);
-
-  &:hover {
-    box-shadow: 0 0 3px 3px rgba(66,133,244,.3);
-  }
-`;
-
-const GoogleLogoContainer = styled.div`
-  height: 48px;
-  background-color: ${colors.white};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-grow: 1;
-`;
-
-const ButtonLabel = styled.span`
-  flex-grow: 3;
-`;
+import { ThirdPartyLoginButton, GoogleLogo } from "./PatternLibrary";
+import { DataConsumer } from "../DataProvider";
 
 class GoogleAuth extends React.Component {
   propTypes: {
@@ -47,61 +10,74 @@ class GoogleAuth extends React.Component {
     onFailure: PropTypes.func,
   };
 
-  constructor(props) {
-    super(props);
-    this.signIn = this.signIn.bind(this);
-  }
-
   componentDidMount() {
-    ((document, script, id, callback) => {
-      const element = document.getElementsByTagName(script)[0];
-      const fjs = element;
-      let js = element;
-      js = document.createElement(script);
-      js.id = id;
-      js.src = "https://apis.google.com/js/client:platform.js";
-      if (fjs && fjs.parentNode) {
-        fjs.parentNode.insertBefore(js, fjs);
-      } else {
-        document.head.appendChild(js);
-      }
-      js.onload = callback;
-    })(document, "script", "google-login", () => {
-      window.gapi.load("auth2", () => {
+    try {
+      window.gapi.load("client:auth2", () => {
         if (!window.gapi.auth2.getAuthInstance()) {
-          window.gapi.auth2.init({ clientId: GAPI_CLIENT_ID });
+          window.gapi.auth2.init({ client_id: this.props.GAPI_CLIENT_ID });
         }
       });
-    });
-  }
-
-  signIn(e) {
-    if (e) {
-      e.preventDefault(); // to prevent submit if used within form
+    } catch (e) {
+      this.props.setLoginError(
+        "Unable to load the Google authentication service. Check your internet connection?"
+      );
     }
-    const auth2 = window.gapi.auth2.getAuthInstance();
-    const { onFailure } = this.props;
-    const options = {
-      prompt: "select_account",
-    };
-    auth2.signIn(options).then(res => this.handleSigninSuccess(res), err => onFailure(err));
   }
 
-  handleSigninSuccess(res) {
-    const { id_token: accessToken } = res.getAuthResponse();
-    this.props.onSuccess(accessToken);
-  }
+  authorizeGoogleRegistration = () => {
+    return window.gapi.auth2
+      .getAuthInstance()
+      .signIn()
+      .then(
+        googleUser => {
+          const SCOPES =
+            "https://www.googleapis.com/auth/classroom.courses.readonly " +
+            "https://www.googleapis.com/auth/classroom.rosters.readonly";
+          return googleUser.grant({ scope: SCOPES }).then(
+            googleUser => {
+              console.log(JSON.stringify({ message: "success", value: googleUser }));
+              const { access_token: authorizationToken } = googleUser.getAuthResponse();
+              this.props.onSuccess(authorizationToken);
+            },
+            function(error) {
+              console.error("Error signing in", error);
+            }
+          );
+        },
+        error => {
+          console.error("Error signing in", error);
+        }
+      );
+  };
+
+  logInWithGoogle = () => {
+    return window.gapi.auth2
+      .getAuthInstance()
+      .signIn()
+      .then(
+        googleUser => {
+          const { id_token: accessToken } = googleUser.getAuthResponse();
+          this.props.onSuccess(accessToken);
+          console.log("Sign-in successful");
+        },
+        error => {
+          console.error("Error signing in", error);
+        }
+      );
+  };
+
+  handleClick = e => {
+    e.preventDefault();
+    this.props.type === "register" ? this.authorizeGoogleRegistration() : this.logInWithGoogle();
+  };
 
   render() {
-    return (
-      <GoogleButton onClick={this.signIn}>
-        <GoogleLogoContainer>
-          <GoogleLogo />
-        </GoogleLogoContainer>
-        <ButtonLabel>Sign in</ButtonLabel>
-      </GoogleButton>
-    );
+    return <ThirdPartyLoginButton onClick={this.handleClick} icon={GoogleLogo()} copy="Google" />;
   }
 }
 
-export default GoogleAuth;
+export default props => (
+  <DataConsumer>
+    {({ GAPI_CLIENT_ID }) => <GoogleAuth GAPI_CLIENT_ID={GAPI_CLIENT_ID} {...props} />}
+  </DataConsumer>
+);

@@ -1,6 +1,6 @@
 import map from "lodash/map";
 import React from "react";
-import { Route, Switch, withRouter } from "react-router-dom";
+import { Route, Switch, withRouter, Redirect } from "react-router-dom";
 import styled from "styled-components";
 import posed, { PoseGroup } from "react-pose";
 import get from "lodash/get";
@@ -9,7 +9,14 @@ import { DataConsumer } from "./DataProvider";
 import { Error, Message, Loading, SiteNav, NotFound } from "./components/PatternLibrary";
 import { fontFamilies, layout } from "./components/PatternLibrary/constants";
 
-import { LeftNavigation, LoginForm, Home, StudentDetail, Reminders } from "./components";
+import {
+  LeftNavigation,
+  LoginForm,
+  PasswordResetForm,
+  Home,
+  StudentDetail,
+  Reminders,
+} from "./components";
 
 const Window = styled.section`
   display: flex;
@@ -61,32 +68,18 @@ class App extends React.Component {
     }
   };
 
-  getOAuthCode = () => {
-    const search = this.props.location.search;
-    const code = search.match(/code=([\d\w]+)&/);
-    return code ? code[1] : undefined;
-  };
-
   getPageBody = () => {
-    const { isLoading, user, startCleverOAuth } = this.props;
+    const { isLoading, user } = this.props;
     if (isLoading) {
       return <Loading />;
-    }
-
-    const code = this.getOAuthCode();
-
-    if (code && !user) {
-      startCleverOAuth(code).then(() => this.props.history.push("/"));
     }
 
     if (!user) {
       return (
         <Switch>
-          <Route
-            path="/password-reset/"
-            render={props => <LoginForm isPasswordReset {...props} />}
-          />
-          <Route component={LoginForm} />
+          <Route path="/password-reset/" component={PasswordResetForm} />
+          <Route path="/login/" component={LoginForm} />
+          <Redirect to="/login" />
         </Switch>
       );
     }
@@ -140,13 +133,12 @@ class App extends React.Component {
 
 export default withRouter(props => (
   <DataConsumer>
-    {({ isLoading, user, errors, logUserOut, startCleverOAuth, messages }) => (
+    {({ isLoading, user, errors, logUserOut, messages }) => (
       <App
         user={user}
         logUserOut={logUserOut}
         isLoading={isLoading}
         errors={errors}
-        startCleverOAuth={startCleverOAuth}
         messages={messages}
         {...props}
       />

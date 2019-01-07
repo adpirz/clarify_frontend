@@ -2,10 +2,13 @@ import React from "react";
 import filter from "lodash/filter";
 import orderBy from "lodash/orderBy";
 import format from "date-fns/format";
-
 import { ApiFetcher } from "./fetchModule";
 
 const Context = React.createContext();
+
+const GAPI_CLIENT_ID =
+  process.env.REACT_APP_GAPI_CLIENT_ID ||
+  "729776830467-i92lfrj8sdj1ospq4rn349dvsu0jbjgi.apps.googleusercontent.com";
 
 export class DataProvider extends React.Component {
   constructor(props) {
@@ -33,6 +36,9 @@ export class DataProvider extends React.Component {
       getReminderActions: this.getReminderActions,
       startCleverOAuth: this.startCleverOAuth,
       postPasswordReset: this.postPasswordReset,
+      setLoginError: this.setLoginError,
+      syncUserWithGoogleClassroom: this.syncUserWithGoogleClassroom,
+      GAPI_CLIENT_ID,
     };
   }
 
@@ -101,22 +107,20 @@ export class DataProvider extends React.Component {
     } else {
       return;
     }
-    ApiFetcher.post("session", payload).then(resp => {
+    return ApiFetcher.post("session", payload).then(resp => {
       const newState = {};
       if (resp.data) {
         newState.user = resp.data;
-        this.hydrateUserData();
+        newState.isLoading = false;
+        this.setState(newState);
+        return this.hydrateUserData();
       } else if (resp.error === "user-lookup") {
-        const loginError = {
-          text:
-            "We couldn't find a Clarify user for that email. Are you sure you're using your Alpha email?",
-        };
+        const loginError =
+          "We couldn't find a user for that email. Send us a note at help@clarify.school and we'll get you sorted out.";
         newState.errors = { ...this.state.errors, loginError };
         newState.isLoading = false;
       } else if (resp.error === "invalid-credentials") {
-        const loginError = {
-          text: "Those look like invalid credentials.",
-        };
+        const loginError = "Those look like invalid credentials.";
         newState.errors = {
           ...this.state.errors,
           loginError,
@@ -130,6 +134,29 @@ export class DataProvider extends React.Component {
   logUserOut = () => {
     ApiFetcher.delete("session").then(() => {
       window.location.reload();
+    });
+  };
+
+  syncUserWithGoogleClassroom = (googleIdToken = null) => {
+    this.setState({ isLoading: true });
+    let payload = {};
+    if (!googleIdToken) {
+      this.setState({ errors: { ...this.state.errors, loginError: "No google token provided" } });
+    }
+    payload.google_token = googleIdToken;
+
+    ApiFetcher.post("google-classroom-sync", payload).then(resp => {
+      const newState = {};
+      if (resp.data) {
+        console.debug(resp.data);
+        // newState.user = resp.data;
+        // this.hydrateUserData();
+      } else {
+        const loginError = "There was a problem syncing your data";
+        newState.errors = { ...this.state.errors, loginError };
+        newState.isLoading = false;
+      }
+      this.setState(newState);
     });
   };
 
@@ -256,6 +283,10 @@ export class DataProvider extends React.Component {
         }));
       }
     });
+  };
+
+  setLoginError = e => {
+    this.setState({ errors: { ...this.state.errors, loginError: e } });
   };
 
   render() {

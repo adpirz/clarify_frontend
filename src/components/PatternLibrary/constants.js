@@ -1,3 +1,5 @@
+import { lighten } from "polished";
+
 const fontSizes = {
   xlarge: "2em",
   large: "1.5em",
@@ -21,6 +23,7 @@ const colors = {
   mainTheme: "#7F4FFF",
   accent: "#7E98FF",
   backgroundAccent: "#DED9F0",
+  cleverBlue: "#4670ee",
 
   primaryPink: "#B36CD5",
   secondaryMidnightBlue: "#282A5F",
@@ -35,6 +38,8 @@ const colors = {
 const effects = {
   cardBoxShadow: "0 2px 11px rgba(0, 0, 0, 0.17), 0 3px 6px rgba(0, 0, 0, 0.23)",
   cardBoxShadowHover: "0 7px 11px rgba(0, 0, 0, 0.17), 0 3px 6px rgba(0, 0, 0, 0.23)",
+  formBoxShadow: `0 3px 8px 3px ${lighten(0.25, colors.borderGrey)}`,
+  inputBoxShadow: "inset 1px 1px 1px 0px rgba(0, 0, 0, 0.08)",
 };
 
 const layout = {

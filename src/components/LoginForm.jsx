@@ -1,28 +1,18 @@
 import React from "react";
-import { DataConsumer } from "../DataProvider";
-import { Error, Button } from "./PatternLibrary";
-import GoogleAuth from "./GoogleAuth";
+import { NavLink } from "react-router-dom";
 import queryString from "query-string";
 import styled from "styled-components";
 import { lighten, darken } from "polished";
 import posed from "react-pose";
 import debounce from "lodash/debounce";
 
-import { colors } from "./PatternLibrary/constants";
+import { DataConsumer } from "../DataProvider";
+import { Error, Button, ThirdPartyLoginButton, AuthFormContainer } from "./PatternLibrary";
+import { colors, effects } from "./PatternLibrary/constants";
+import { GoogleAuth } from ".";
 
-const LoginFormContainer = styled.div`
-  width: 450px;
-  min-height: 200px;
-  border-radius: 20px;
-  background: linear-gradient(180deg, ${lighten(0.6, "grey")} 70%, ${lighten(0.47, "grey")});
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  align-content: center;
-  justify-content: center;
-  box-shadow: 0 3px 8px 3px ${lighten(0.35, "grey")};
-  padding: 0 0 20px;
-`;
+const CLEVER_CLIENT_ID = process.env.REACT_APP_CLEVER_CLIENT_ID;
+const CLEVER_REDIRECT_URL = process.env.REACT_APP_CLEVER_REDIRECT_URL || "http://localhost:3000";
 
 const LoginForm = styled.form`
   display: flex;
@@ -42,7 +32,25 @@ const LoginHeader = styled.h1`
   font-weight: 400;
   color: ${lighten(0.45, colors.black)};
   font-size: 1em;
-  margin: 30px auto 5px;
+  margin: 0;
+`;
+
+const IntegrationContainer = styled.div`
+  display: flex;
+  width: 80%;
+  justify-content: center;
+  padding-top: 10px;
+`;
+
+const CleverLink = styled.a`
+  display: inline-block;
+  font-weight: bold;
+  color: ${colors.cleverBlue};
+  text-decoration: none;
+
+  &:hover {
+    color: ${darken(0.1, colors.cleverBlue)};
+  }
 `;
 
 const EmailLink = styled.a`
@@ -58,7 +66,6 @@ const EmailLink = styled.a`
   }
 `;
 
-const INPUT_WIDTH = 60;
 const LoginInput = styled.input`
   height: 30px;
   font-size: 0.9em;
@@ -67,7 +74,7 @@ const LoginInput = styled.input`
   border: 1px solid ${darken(0.15, "white")};
   border-radius: 7px;
   background-color: ${darken(0.02, "white")};
-  box-shadow: inset 1px 1px 1px 0px rgba(0, 0, 0, 0.08);
+  box-shadow: ${effects.inputBoxShadow};
 `;
 
 const transition = {
@@ -93,19 +100,9 @@ const ResetEmailContainer = styled(ResetEmailPosed)`
   overflow: hidden;
 `;
 
-const ResetErrorMessage = styled.div`
-  width: ${INPUT_WIDTH + 3}%;
-  display: flex;
-  font-size: 0.72em;
-  font-weight: 500;
-  align-items: flex-start;
-  color: ${colors.warningRed};
-`;
-
 const ForgotPassword = styled.div`
-  margin: 20px auto 0;
   cursor: pointer;
-  color: ${lighten(0.6, "black")};
+  color: ${colors.textGrey};
   text-align: center;
   font-size: 0.9em;
   font-weight: 400;
@@ -116,6 +113,30 @@ const ForgotPassword = styled.div`
   &:active {
     color: ${colors.deltaRed};
   }
+`;
+
+const RegisterLink = styled(NavLink)`
+  margin: 20px auto 0;
+  cursor: pointer;
+  color: ${colors.textGrey};
+  font-size: 0.9em;
+  font-weight: 400;
+  &:hover {
+    color: ${lighten(0.6, colors.black)};
+  }
+
+  &:active {
+    color: ${colors.deltaRed};
+  }
+`;
+
+const DividOr = styled.span`
+  margin: 15px 0px;
+`;
+
+const CleverIcon = styled.span`
+  color: ${colors.cleverBlue};
+  font-weight: bold;
 `;
 
 class Login extends React.Component {
@@ -131,7 +152,9 @@ class Login extends React.Component {
   };
 
   googleLogin = accessToken => {
-    this.props.logUserIn(null, null, accessToken);
+    this.props.logUserIn(null, null, accessToken).then(resp => {
+      this.props.history.push("/");
+    });
   };
 
   handleUpdate = (e, key) => {
@@ -158,10 +181,6 @@ class Login extends React.Component {
 
   handlePasswordChangeUpdate = e => {
     this.handleUpdate(e, "passwordChange");
-  };
-
-  handlePasswordConfirmUpdate = e => {
-    this.handleUpdate(e, "passwordConfirm");
   };
 
   handleResetEmailChange = e => {
@@ -221,16 +240,36 @@ class Login extends React.Component {
   };
 
   render() {
-    const { errors, isPasswordReset } = this.props;
+    const { errors } = this.props;
 
     let errorNode = null;
     if (errors.loginError) {
-      errorNode = errors.loginError.text;
+      errorNode = errors.loginError;
     }
 
-    const baseLogin = (
-      <LoginFormContainer>
-        <LoginHeader>Login with Clarify</LoginHeader>
+    const URL =
+      "https://clever.com/oauth/authorize?" +
+      "response_type=code" +
+      "&redirect_uri=" +
+      encodeURIComponent(CLEVER_REDIRECT_URL) +
+      "&client_id=" +
+      CLEVER_CLIENT_ID +
+      // IMPORTANT: We use this in the demo to always send the user to log in via the Clever SSO demo district. In your app, remove this!
+      "&district_id=5b2ad81a709e300001e2cd7a";
+
+    return (
+      <AuthFormContainer>
+        <Error>{errorNode}</Error>
+        <LoginHeader>Log in with:</LoginHeader>
+        <IntegrationContainer>
+          <GoogleAuth
+            type="login"
+            onSuccess={this.googleLogin}
+            onFailure={err => console.log(err)}
+          />
+        </IntegrationContainer>
+        <DividOr>or</DividOr>
+        <LoginHeader>Clarify</LoginHeader>
         <LoginForm onSubmit={this.initiateClarifyLogin}>
           <LoginInput
             type="text"
@@ -248,9 +287,6 @@ class Login extends React.Component {
           />
           <Button>Log in</Button>
         </LoginForm>
-        <LoginHeader>Login with Google</LoginHeader>
-        <GoogleAuth onSuccess={this.googleLogin} onFailure={err => console.log(err)} />
-
         <ForgotPassword onClick={this.toggleResetEmailContainer}>Forgot password?</ForgotPassword>
         <ResetEmailContainer pose={this.state.resetEmailOpen ? "open" : "closed"}>
           <LoginInput
@@ -262,44 +298,18 @@ class Login extends React.Component {
             Submit Email
           </Button>
         </ResetEmailContainer>
-        <Error>{errorNode}</Error>
         <LoginHelperText>
-          This should be the same account you use to login with <strong>Illuminate</strong>.
+          If you're coming from Alpha Schools, you can use Google to sign in.
           <br />
           Contact your system administrator if you need account information.
           <br />
-          Still not sure? Reach out to{" "}
+          Still not sure? Reach out to
           <strong>
-            <EmailLink href="mailto:help@clarify.school">help@clarify.school</EmailLink>.
+            <EmailLink href="mailto:help@clarify.school"> help@clarify.school</EmailLink>.
           </strong>
         </LoginHelperText>
-      </LoginFormContainer>
+      </AuthFormContainer>
     );
-
-    const passwordReset = (
-      <LoginFormContainer>
-        <LoginForm onSubmit={this.handleResetSubmit}>
-          <LoginHeader>Reset Password</LoginHeader>
-          <LoginInput
-            type="password"
-            id="password-change"
-            placeholder="Password"
-            value={this.state.passwordChange}
-            onChange={this.handlePasswordChangeUpdate}
-          />
-          <LoginInput
-            type="password"
-            id="password-confirm"
-            placeholder="Confirm Password"
-            value={this.state.passwordConfirm}
-            onChange={this.handlePasswordConfirmUpdate}
-          />
-          <ResetErrorMessage>{this.state.passwordResetError}</ResetErrorMessage>
-          <Button disabled={!this.state.validResetPassword}>Submit</Button>
-        </LoginForm>
-      </LoginFormContainer>
-    );
-    return <div style={{ margin: "5vh auto" }}>{isPasswordReset ? passwordReset : baseLogin}</div>;
   }
 }
 
