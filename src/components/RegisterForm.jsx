@@ -1,7 +1,8 @@
 import React from "react";
 import queryString from "query-string";
 import styled from "styled-components";
-import { darken } from "polished";
+import { lighten, darken } from "polished";
+import { NavLink } from "react-router-dom";
 
 import { AuthFormContainer, ThirdPartyLoginButton } from "./PatternLibrary";
 import { colors } from "./PatternLibrary/constants";
@@ -32,6 +33,21 @@ const CleverLink = styled.a`
 const CleverIcon = styled.span`
   color: ${colors.cleverBlue};
   font-weight: bold;
+`;
+
+const LogInLink = styled(NavLink)`
+  margin: 20px auto 0;
+  cursor: pointer;
+  color: ${colors.textGrey};
+  font-size: 0.9em;
+  font-weight: 400;
+  &:hover {
+    color: ${lighten(0.6, colors.black)};
+  }
+
+  &:active {
+    color: ${colors.deltaRed};
+  }
 `;
 
 class RegisterForm extends React.Component {
@@ -67,13 +83,14 @@ class RegisterForm extends React.Component {
         <IntegrationContainer>
           <GoogleAuth
             type="register"
-            callback={syncUserWithGoogleClassroom}
+            onSuccess={syncUserWithGoogleClassroom}
             onFailure={err => console.log(err)}
           />
           <CleverLink href={URL}>
             <ThirdPartyLoginButton noNav copy="Clever" icon={<CleverIcon>C</CleverIcon>} />
           </CleverLink>
         </IntegrationContainer>
+        <LogInLink to="/login">Log In</LogInLink>
       </AuthFormContainer>
     );
   }

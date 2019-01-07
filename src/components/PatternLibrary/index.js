@@ -14,7 +14,7 @@ import Logo from "./Logo.js";
 import PageHeading from "./PageHeading.js";
 import SiteNav from "./SiteNav";
 import ThirdPartyLoginButton from "./ThirdPartyLoginButton";
-import NotFound from "./404";
+import NotFound from "./NotFound";
 
 import { colors, effects } from "./constants";
 

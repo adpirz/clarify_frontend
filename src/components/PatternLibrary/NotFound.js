@@ -38,11 +38,6 @@ const NotFound = () => {
       <Styled style={{ fontSize: "3em" }}>
         <h1>404: Page Not Found</h1>
       </Styled>
-      <Styled style={{ fontSize: "10em" }}>
-        <span role="img" aria-label="confused face">
-          😕
-        </span>
-      </Styled>
     </StyledContainer>
   );
 };

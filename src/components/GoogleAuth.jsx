@@ -36,16 +36,16 @@ class GoogleAuth extends React.Component {
           return googleUser.grant({ scope: SCOPES }).then(
             googleUser => {
               console.log(JSON.stringify({ message: "success", value: googleUser }));
-              const { id_token: authorizationToken } = googleUser.getAuthResponse();
-              this.props.callback(authorizationToken);
+              const { access_token: authorizationToken } = googleUser.getAuthResponse();
+              this.props.onSuccess(authorizationToken);
             },
-            function(fail) {
-              alert(JSON.stringify({ message: "fail", value: fail }));
+            function(error) {
+              console.error("Error signing in", error);
             }
           );
         },
-        err => {
-          console.error("Error signing in", err);
+        error => {
+          console.error("Error signing in", error);
         }
       );
   };
@@ -55,12 +55,13 @@ class GoogleAuth extends React.Component {
       .getAuthInstance()
       .signIn()
       .then(
-        res => {
-          this.handleSigninSuccess(res);
+        googleUser => {
+          const { id_token: accessToken } = googleUser.getAuthResponse();
+          this.props.onSuccess(accessToken);
           console.log("Sign-in successful");
         },
-        err => {
-          console.error("Error signing in", err);
+        error => {
+          console.error("Error signing in", error);
         }
       );
   };
