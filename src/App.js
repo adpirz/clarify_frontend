@@ -13,6 +13,7 @@ import {
   LeftNavigation,
   LoginForm,
   PasswordResetForm,
+  RegisterForm,
   Home,
   StudentDetail,
   Reminders,
@@ -78,6 +79,7 @@ class App extends React.Component {
       return (
         <Switch>
           <Route path="/password-reset/" component={PasswordResetForm} />
+          <Route path="/register/" component={RegisterForm} />
           <Route path="/login/" component={LoginForm} />
           <Redirect to="/login" />
         </Switch>

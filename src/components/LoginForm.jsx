@@ -38,7 +38,7 @@ const LoginHeader = styled.h1`
 const IntegrationContainer = styled.div`
   display: flex;
   width: 80%;
-  justify-content: center;
+  justify-content: space-between;
   padding-top: 10px;
 `;
 
@@ -267,6 +267,9 @@ class Login extends React.Component {
             onSuccess={this.googleLogin}
             onFailure={err => console.log(err)}
           />
+          <CleverLink href={URL}>
+            <ThirdPartyLoginButton noNav copy="Clever" icon={<CleverIcon>C</CleverIcon>} />
+          </CleverLink>
         </IntegrationContainer>
         <DividOr>or</DividOr>
         <LoginHeader>Clarify</LoginHeader>
@@ -287,6 +290,7 @@ class Login extends React.Component {
           />
           <Button>Log in</Button>
         </LoginForm>
+        <RegisterLink to="/register">Register</RegisterLink>
         <ForgotPassword onClick={this.toggleResetEmailContainer}>Forgot password?</ForgotPassword>
         <ResetEmailContainer pose={this.state.resetEmailOpen ? "open" : "closed"}>
           <LoginInput
@@ -299,13 +303,13 @@ class Login extends React.Component {
           </Button>
         </ResetEmailContainer>
         <LoginHelperText>
-          If you're coming from Alpha Schools, you can use Google to sign in.
+          This should be the same account you use to login with <strong>Illuminate</strong>.
           <br />
           Contact your system administrator if you need account information.
           <br />
-          Still not sure? Reach out to
+          Still not sure? Reach out to{" "}
           <strong>
-            <EmailLink href="mailto:help@clarify.school"> help@clarify.school</EmailLink>.
+            <EmailLink href="mailto:help@clarify.school">help@clarify.school</EmailLink>.
           </strong>
         </LoginHelperText>
       </AuthFormContainer>
