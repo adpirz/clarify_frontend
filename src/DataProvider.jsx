@@ -82,7 +82,7 @@ export class DataProvider extends React.Component {
       return Promise.resolve();
     }
     this.setState({ cleverLoading: true });
-    return ApiFetcher.post("clever", { code }).then(resp => {
+    return ApiFetcher.post("clever-sync", { code }).then(resp => {
       return this.initializeUser().then(resp => {
         this.setState({ isLoading: true });
         if (resp.status !== 404) {
@@ -137,13 +137,11 @@ export class DataProvider extends React.Component {
     });
   };
 
-  syncUserWithGoogleClassroom = (googleIdToken = null) => {
+  syncUserWithGoogleClassroom = (accessToken, idToken) => {
     this.setState({ isLoading: true });
     let payload = {};
-    if (!googleIdToken) {
-      this.setState({ errors: { ...this.state.errors, loginError: "No google token provided" } });
-    }
-    payload.google_token = googleIdToken;
+    payload.google_access_token = accessToken;
+    payload.google_id_token = idToken;
 
     ApiFetcher.post("google-classroom-sync", payload).then(resp => {
       const newState = {};

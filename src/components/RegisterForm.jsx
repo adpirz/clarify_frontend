@@ -1,5 +1,4 @@
 import React from "react";
-import queryString from "query-string";
 import styled from "styled-components";
 import { lighten, darken } from "polished";
 import { NavLink } from "react-router-dom";
@@ -51,21 +50,8 @@ const LogInLink = styled(NavLink)`
 `;
 
 class RegisterForm extends React.Component {
-  authorizeClever = () => {};
-
-  getOAuthCode = () => {
-    const { search } = this.props.location;
-    const queryParams = queryString.parse(search);
-    return queryParams.code || undefined;
-  };
-
   render() {
-    const code = this.getOAuthCode();
-    const { syncWithClever, syncUserWithGoogleClassroom, user, history } = this.props;
-
-    if (code && !user) {
-      syncWithClever(code).then(() => history.push("/"));
-    }
+    const { syncUserWithGoogleClassroom } = this.props;
 
     const URL =
       "https://clever.com/oauth/authorize?" +
@@ -98,10 +84,9 @@ class RegisterForm extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({ syncUserWithGoogleClassroom, user, setLoginError, startCleverOAuth }) => (
+    {({ syncUserWithGoogleClassroom, user, setLoginError }) => (
       <RegisterForm
         syncUserWithGoogleClassroom={syncUserWithGoogleClassroom}
-        startCleverOAuth={startCleverOAuth}
         user={user}
         setLoginError={setLoginError}
         {...props}

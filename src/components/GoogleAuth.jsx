@@ -35,9 +35,11 @@ class GoogleAuth extends React.Component {
             "https://www.googleapis.com/auth/classroom.rosters.readonly";
           return googleUser.grant({ scope: SCOPES }).then(
             googleUser => {
-              console.log(JSON.stringify({ message: "success", value: googleUser }));
-              const { access_token: authorizationToken } = googleUser.getAuthResponse();
-              this.props.onSuccess(authorizationToken);
+              const {
+                access_token: authorizationToken,
+                id_token: idToken,
+              } = googleUser.getAuthResponse();
+              this.props.onSuccess(authorizationToken, idToken);
             },
             function(error) {
               console.error("Error signing in", error);

@@ -1,5 +1,6 @@
 import map from "lodash/map";
 import React from "react";
+import queryString from "query-string";
 import { Route, Switch, withRouter, Redirect } from "react-router-dom";
 import styled from "styled-components";
 import posed, { PoseGroup } from "react-pose";
@@ -69,10 +70,20 @@ class App extends React.Component {
     }
   };
 
+  getOAuthCode = () => {
+    const { search } = this.props.location;
+    const queryParams = queryString.parse(search);
+    return queryParams.code || undefined;
+  };
+
   getPageBody = () => {
-    const { isLoading, user } = this.props;
+    const { isLoading, user, startCleverOAuth, history } = this.props;
     if (isLoading) {
       return <Loading />;
+    }
+    const code = this.getOAuthCode();
+    if (code && !user) {
+      startCleverOAuth(code).then(() => history.push("/"));
     }
 
     if (!user) {
@@ -135,13 +146,14 @@ class App extends React.Component {
 
 export default withRouter(props => (
   <DataConsumer>
-    {({ isLoading, user, errors, logUserOut, messages }) => (
+    {({ isLoading, user, errors, logUserOut, messages, startCleverOAuth }) => (
       <App
         user={user}
         logUserOut={logUserOut}
         isLoading={isLoading}
         errors={errors}
         messages={messages}
+        startCleverOAuth={startCleverOAuth}
         {...props}
       />
     )}
