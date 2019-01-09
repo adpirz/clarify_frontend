@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { lighten, darken } from "polished";
 import { NavLink } from "react-router-dom";
 
-import { AuthFormContainer, ThirdPartyLoginButton } from "./PatternLibrary";
+import { AuthFormContainer, ThirdPartyLoginButton, Error } from "./PatternLibrary";
 import { colors } from "./PatternLibrary/constants";
 import { GoogleAuth } from ".";
 import { DataConsumer } from "../DataProvider";
@@ -51,7 +51,12 @@ const LogInLink = styled(NavLink)`
 
 class RegisterForm extends React.Component {
   render() {
-    const { syncUserWithGoogleClassroom } = this.props;
+    const { syncUserWithGoogleClassroom, errors } = this.props;
+
+    let errorNode = null;
+    if (errors.loginError) {
+      errorNode = errors.loginError;
+    }
 
     const URL =
       "https://clever.com/oauth/authorize?" +
@@ -65,6 +70,7 @@ class RegisterForm extends React.Component {
 
     return (
       <AuthFormContainer>
+        <Error>{errorNode}</Error>
         <h1>Register with</h1>
         <IntegrationContainer>
           <GoogleAuth
@@ -84,11 +90,11 @@ class RegisterForm extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({ syncUserWithGoogleClassroom, user, setLoginError }) => (
+    {({ syncUserWithGoogleClassroom, user, errors }) => (
       <RegisterForm
         syncUserWithGoogleClassroom={syncUserWithGoogleClassroom}
         user={user}
-        setLoginError={setLoginError}
+        errors={errors}
         {...props}
       />
     )}
