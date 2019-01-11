@@ -30,14 +30,19 @@ class GoogleAuth extends React.Component {
       .signIn()
       .then(
         googleUser => {
+          // Might seem weird to have the emails scope here, but it means the returned token
+          // will support the BE lookup of the teacher's email.
           const SCOPES =
             "https://www.googleapis.com/auth/classroom.courses.readonly " +
-            "https://www.googleapis.com/auth/classroom.rosters.readonly";
+            "https://www.googleapis.com/auth/classroom.rosters.readonly " +
+            "https://www.googleapis.com/auth/classroom.profile.emails";
           return googleUser.grant({ scope: SCOPES }).then(
             googleUser => {
-              console.log(JSON.stringify({ message: "success", value: googleUser }));
-              const { access_token: authorizationToken } = googleUser.getAuthResponse();
-              this.props.onSuccess(authorizationToken);
+              const {
+                access_token: authorizationToken,
+                id_token: idToken,
+              } = googleUser.getAuthResponse();
+              this.props.onSuccess(authorizationToken, idToken);
             },
             function(error) {
               console.error("Error signing in", error);
@@ -78,6 +83,8 @@ class GoogleAuth extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({ GAPI_CLIENT_ID }) => <GoogleAuth GAPI_CLIENT_ID={GAPI_CLIENT_ID} {...props} />}
+    {({ GAPI_CLIENT_ID, setLoginError }) => (
+      <GoogleAuth setLoginError={setLoginError} GAPI_CLIENT_ID={GAPI_CLIENT_ID} {...props} />
+    )}
   </DataConsumer>
 );

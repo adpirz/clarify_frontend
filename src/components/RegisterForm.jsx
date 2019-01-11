@@ -1,10 +1,9 @@
 import React from "react";
-import queryString from "query-string";
 import styled from "styled-components";
 import { lighten, darken } from "polished";
 import { NavLink } from "react-router-dom";
 
-import { AuthFormContainer, ThirdPartyLoginButton } from "./PatternLibrary";
+import { AuthFormContainer, ThirdPartyLoginButton, Error } from "./PatternLibrary";
 import { colors } from "./PatternLibrary/constants";
 import { GoogleAuth } from ".";
 import { DataConsumer } from "../DataProvider";
@@ -51,20 +50,12 @@ const LogInLink = styled(NavLink)`
 `;
 
 class RegisterForm extends React.Component {
-  authorizeClever = () => {};
-
-  getOAuthCode = () => {
-    const { search } = this.props.location;
-    const queryParams = queryString.parse(search);
-    return queryParams.code || undefined;
-  };
-
   render() {
-    const code = this.getOAuthCode();
-    const { syncWithClever, syncUserWithGoogleClassroom, user, history } = this.props;
+    const { syncUserWithGoogleClassroom, errors } = this.props;
 
-    if (code && !user) {
-      syncWithClever(code).then(() => history.push("/"));
+    let errorNode = null;
+    if (errors.loginError) {
+      errorNode = errors.loginError;
     }
 
     const URL =
@@ -79,6 +70,7 @@ class RegisterForm extends React.Component {
 
     return (
       <AuthFormContainer>
+        <Error>{errorNode}</Error>
         <h1>Register with</h1>
         <IntegrationContainer>
           <GoogleAuth
@@ -98,12 +90,11 @@ class RegisterForm extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({ syncUserWithGoogleClassroom, user, setLoginError, startCleverOAuth }) => (
+    {({ syncUserWithGoogleClassroom, user, errors }) => (
       <RegisterForm
         syncUserWithGoogleClassroom={syncUserWithGoogleClassroom}
-        startCleverOAuth={startCleverOAuth}
         user={user}
-        setLoginError={setLoginError}
+        errors={errors}
         {...props}
       />
     )}

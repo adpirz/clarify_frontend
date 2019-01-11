@@ -1,18 +1,20 @@
 import map from "lodash/map";
 import React from "react";
+import queryString from "query-string";
 import { Route, Switch, withRouter, Redirect } from "react-router-dom";
 import styled from "styled-components";
 import posed, { PoseGroup } from "react-pose";
 import get from "lodash/get";
 
 import { DataConsumer } from "./DataProvider";
-import { Error, Message, Loading, SiteNav, NotFound } from "./components/PatternLibrary";
+import { Error, Message, Loading, SiteNav } from "./components/PatternLibrary";
 import { fontFamilies, layout } from "./components/PatternLibrary/constants";
 
 import {
   LeftNavigation,
   LoginForm,
   PasswordResetForm,
+  RegisterForm,
   Home,
   StudentDetail,
   Reminders,
@@ -68,17 +70,28 @@ class App extends React.Component {
     }
   };
 
+  getOAuthCode = () => {
+    const { search } = this.props.location;
+    const queryParams = queryString.parse(search);
+    return queryParams.code || undefined;
+  };
+
   getPageBody = () => {
-    const { isLoading, user } = this.props;
+    const { isLoading, user, startCleverOAuth, history } = this.props;
     if (isLoading) {
       return <Loading />;
+    }
+    const code = this.getOAuthCode();
+    if (code && !user) {
+      startCleverOAuth(code).then(() => history.push("/"));
     }
 
     if (!user) {
       return (
         <Switch>
-          <Route path="/password-reset/" component={PasswordResetForm} />
-          <Route path="/login/" component={LoginForm} />
+          <Route path="/password-reset" component={PasswordResetForm} />
+          <Route path="/register" component={RegisterForm} />
+          <Route path="/login" component={LoginForm} />
           <Redirect to="/login" />
         </Switch>
       );
@@ -86,19 +99,19 @@ class App extends React.Component {
 
     return (
       <Switch>
-        <Route path="/password-reset/" render={props => <LoginForm isPasswordReset {...props} />} />
+        <Route path="/password-reset" render={props => <LoginForm isPasswordReset {...props} />} />
         <Route
-          render={({ location }) => (
+          render={() => (
             <PageBody>
               <LeftNavigation />
               <MainContent>
                 <PoseGroup animateOnMount>
-                  <RouteContainer key={location.key || "start"}>
-                    <Switch location={location}>
+                  <RouteContainer key="router">
+                    <Switch>
                       <Route path="/" exact component={Home} />
                       <Route path="/student/:studentID" component={StudentDetail} />
-                      <Route path="/reminders/" component={Reminders} />
-                      <Route component={NotFound} />
+                      <Route path="/reminders" component={Reminders} />
+                      <Redirect to="/" />
                     </Switch>
                   </RouteContainer>
                 </PoseGroup>
@@ -133,13 +146,14 @@ class App extends React.Component {
 
 export default withRouter(props => (
   <DataConsumer>
-    {({ isLoading, user, errors, logUserOut, messages }) => (
+    {({ isLoading, user, errors, logUserOut, messages, startCleverOAuth }) => (
       <App
         user={user}
         logUserOut={logUserOut}
         isLoading={isLoading}
         errors={errors}
         messages={messages}
+        startCleverOAuth={startCleverOAuth}
         {...props}
       />
     )}

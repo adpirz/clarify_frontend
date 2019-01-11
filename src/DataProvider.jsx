@@ -16,7 +16,7 @@ export class DataProvider extends React.Component {
 
     this.state = {
       user: null,
-      isLoading: false,
+      isLoading: true,
       cleverLoading: false,
       resetToken: null,
       errors: {
@@ -43,9 +43,9 @@ export class DataProvider extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({ isLoading: true });
     this.initializeUser().then(resp => {
       if (resp.status !== 404) {
+        this.setState({ isLoading: true });
         this.hydrateUserData();
       } else {
         this.setState({ isLoading: false });
@@ -82,7 +82,7 @@ export class DataProvider extends React.Component {
       return Promise.resolve();
     }
     this.setState({ cleverLoading: true });
-    return ApiFetcher.post("clever", { code }).then(resp => {
+    return ApiFetcher.post("clever-sync", { code }).then(resp => {
       return this.initializeUser().then(resp => {
         this.setState({ isLoading: true });
         if (resp.status !== 404) {
@@ -137,24 +137,29 @@ export class DataProvider extends React.Component {
     });
   };
 
-  syncUserWithGoogleClassroom = (googleIdToken = null) => {
+  syncUserWithGoogleClassroom = (accessToken, idToken) => {
     this.setState({ isLoading: true });
     let payload = {};
-    if (!googleIdToken) {
-      this.setState({ errors: { ...this.state.errors, loginError: "No google token provided" } });
-    }
-    payload.google_token = googleIdToken;
+    payload.google_access_token = accessToken;
+    payload.google_id_token = idToken;
 
-    ApiFetcher.post("google-classroom-sync", payload).then(resp => {
-      const newState = {};
-      if (resp.data) {
-        console.debug(resp.data);
-        // newState.user = resp.data;
-        // this.hydrateUserData();
+    return ApiFetcher.post("google-classroom-sync", payload).then(resp => {
+      const newState = { isLoading: false };
+      if (resp.status === 201) {
+        return this.initializeUser().then(resp => {
+          if (resp.status !== 404) {
+            return this.hydrateUserData();
+          } else {
+            const loginError =
+              "There was a problem retrieving your new account. Try refreshing the page.";
+            newState.errors = { ...this.state.errors, loginError };
+            return Promise.resolve();
+          }
+        });
       } else {
-        const loginError = "There was a problem syncing your data";
+        const loginError =
+          "There was a problem syncing your data. Reach out to help@clarify.school and we'll look into it.";
         newState.errors = { ...this.state.errors, loginError };
-        newState.isLoading = false;
       }
       this.setState(newState);
     });
