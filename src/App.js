@@ -19,10 +19,6 @@ import {
 } from "./components";
 
 import { SiteNav } from "./components/PatternLibrary";
-<<<<<<< HEAD
-=======
-import { LeftNavigation, Home, StudentDetail } from "./components";
->>>>>>> added StudentDetail route
 
 class App extends React.Component {
   componentDidMount = () => {
@@ -118,29 +114,7 @@ class App extends React.Component {
           </Grid>
         </Container>
       );
-<<<<<<< HEAD
     };
-=======
-
-    return (
-      <Container fluid>
-        <SiteNav user={user} logUserOut={logUserOut} />
-        <Grid>
-          <Grid.Row>
-            <Grid.Column width={4}>
-              <LeftNavigation />
-            </Grid.Column>
-            <Grid.Column width={12}>
-              <Switch>
-                <Route path="/" exact component={Home} />
-                <Route component={StudentDetail} />
-              </Switch>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Container>
-    );
->>>>>>> added StudentDetail route
   };
 }
 
