@@ -5,8 +5,7 @@ import get from "lodash/get";
 import { Container, Grid, Segment, Loader } from "semantic-ui-react";
 
 import { DataConsumer } from "./DataProvider";
-import { Error, Message, Loading, SiteNav } from "./components/PatternLibrary";
-import { fontFamilies, layout } from "./components/PatternLibrary/constants";
+import { Loading, SiteNav } from "./components/PatternLibrary";
 
 import {
   LeftNavigation,
@@ -17,8 +16,6 @@ import {
   StudentDetail,
   Reminders,
 } from "./components";
-
-import { SiteNav } from "./components/PatternLibrary";
 
 class App extends React.Component {
   componentDidMount = () => {
