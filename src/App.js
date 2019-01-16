@@ -49,6 +49,8 @@ class App extends React.Component {
 
   getPageBody = () => {
     const { isLoading, user, startCleverOAuth, history } = this.props;
+
+    // Loader
     if (isLoading) {
       return <Loading />;
     }
@@ -56,62 +58,48 @@ class App extends React.Component {
     if (code && !user) {
       startCleverOAuth(code).then(() => history.push("/"));
     }
-    isPasswordReset = () => {
-      if (!this.props.location) return false;
-      return this.props.location.pathname === "/password-reset/";
-    };
 
-    getResetToken = () => {
-      const token = this.props.locaton.search.match(/token=([\d\w]+)/);
-      return token ? token[1] : undefined;
-    };
-
-    render = () => {
-      const { user, logUserOut, isLoading } = this.props;
-      if (!user) {
-        return (
-          <Switch>
-            <Route path="/password-reset" component={PasswordResetForm} />
-            <Route path="/register" component={RegisterForm} />
-            <Route path="/login" component={LoginForm} />
-            <Redirect to="/login" />
-          </Switch>
-        );
-      }
-
-      if (isLoading) {
-        return (
-          <div style={{ paddingTop: "50px" }}>
-            <Container>
-              <Segment placeholder size="massive">
-                <Loader active>Loading</Loader>
-              </Segment>
-            </Container>
-          </div>
-        );
-      }
-
+    // Needs to Login
+    if (!user) {
       return (
-        <Container fluid>
-          <SiteNav user={user} logUserOut={logUserOut} />
-          <Grid>
-            <Grid.Row>
-              <Grid.Column width={4}>
-                <LeftNavigation />
-              </Grid.Column>
-              <Grid.Column width={12}>
-                <Switch>
-                  <Route path="/" exact component={Home} />
-                  <Route path="/student/:studentID" component={StudentDetail} />
-                  <Route path="/reminders" component={Reminders} />
-                  <Redirect to="/" />
-                </Switch>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
-        </Container>
+        <Switch>
+          <Route path="/password-reset" component={PasswordResetForm} />
+          <Route path="/register" component={RegisterForm} />
+          <Route path="/login" component={LoginForm} />
+          <Redirect to="/login" />
+        </Switch>
       );
-    };
+    }
+
+    // Home page
+    return (
+      <Grid>
+        <Grid.Row>
+          <Grid.Column width={4}>
+            <LeftNavigation />
+          </Grid.Column>
+          <Grid.Column width={12}>
+            <Switch>
+              <Route path="/" exact component={Home} />
+              <Route path="/student/:studentID" component={StudentDetail} />
+              <Route path="/reminders" component={Reminders} />
+              <Redirect to="/" />
+            </Switch>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+    );
+  };
+
+  render = () => {
+    const { user, errorMessages, messages, logUserOut } = this.props;
+
+    return (
+      <Container fluid>
+        <SiteNav user={user} logUserOut={logUserOut} />
+        {this.getPageBody()}
+      </Container>
+    );
   };
 }
 
