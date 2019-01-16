@@ -17,7 +17,7 @@ import {
   Card,
   Transition,
   Form,
-  Container,
+  Button,
   Checkbox,
 } from "semantic-ui-react";
 
@@ -242,7 +242,10 @@ class Home extends React.Component {
                             <Form.Field>
                               <Checkbox toggle label="Publicly visible" />
                             </Form.Field>
-                            <Form.Button>Submit</Form.Button>
+                            <div>
+                              <Button>Submit</Button>
+                              <Button>Remind Me</Button>
+                            </div>
                           </Form>
                         </Segment>
                       ) : null}
