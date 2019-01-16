@@ -16,6 +16,7 @@ import {
   StudentDetail,
   Reminders,
 } from "./components";
+import posed, { PoseGroup } from "react-pose";
 
 class App extends React.Component {
   componentDidMount = () => {
@@ -48,7 +49,7 @@ class App extends React.Component {
   };
 
   getPageBody = () => {
-    const { isLoading, user, startCleverOAuth, history } = this.props;
+    const { isLoading, user, startCleverOAuth, history, location } = this.props;
 
     // Loader
     if (isLoading) {
@@ -71,6 +72,17 @@ class App extends React.Component {
       );
     }
 
+    const RouteContainer = posed.div({
+      enter: { opacity: 1, delay: 300, beforeChildren: true },
+      exit: { opacity: 0 },
+    });
+
+    const locationKey = location.path
+      ? location.path
+          .split("/")
+          .slice(0, 2)
+          .join("-")
+      : "start";
     // Home page
     return (
       <Grid>
@@ -78,14 +90,16 @@ class App extends React.Component {
           <Grid.Column width={4}>
             <LeftNavigation />
           </Grid.Column>
-          <Grid.Column width={12}>
-            <Switch>
-              <Route path="/" exact component={Home} />
-              <Route path="/student/:studentID" component={StudentDetail} />
-              <Route path="/reminders" component={Reminders} />
-              <Redirect to="/" />
-            </Switch>
-          </Grid.Column>
+          <PoseGroup>
+            <Grid.Column as={RouteContainer} key={locationKey} width={12}>
+              <Switch key={locationKey}>
+                <Route path="/" exact component={Home} />
+                <Route path="/student/:studentID" component={StudentDetail} />
+                <Route path="/reminders" component={Reminders} />
+                <Redirect to="/" />
+              </Switch>
+            </Grid.Column>
+          </PoseGroup>
         </Grid.Row>
       </Grid>
     );

@@ -3,8 +3,10 @@ import map from "lodash/map";
 import filter from "lodash/filter";
 import orderBy from "lodash/orderBy";
 import reduce from "lodash/reduce";
+import capitalize from "lodash/capitalize";
 import without from "lodash/without";
 import { NavLink } from "react-router-dom";
+import posed, { PoseGroup } from "react-pose";
 
 import {
   Segment,
@@ -16,6 +18,7 @@ import {
   Transition,
   Form,
   Container,
+  Checkbox,
 } from "semantic-ui-react";
 
 import { ActionCard, DeltaCard } from "../components/PatternLibrary";
@@ -75,6 +78,19 @@ class Home extends React.Component {
   getStudentDeltaList = studentViewModel => {
     const { actionsAndDeltas, student } = studentViewModel;
 
+    const staggerDuration = 60;
+    const DeltaPosed = posed.div({
+      enter: {
+        x: 0,
+        opacity: 1,
+        delay: ({ i }) => i * staggerDuration,
+      },
+      exit: {
+        x: -20,
+        opacity: 0,
+      },
+    });
+
     if (!actionsAndDeltas.length) {
       return <Segment placeholder>Add an action to this timeline</Segment>;
     }
@@ -85,8 +101,7 @@ class Home extends React.Component {
           <ActionCard showTitle={false} student={student} action={node} key={node.action_id} />
         );
       } else {
-        debugger;
-        return <DeltaCard delta={node} key={node.delta_id} />;
+        return <DeltaCard i={i} as={DeltaPosed} delta={node} key={node.delta_id} />;
       }
     });
   };
@@ -134,9 +149,26 @@ class Home extends React.Component {
       return null;
     }
 
+    const transition = { duration: 150 };
+    const HomePosed = posed.div({
+      enter: {
+        opacity: 1,
+        beforeChildren: true,
+        staggerChildren: 40,
+        transition,
+      },
+      exit: {
+        opacity: 0,
+        transition,
+      },
+    });
+
+    const RowPosed = posed.div({ enter: { opacity: 1, x: 0 }, exit: { opacity: 0, x: -20 } });
+
     return (
-      <Grid container padded columns={1}>
-        <Grid.Row>
+      <Grid as={HomePosed} container padded columns={1}>
+        <Grid.Row as={RowPosed}>
+          {/* Header for Home Page  */}
           <Grid.Column>
             <Menu color="red" inverted pointing size="massive">
               <Menu.Item header>
@@ -145,23 +177,23 @@ class Home extends React.Component {
                 </Header>
               </Menu.Item>
               <Menu.Menu position="right">
-                <Menu.Item>
-                  <Icon name="sticky note" />
-                  Note
-                </Menu.Item>
-                <Menu.Item>
-                  <Icon name="phone" />
-                  Call
-                </Menu.Item>
-                <Menu.Item>
-                  <Icon name="chat" />
-                  Message
-                </Menu.Item>
+                {[
+                  { label: "Note", iconName: "sticky note" },
+                  { label: "Call", iconName: "phone" },
+                  { label: "Message", iconName: "chat" },
+                ].map(({ label, iconName }) => (
+                  <Menu.Item key={label}>
+                    <Icon name={iconName} />
+                    {label}
+                  </Menu.Item>
+                ))}
               </Menu.Menu>
             </Menu>
           </Grid.Column>
         </Grid.Row>
-        <Grid.Row>
+
+        {/* Container for all homepage student card sets */}
+        <Grid.Row as={RowPosed}>
           <Grid.Column>
             {map(studentViewModels.slice(0, 3), (studentViewModel, i) => {
               const { student } = studentViewModel;
@@ -197,23 +229,27 @@ class Home extends React.Component {
                       )}
                     </Menu.Menu>
                   </Menu>
-                  <Transition.Group animation="slide down">
-                    {activeStudent ? (
-                      <Segment inverted attached="bottom">
-                        <Form inverted>
-                          <Form.Field
-                            control="textarea"
-                            label="Note"
-                            placeholder="I noticed that...."
-                          />
-                          <Form.Field control="input" type="checkbox" label="Publicly visible?" />
-                        </Form>
-                      </Segment>
-                    ) : null}
-                  </Transition.Group>
                   <Segment basic attached="bottom">
-                    <Card.Group itemsPerRow={3}>
-                      {this.getStudentDeltaList(studentViewModel)}
+                    <Transition.Group animation="slide down">
+                      {activeStudent ? (
+                        <Segment raised inverted>
+                          <Form inverted>
+                            <Form.Field
+                              control="textarea"
+                              label={capitalize(this.state.type)}
+                              placeholder="Enter text here"
+                            />
+                            <Form.Field>
+                              <Checkbox toggle label="Publicly visible" />
+                            </Form.Field>
+                            <Form.Button>Submit</Form.Button>
+                          </Form>
+                        </Segment>
+                      ) : null}
+                    </Transition.Group>
+
+                    <Card.Group className="blongo" itemsPerRow={3}>
+                      <PoseGroup>{this.getStudentDeltaList(studentViewModel)}</PoseGroup>
                     </Card.Group>
                   </Segment>
                 </Segment>

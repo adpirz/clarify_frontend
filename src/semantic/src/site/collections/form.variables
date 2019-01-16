@@ -1,3 +1,6 @@
 /*******************************
     User Variable Overrides
 *******************************/
+
+@invertedInputColor: rgba(0, 0, 0, 0.87);
+@inputFocusColor: darken(@invertedInputColor, 10%);

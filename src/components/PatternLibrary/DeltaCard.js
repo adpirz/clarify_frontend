@@ -11,7 +11,7 @@ const LighterTextSpan = styled.span`
   }
 `;
 
-const DeltaCard = ({ delta, selectable, isSelected }) => {
+const DeltaCard = ({ delta, selectable, isSelected, as, ...props }) => {
   const { cardHeader, cardMeta, cardDescription, cardExtra, popup } =
     delta.type === "missing" ? processMissing(delta) : processCategory(delta);
 
@@ -23,7 +23,7 @@ const DeltaCard = ({ delta, selectable, isSelected }) => {
   );
 
   return (
-    <Card raised>
+    <Card as={as} raised {...props}>
       <Card.Content>
         {popup ? popup(label) : null}
         <Card.Header>{cardHeader}</Card.Header>
