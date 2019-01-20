@@ -99,7 +99,6 @@ class LeftNavigation extends React.Component {
   }
 
   render() {
-    const { students } = this.props;
     const { filteredStudents } = this.state;
 
     return (

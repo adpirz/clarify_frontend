@@ -2,7 +2,7 @@ import React from "react";
 import queryString from "query-string";
 import { Route, Switch, withRouter, Redirect } from "react-router-dom";
 import get from "lodash/get";
-import { Container, Grid, Segment, Loader } from "semantic-ui-react";
+import { Container, Grid } from "semantic-ui-react";
 
 import { DataConsumer } from "./DataProvider";
 import { Loading, SiteNav } from "./components/PatternLibrary";
@@ -106,7 +106,7 @@ class App extends React.Component {
   };
 
   render = () => {
-    const { user, errorMessages, messages, logUserOut } = this.props;
+    const { user, logUserOut } = this.props;
 
     return (
       <Container fluid>

@@ -103,7 +103,6 @@ const DeltaCard = ({ delta, selectable, isSelected, as, ...props }) => {
       category_average_after: categoryAverageAfter,
       sort_date: sortDate,
       context_record: {
-        category_id: categoryId,
         category_name: categoryName,
         total_points_possible: totalPointsPossible,
         average_points_earned: averagePointsEarned,
