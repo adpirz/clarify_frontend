@@ -92,7 +92,11 @@ class Home extends React.Component {
     });
 
     if (!actionsAndDeltas.length) {
-      return <Segment placeholder>Add an action to this timeline</Segment>;
+      return (
+        <Segment key="placeholder" placeholder>
+          Add an action to this timeline
+        </Segment>
+      );
     }
 
     return map(actionsAndDeltas.slice(0, 3), (node, i) => {
