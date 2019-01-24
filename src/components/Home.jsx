@@ -180,18 +180,6 @@ class Home extends React.Component {
                   Next Steps
                 </Header>
               </Menu.Item>
-              <Menu.Menu position="right">
-                {[
-                  { label: "Note", iconName: "sticky note" },
-                  { label: "Call", iconName: "phone" },
-                  { label: "Message", iconName: "chat" },
-                ].map(({ label, iconName }) => (
-                  <Menu.Item key={label}>
-                    <Icon name={iconName} />
-                    {label}
-                  </Menu.Item>
-                ))}
-              </Menu.Menu>
             </Menu>
           </Grid.Column>
         </Grid.Row>
