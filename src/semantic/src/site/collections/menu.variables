@@ -10,5 +10,4 @@
 @activeItemBackground: darken(@background, 20%);
 @activeHoverItemBackground: lighten(@activeItemBackground, 10%);
 
-
 @invertedArrowActiveColor: #926aff;

@@ -3,9 +3,25 @@ import map from "lodash/map";
 import filter from "lodash/filter";
 import findIndex from "lodash/findIndex";
 import { NavLink, withRouter } from "react-router-dom";
-import { Menu, Input, Label, Divider, Header } from "semantic-ui-react";
+import { Menu, Input, Label, Divider, Header, List, Segment } from "semantic-ui-react";
 
 import { DataConsumer } from "../DataProvider";
+import styled from "styled-components";
+
+const OverflowMenu = styled.div`
+  height: 100%;
+  overflow-y: scroll;
+`;
+
+const MenuWithHeight = styled.div`
+  height: calc(100vh - 6em);
+  overflow: hidden;
+`;
+
+const StyledStudent = styled(NavLink)`
+  color: ${props => (props.isActive ? "white !important" : "inherit")};
+  font-size: 1em !important;
+`;
 
 class LeftNavigation extends React.Component {
   constructor(props) {
@@ -102,7 +118,7 @@ class LeftNavigation extends React.Component {
     const { filteredStudents } = this.state;
 
     return (
-      <Menu borderless fluid size="huge" vertical>
+      <Menu as={MenuWithHeight} borderless fluid size="huge" vertical>
         {[{ name: "Next Steps", to: "/" }, { name: "Reminders", to: "/reminders" }].map(route => (
           <Menu.Item key={route.name} as={NavLink} activeClassName="active" exact to={route.to}>
             <Menu.Header>{route.name}</Menu.Header>
@@ -121,26 +137,24 @@ class LeftNavigation extends React.Component {
             placeholder="Search for students..."
           />
         </Menu.Item>
-        {map(filteredStudents, (s, i, arr) => {
-          const highlight = s.id === this.state.currentSelection;
-          return (
-            <Menu.Item
-              as={NavLink}
-              onClick={this.resetSearch}
-              to={`/student/${s.id}`}
-              activeClassName="active"
-              active={Boolean(highlight)}
-              key={s.id}
-            >
-              {this.displayStudentName(s)}
-              {highlight ? (
-                <Label size="large" color="teal">
-                  Enter to select
-                </Label>
-              ) : null}
-            </Menu.Item>
-          );
-        })}
+        <Menu.Menu as={OverflowMenu}>
+          {map(filteredStudents, (s, i, arr) => {
+            const highlight = s.id === this.state.currentSelection;
+            return (
+              <Menu.Item
+                as={StyledStudent}
+                onClick={this.resetSearch}
+                to={`/student/${s.id}`}
+                activeClassName="active"
+                active={Boolean(highlight)}
+                key={s.id}
+              >
+                {this.displayStudentName(s)}
+                {highlight ? <Label color="teal">Enter to select</Label> : null}
+              </Menu.Item>
+            );
+          })}
+        </Menu.Menu>
       </Menu>
     );
   }
