@@ -7,9 +7,10 @@ import posed from "react-pose";
 import debounce from "lodash/debounce";
 
 import { DataConsumer } from "../DataProvider";
-import { Error, Button, ThirdPartyLoginButton, AuthFormContainer } from "./PatternLibrary";
+import { Button, ThirdPartyLoginButton, AuthFormContainer } from "./PatternLibrary";
 import { colors, effects } from "./PatternLibrary/constants";
 import { GoogleAuth } from ".";
+import { Message } from "semantic-ui-react";
 
 const CLEVER_CLIENT_ID = process.env.REACT_APP_CLEVER_CLIENT_ID;
 const CLEVER_REDIRECT_URL = process.env.REACT_APP_CLEVER_REDIRECT_URL || "http://localhost:3000";
@@ -259,7 +260,7 @@ class Login extends React.Component {
 
     return (
       <AuthFormContainer>
-        <Error>{errorNode}</Error>
+        <Message warning>{errorNode}</Message>
         <LoginHeader>Log in with:</LoginHeader>
         <IntegrationContainer>
           <GoogleAuth
