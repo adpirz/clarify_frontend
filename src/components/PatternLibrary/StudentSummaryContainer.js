@@ -4,7 +4,7 @@ import sortBy from "lodash/sortBy";
 import map from "lodash/map";
 import filter from "lodash/filter";
 import { NavLink } from "react-router-dom";
-import { Segment, Menu, Header, Icon, Container, Card } from "semantic-ui-react";
+import { Segment, Menu, Header, Icon, Container, Card, Button, Divider } from "semantic-ui-react";
 import { PoseGroup } from "react-pose";
 
 import { PoseGroupItemFactory } from "./Posed";
@@ -18,7 +18,7 @@ const initialState = {
   actionFormOpen: false,
   actionFormType: "",
   actionFormTextValue: "",
-  actionFormDueOn: undefined,
+  actionFormDueOn: "",
   actionFormIsPublic: false,
   actionFormContextDeltaIDs: [],
 };
@@ -67,9 +67,13 @@ export default class StudentSummaryContainer extends React.Component {
     }).then(() => this.setState(initialState));
   };
 
-  handleInput(e) {
+  handleInput = e => {
     this.setState({ actionFormTextValue: e.target.value });
-  }
+  };
+
+  handleDateChange = (e, { value }) => {
+    this.setState({ actionFormDueOn: value });
+  };
 
   toggleContextDeltaSelected = deltaID => {
     const { actionFormContextDeltaIDs } = this.state;
@@ -155,7 +159,7 @@ export default class StudentSummaryContainer extends React.Component {
     );
 
     return (
-      <Segment key={student.student_id} as={Container} fluid basic padded="very">
+      <Segment key={student.student_id} as={Container} fluid basic>
         {containerMenu}
         <Segment
           as={Container}
@@ -173,9 +177,22 @@ export default class StudentSummaryContainer extends React.Component {
                 actionFormDueOn={actionFormDueOn}
                 actionFormOnInput={this.handleInput.bind(this)}
                 onPublicToggleClick={this.togglePublic}
+                onDateChange={this.handleDateChange.bind(this)}
                 as={GroupPosed}
                 setRef={this.setRef}
-                key="actidaf"
+                contextCount={actionFormContextDeltaIDs.length}
+                bottomMenuItems={[
+                  <Button
+                    icon
+                    secondary
+                    labelPosition="left"
+                    onClick={this.toggleFormOpenAndType.bind(this, actionFormType)}
+                  >
+                    <Icon name="arrow circle left" />
+                    Back to Summary
+                  </Button>,
+                ]}
+                key="actionForm"
               >
                 {deltas
                   .filter(d => actionFormContextDeltaIDs.indexOf(d.delta_id) > -1)
@@ -188,6 +205,7 @@ export default class StudentSummaryContainer extends React.Component {
                       popupRef={this.state.popupRef}
                     />
                   ))}
+                {actionFormContextDeltaIDs.length > 0 && <Divider />}
                 {deltas
                   .filter(d => actionFormContextDeltaIDs.indexOf(d.delta_id) === -1)
                   .map(delta => (

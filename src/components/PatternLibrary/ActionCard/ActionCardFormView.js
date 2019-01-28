@@ -15,13 +15,15 @@ import {
   Radio,
   Ref,
   Header,
+  Label,
 } from "semantic-ui-react";
+import { DateInput } from "semantic-ui-calendar-react";
 import styled from "styled-components";
 
 import { ListItemPosedFactory } from "../Posed";
 
 const ListOverflow = styled.div`
-  max-height: 200px;
+  max-height: 210px;
   overflow-y: scroll;
 `;
 /**
@@ -41,6 +43,7 @@ const ActionCardFormView = ({
   onSubmitAction,
   children,
   bottomMenuItems,
+  contextCount,
   ...props
 }) => {
   const disabled = !action && !actionFormType;
@@ -52,7 +55,7 @@ const ActionCardFormView = ({
 
   return (
     <Segment basic {...props}>
-      <Segment attached basic secondary style={{ minHeight: "240px" }}>
+      <Segment attached basic secondary style={{ minHeight: "270px" }}>
         <Grid divided>
           <Grid.Row>
             <Grid.Column computer={children ? 9 : 16}>
@@ -83,7 +86,14 @@ const ActionCardFormView = ({
                       <Input icon="search" placeholder="Search for context..." />
                     </Menu.Item>
                   </Menu> */}
-                  <Header as="h3">Select Context for Note</Header>
+                  <Header as="h3">
+                    Select Context for Note
+                    {contextCount > 0 && (
+                      <Label size="small" color="teal">
+                        {contextCount}
+                      </Label>
+                    )}
+                  </Header>
                   <List as={ListOverflow} selection relaxed="very" divided>
                     {children}
                   </List>
@@ -94,10 +104,12 @@ const ActionCardFormView = ({
         </Grid>
       </Segment>
       <Menu attached="bottom">
-        <Menu.Item as={ListItemPosedFactory()}>
+        <Menu.Item>
           <Button onClick={onSubmitAction}>Submit</Button>
         </Menu.Item>
-        {bottomMenuItems}
+        {bottomMenuItems.map((item, i) => (
+          <Menu.Item key={item.key || i}>{item}</Menu.Item>
+        ))}
         <Menu.Item>
           <Popup
             size="mini"
@@ -124,6 +136,35 @@ const ActionCardFormView = ({
             </Popup.Content>
           </Popup>
         </Menu.Item>
+        <Menu.Item>
+          <DateInput
+            value={actionFormDueOn}
+            onChange={onDateChange}
+            clearable
+            placeholder="Remind me later..."
+          />
+          <Popup
+            size="mini"
+            position="top right"
+            verticalOffset={9}
+            trigger={
+              <Icon style={{ paddingLeft: "0.3em" }} size="large" link name="question circle" />
+            }
+          >
+            <Popup.Content>
+              <Segment basic>
+                Adding a date will turn this action into a reminder. It will go to your Reminders
+                page to finish later.
+                <Divider />
+                <strong>
+                  {actionFormDueOn
+                    ? "This will go to your reminders."
+                    : "This action will be considered complete (will not be reminded)."}
+                </strong>
+              </Segment>
+            </Popup.Content>
+          </Popup>
+        </Menu.Item>
       </Menu>
     </Segment>
   );
@@ -134,7 +175,7 @@ export default ActionCardFormView;
 function contactList(contacts) {
   return (
     <Segment basic>
-      <List size="small" horizontal divided relaxed>
+      <List size="small" horizontal celled relaxed>
         {map(contacts, (contact, i) => (
           <List.Item key={i}>
             <List.Content>
