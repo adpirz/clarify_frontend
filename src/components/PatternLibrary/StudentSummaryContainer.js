@@ -11,6 +11,7 @@ import { PoseGroupItemFactory } from "./Posed";
 import { ActionCard, DeltaCard } from "../PatternLibrary";
 import ActionCardFormView from "./ActionCard/ActionCardFormView";
 import { DeltaCardListView } from "./DeltaCard";
+import { toast } from "react-toastify";
 
 const GroupPosed = PoseGroupItemFactory();
 
@@ -64,7 +65,12 @@ export default class StudentSummaryContainer extends React.Component {
       studentID,
       deltaIDs,
       audience,
-    }).then(() => this.setState(initialState));
+    }).then(() => {
+      toast.success("Action added!", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      this.setState(initialState);
+    });
   };
 
   handleInput = e => {

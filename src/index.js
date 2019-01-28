@@ -6,6 +6,7 @@ import registerServiceWorker from "./registerServiceWorker";
 import App from "./App";
 import { DataProvider } from "./DataProvider";
 import "./semantic/dist/semantic.min.css";
+import "react-toastify/dist/ReactToastify.min.css";
 
 ReactDOM.render(
   <BrowserRouter>

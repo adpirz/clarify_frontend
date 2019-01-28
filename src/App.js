@@ -3,6 +3,7 @@ import queryString from "query-string";
 import { Route, Switch, withRouter, Redirect } from "react-router-dom";
 import get from "lodash/get";
 import { Container, Grid } from "semantic-ui-react";
+import { ToastContainer } from "react-toastify";
 
 import { DataConsumer } from "./DataProvider";
 import { Loading } from "./components/PatternLibrary";
@@ -91,7 +92,7 @@ class App extends React.Component {
             <LeftNavigation />
           </Grid.Column>
           <PoseGroup>
-            <Grid.Column as={RouteContainer} key={locationKey} width={12}>
+            <Grid.Column as={RouteContainer} key={locationKey || "start"} width={12}>
               <Switch key={locationKey}>
                 <Route path="/" exact component={Home} />
                 <Route path="/student/:studentID" component={StudentDetail} />
@@ -110,6 +111,7 @@ class App extends React.Component {
 
     return (
       <Container fluid>
+        <ToastContainer />
         {/* <SiteNav user={user} logUserOut={logUserOut} /> */}
         {this.getPageBody()}
       </Container>

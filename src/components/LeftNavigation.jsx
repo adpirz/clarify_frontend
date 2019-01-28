@@ -124,8 +124,18 @@ class LeftNavigation extends React.Component {
             Mr. Mosh
           </Button>
         </Menu.Item>
-        {[{ name: "Next Steps", to: "/" }, { name: "Reminders", to: "/reminders" }].map(route => (
-          <Menu.Item key={route.name} as={NavLink} activeClassName="active" exact to={route.to}>
+        {[
+          { name: "Next Steps", to: "/" },
+          { name: "Reminders", disabled: true, to: "/reminders" },
+        ].map(route => (
+          <Menu.Item
+            key={route.name}
+            as={NavLink}
+            disabled={route.disabled}
+            activeClassName="active"
+            exact
+            to={route.to}
+          >
             <Menu.Header>{route.name}</Menu.Header>
           </Menu.Item>
         ))}

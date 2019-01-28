@@ -3,10 +3,12 @@ import get from "lodash/get";
 import find from "lodash/find";
 import filter from "lodash/filter";
 import sortBy from "lodash/sortBy";
+import reverse from "lodash/reverse";
 import { Grid, Menu, Header, Placeholder } from "semantic-ui-react";
 
 import { DataConsumer } from "../DataProvider";
 import { PageRowPosedFactory, PagePosedFactory } from "./PatternLibrary/Posed";
+import { ActionCard, DeltaCard } from "./PatternLibrary";
 
 const StudentDetail = ({ students, actions, deltas, saveAction, match }) => {
   if (!students) {
@@ -38,6 +40,18 @@ const StudentDetail = ({ students, actions, deltas, saveAction, match }) => {
             </Menu.Item>
           </Menu>
         </Grid.Column>
+      </Grid.Row>
+      <Grid.Row>
+        <Grid.Column width={12}>
+          {reverse(sortedViews).map(view =>
+            view.note ? (
+              <ActionCard detailView action={view} />
+            ) : (
+              <DeltaCard detailView delta={view} />
+            )
+          )}
+        </Grid.Column>
+        <Grid.Column width={4} />
       </Grid.Row>
     </Grid>
   );
