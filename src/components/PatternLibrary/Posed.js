@@ -1,6 +1,5 @@
 import posed from "react-pose";
 import defaults from "lodash/defaultsDeep";
-import PoseConfig from "react-pose/types";
 
 /**
  * Returns a wrapped function that generates a pose with
@@ -13,18 +12,25 @@ import PoseConfig from "react-pose/types";
  *
  * @example
  * const PageStyled = styled.div();
- * PagePosedFactory()(PageStyled); // returns posed div with styling
- * PagePosedFactory({ open: { transition: { type :"tween" }}})(PageStyled);
+ * PagePosedFactory(PageStyled)(); // returns posed div with styling
+ * PagePosedFactory(PageStyled)({ open: { transition: { type :"tween" }}});
  * // returns posed div with styling and custom open transition type
  *
  * @example Using "as" with Semantic
  * <Segment as={PagePosedFactory}/> // INCORRECT, must invoke
  * <Segment as={PagePosedFactory()}/> // CORRECT!
+ * <Segment as={PagePosedFactory(PageStyled)()}/> // ALSO CORRECT!
+ * <Segment as={PagePosedFactory(PageStyled)/> // ALSO CORRECT!
  *
  */
-const configurablePose = defaultConfig => (config = {}) => (wrappedElement = none) => {
-  const mergedConfig = defaults(config, defaultConfig);
-  if (wrappedElement) return posed(wrappedElement)(mergedConfig);
+const configurablePose = defaultConfig => configOrElement => {
+  if (configOrElement && configOrElement.styledComponentId) {
+    return config => {
+      const mergedConfig = defaults(config || {}, defaultConfig);
+      return posed(configOrElement)(mergedConfig);
+    };
+  }
+  const mergedConfig = defaults(configOrElement, defaultConfig);
   return posed.div(mergedConfig);
 };
 
@@ -51,4 +57,48 @@ const PagePosedFactory = configurablePose({
   },
 });
 
-export { PagePosedFactory };
+const PageRowPosedFactory = configurablePose({
+  enter: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -20 },
+});
+
+const PoseGroupItemFactory = configurablePose({
+  preEnter: { opacity: 0, x: "-20%", transition },
+  enter: { opacity: 1, x: 0, transition, delay: 150 },
+  exit: { opacity: 0, x: "20%", transition },
+});
+
+const ListItemPosedFactory = configurablePose({
+  open: {
+    opacity: 1,
+    x: 0,
+    transition,
+  },
+  closed: {
+    opacity: 0,
+    x: "-20%",
+    transition,
+  },
+});
+
+const OpenClosePosedFactory = configurablePose({
+  open: {
+    opacity: 1,
+    height: "auto",
+    beforeChildren: true,
+    transition,
+  },
+  closed: {
+    opacity: 0,
+    height: 0,
+    transition,
+  },
+});
+
+export {
+  PagePosedFactory,
+  PageRowPosedFactory,
+  PoseGroupItemFactory,
+  ListItemPosedFactory,
+  OpenClosePosedFactory,
+};

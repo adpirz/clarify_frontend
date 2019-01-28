@@ -20,7 +20,7 @@ const UserLoggedIn = ({ user, logUserOut }) => {
 
 const SiteNav = ({ user, logUserOut }) => {
   return (
-    <Menu secondary size="massive">
+    <Menu size="massive" fixed="top">
       <Menu.Item header>
         <LogoDiv>Clarify</LogoDiv>
       </Menu.Item>

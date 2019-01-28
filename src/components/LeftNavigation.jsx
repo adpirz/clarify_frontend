@@ -3,19 +3,14 @@ import map from "lodash/map";
 import filter from "lodash/filter";
 import findIndex from "lodash/findIndex";
 import { NavLink, withRouter } from "react-router-dom";
-import { Menu, Input, Label, Divider, Header, List, Segment } from "semantic-ui-react";
+import { Menu, Input, Label, Divider, Header, Icon, Button } from "semantic-ui-react";
 
 import { DataConsumer } from "../DataProvider";
 import styled from "styled-components";
 
 const OverflowMenu = styled.div`
-  height: 100%;
+  height: 70vh;
   overflow-y: scroll;
-`;
-
-const MenuWithHeight = styled.div`
-  height: calc(100vh - 6em);
-  overflow: hidden;
 `;
 
 const StyledStudent = styled(NavLink)`
@@ -70,7 +65,6 @@ class LeftNavigation extends React.Component {
       this.state.filteredStudents.length !== 0 &&
       this.state.currentSelection !== null
     ) {
-      debugger;
       this.search.inputRef.value = "";
       this.props.history.push(`/student/${this.state.currentSelection}`);
       this.setState({
@@ -118,7 +112,18 @@ class LeftNavigation extends React.Component {
     const { filteredStudents } = this.state;
 
     return (
-      <Menu as={MenuWithHeight} borderless fluid size="huge" vertical>
+      <Menu fixed="left" size="huge" borderless vertical>
+        <Menu.Item>
+          <Menu.Header>
+            <Header as="h2">Clarify</Header>
+          </Menu.Header>
+        </Menu.Item>
+        <Menu.Item>
+          <Button icon labelPosition="left" fluid>
+            <Icon name="user circle" size="large" />
+            Mr. Mosh
+          </Button>
+        </Menu.Item>
         {[{ name: "Next Steps", to: "/" }, { name: "Reminders", to: "/reminders" }].map(route => (
           <Menu.Item key={route.name} as={NavLink} activeClassName="active" exact to={route.to}>
             <Menu.Header>{route.name}</Menu.Header>

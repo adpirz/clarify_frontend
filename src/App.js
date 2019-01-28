@@ -5,7 +5,7 @@ import get from "lodash/get";
 import { Container, Grid } from "semantic-ui-react";
 
 import { DataConsumer } from "./DataProvider";
-import { Loading, SiteNav } from "./components/PatternLibrary";
+import { Loading } from "./components/PatternLibrary";
 
 import {
   LeftNavigation,
@@ -85,7 +85,7 @@ class App extends React.Component {
       : "start";
     // Home page
     return (
-      <Grid>
+      <Grid style={{ marginTop: "1em" }}>
         <Grid.Row>
           <Grid.Column width={4}>
             <LeftNavigation />
@@ -110,7 +110,7 @@ class App extends React.Component {
 
     return (
       <Container fluid>
-        <SiteNav user={user} logUserOut={logUserOut} />
+        {/* <SiteNav user={user} logUserOut={logUserOut} /> */}
         {this.getPageBody()}
       </Container>
     );

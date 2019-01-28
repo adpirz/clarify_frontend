@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { lighten } from "polished";
 
-import ActionCard from "./ActionCard.js";
+import ActionCard from "./ActionCard";
 import Button from "./Button.js";
 import DeltaCard from "./DeltaCard";
+import StudentSummaryContainer from "./StudentSummaryContainer";
 import GoogleLogo from "./GoogleLogo.js";
 import Loading from "./Loading.js";
 import SiteNav from "./SiteNav";
@@ -35,6 +36,7 @@ export {
   ActionCard,
   AuthFormContainer,
   Button,
+  StudentSummaryContainer,
   DeltaCard,
   GoogleLogo,
   Loading,
