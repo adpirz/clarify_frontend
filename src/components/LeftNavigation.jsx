@@ -119,7 +119,7 @@ class LeftNavigation extends React.Component {
           </Menu.Header>
         </Menu.Item>
         <Menu.Item>
-          <Button icon labelPosition="left" fluid>
+          <Button onClick={this.props.logUserOut} icon labelPosition="left" fluid>
             <Icon name="user circle" size="large" />
             Mr. Mosh
           </Button>
@@ -176,5 +176,9 @@ class LeftNavigation extends React.Component {
 }
 
 export default withRouter(props => (
-  <DataConsumer>{({ students }) => <LeftNavigation students={students} {...props} />}</DataConsumer>
+  <DataConsumer>
+    {({ students, logUserOut }) => (
+      <LeftNavigation logUserOut={logUserOut} students={students} {...props} />
+    )}
+  </DataConsumer>
 ));

@@ -4,7 +4,7 @@ import find from "lodash/find";
 import filter from "lodash/filter";
 import sortBy from "lodash/sortBy";
 import reverse from "lodash/reverse";
-import { Grid, Menu, Header, Placeholder } from "semantic-ui-react";
+import { Grid, Menu, Header } from "semantic-ui-react";
 
 import { DataConsumer } from "../DataProvider";
 import { PageRowPosedFactory, PagePosedFactory } from "./PatternLibrary/Posed";

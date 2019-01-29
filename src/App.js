@@ -38,7 +38,7 @@ class App extends React.Component {
         app_id: "imkydqhm",
         name: `${nextProps.user.first_name} ${nextProps.user.last_name}`,
         email: nextProps.user.username,
-        id: nextProps.user.id,
+        user_id: nextProps.user.id,
       });
     }
   };
@@ -107,12 +107,9 @@ class App extends React.Component {
   };
 
   render = () => {
-    const { user, logUserOut } = this.props;
-
     return (
       <Container fluid>
         <ToastContainer />
-        {/* <SiteNav user={user} logUserOut={logUserOut} /> */}
         {this.getPageBody()}
       </Container>
     );
@@ -121,10 +118,9 @@ class App extends React.Component {
 
 export default withRouter(props => (
   <DataConsumer>
-    {({ isLoading, user, errors, logUserOut, messages, startCleverOAuth }) => (
+    {({ isLoading, user, errors, messages, startCleverOAuth }) => (
       <App
         user={user}
-        logUserOut={logUserOut}
         isLoading={isLoading}
         errors={errors}
         messages={messages}
