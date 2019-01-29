@@ -1,147 +1,72 @@
 import React from "react";
-import styled from "styled-components";
-import posed from "react-pose";
-import { Route } from "react-router-dom";
-
-import filter from "lodash/filter";
-import map from "lodash/map";
 import get from "lodash/get";
 import find from "lodash/find";
+import filter from "lodash/filter";
+import sortBy from "lodash/sortBy";
+import reverse from "lodash/reverse";
+import { Grid, Menu, Header, Placeholder } from "semantic-ui-react";
 
 import { DataConsumer } from "../DataProvider";
-import { ActionCard, EmptyState, MainContentBody, PageHeading } from "./PatternLibrary/";
-import { fontSizes } from "./PatternLibrary/constants";
+import { PageRowPosedFactory, PagePosedFactory } from "./PatternLibrary/Posed";
+import { ActionCard, DeltaCard } from "./PatternLibrary";
 
-const LinePosed = posed.div({
-  enter: {
-    x: 0,
-    opacity: 1,
-  },
-  exit: {
-    x: -50,
-    opacity: 0,
-  },
-});
-
-const LineStyled = styled(LinePosed)`
-  justify-content: center;
-  font-size: ${fontSizes.medium};
-  align-items: center;
-  margin: 15px auto;
-  text-align: center;
-`;
-
-const EmojiSpan = styled.span`
-  margin: 0 8px;
-  font-size: 1.8em;
-`;
-
-const StudentDetailEmptyState = styled(EmptyState)`
-  box-shadow: none;
-  margin: auto auto;
-`;
-
-class StudentDetail extends React.Component {
-  render() {
-    const { students, actions, match } = this.props;
-    if (!students || !students.length) {
-      return null;
-    }
-
-    const studentID = parseInt(get(match, "params.studentID"), 10);
-    const student = find(students, { id: studentID });
-    const studentsActions = filter(actions, a => {
-      return a.student_id === studentID && !!a.completed_on;
-    });
-
-    let mainContentBodyNode = null;
-    if (studentsActions.length) {
-      mainContentBodyNode = (
-        <MainContentBody>
-          {map(studentsActions, (a, i) => {
-            const contextDeltas = filter(this.props.deltas, delta => {
-              return a.delta_ids.indexOf(delta.delta_id) > -1;
-            });
-
-            const ActionCardContainer = ({ history, match, location }) => {
-              const inEditMode = location.pathname.indexOf("edit") > -1;
-              const thisActionSelected = parseInt(match.params.actionID, 10) === a.id;
-              const editRoute = `/student/${studentID}/action/${a.id}/edit`;
-
-              return (
-                <ActionCard
-                  showTitle={false}
-                  action={a}
-                  key={i}
-                  student={student}
-                  doneEditingRoute={`/student/${studentID}/`}
-                  push={history.push}
-                  inEditMode={thisActionSelected && inEditMode}
-                  editRoute={editRoute}
-                  reminderButtonCopy="Remind Me"
-                  contextDeltas={contextDeltas}
-                  showContextSection={!!contextDeltas.length}
-                />
-              );
-            };
-            return [
-              <Route key="1" path={match.url} exact component={ActionCardContainer} />,
-              <Route
-                key="2"
-                path={`${match.url}/action/:actionID/edit`}
-                component={ActionCardContainer}
-              />,
-            ];
-          })}
-        </MainContentBody>
-      );
-    } else {
-      mainContentBodyNode = (
-        <StudentDetailEmptyState>
-          <LineStyled>
-            <p>
-              <EmojiSpan role="img" aria-label="thinking">
-                {/* eslint-disable-next-line */}
-                🤔
-              </EmojiSpan>
-              <EmojiSpan role="img" aria-label="thinking">
-                {/* eslint-disable-next-line */}
-                🤔
-              </EmojiSpan>
-              <EmojiSpan role="img" aria-label="thinking">
-                {/* eslint-disable-next-line */}
-                🤔
-              </EmojiSpan>
-            </p>
-            <p>Looks like you haven't logged any actions for this student yet.</p>
-          </LineStyled>
-          <LineStyled>
-            <p>
-              Go ahead and pick one{" "}
-              <EmojiSpan role="img" aria-label="pointing up at actions list">
-                {/* eslint-disable-next-line */}
-                👆
-              </EmojiSpan>{" "}
-              when you've got an action you want to log.
-            </p>
-          </LineStyled>
-        </StudentDetailEmptyState>
-      );
-    }
-
-    return (
-      <div>
-        <PageHeading />
-        {mainContentBodyNode}
-      </div>
-    );
+const StudentDetail = ({ students, actions, deltas, saveAction, match }) => {
+  if (!students) {
+    return null;
   }
-}
 
+  const studentID = parseInt(get(match, "params.studentID"), 10);
+  const student = find(students, { id: studentID });
+  if (!student) debugger;
+  const studentActions = filter(actions, a => {
+    return a.student_id === studentID && !!a.completed_on;
+  });
+  const studentDeltas = filter(deltas, d => d.student_id === studentID);
+
+  const sortedViews = sortBy([].concat(studentActions, studentDeltas), actionOrDelta => {
+    return actionOrDelta.sort_date ? actionOrDelta.sort_date : actionOrDelta.created_on;
+  });
+
+  return (
+    <Grid as={PagePosedFactory()} container padded columns={1}>
+      <Grid.Row as={PageRowPosedFactory()}>
+        {/* Header for Home Page  */}
+        <Grid.Column>
+          <Menu color="red" inverted pointing size="massive">
+            <Menu.Item header>
+              <Header inverted as="h1">
+                {student.first_name} {student.last_name}
+              </Header>
+            </Menu.Item>
+          </Menu>
+        </Grid.Column>
+      </Grid.Row>
+      <Grid.Row>
+        <Grid.Column width={12}>
+          {reverse(sortedViews).map(view =>
+            view.note ? (
+              <ActionCard detailView action={view} />
+            ) : (
+              <DeltaCard detailView delta={view} />
+            )
+          )}
+        </Grid.Column>
+        <Grid.Column width={4} />
+      </Grid.Row>
+    </Grid>
+  );
+};
 export default props => (
   <DataConsumer>
-    {({ students, actions, deltas }) => (
-      <StudentDetail students={students} {...props} actions={actions} deltas={deltas} />
+    {({ students, actions, deltas, saveAction, deleteAction }) => (
+      <StudentDetail
+        students={students}
+        actions={actions}
+        deltas={deltas}
+        saveAction={saveAction}
+        deleteAction={deleteAction}
+        {...props}
+      />
     )}
   </DataConsumer>
 );

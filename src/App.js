@@ -1,14 +1,12 @@
-import map from "lodash/map";
 import React from "react";
 import queryString from "query-string";
 import { Route, Switch, withRouter, Redirect } from "react-router-dom";
-import styled from "styled-components";
-import posed, { PoseGroup } from "react-pose";
 import get from "lodash/get";
+import { Container, Grid } from "semantic-ui-react";
+import { ToastContainer } from "react-toastify";
 
 import { DataConsumer } from "./DataProvider";
-import { Error, Message, Loading, SiteNav } from "./components/PatternLibrary";
-import { fontFamilies, layout } from "./components/PatternLibrary/constants";
+import { Loading } from "./components/PatternLibrary";
 
 import {
   LeftNavigation,
@@ -19,32 +17,7 @@ import {
   StudentDetail,
   Reminders,
 } from "./components";
-
-const Window = styled.section`
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-`;
-
-const PageBody = styled.section`
-  position: absolute;
-  top: calc(${layout.siteNavHeight} + 20px);
-  left: 0;
-  bottom: 0;
-  right: 0;
-  font-family: ${fontFamilies.base};
-`;
-
-const MainContent = styled.section`
-  position: absolute;
-  width: calc(100% - ${layout.leftNavWidth});
-  left: ${layout.leftNavWidth};
-  top: 0;
-  bottom: 0;
-  overflow: scroll;
-`;
-
-const RouteContainer = posed.div();
+import posed, { PoseGroup } from "react-pose";
 
 class App extends React.Component {
   componentDidMount = () => {
@@ -65,7 +38,7 @@ class App extends React.Component {
         app_id: "imkydqhm",
         name: `${nextProps.user.first_name} ${nextProps.user.last_name}`,
         email: nextProps.user.username,
-        user_id: nextProps.user.id,
+        id: nextProps.user.id,
       });
     }
   };
@@ -77,7 +50,9 @@ class App extends React.Component {
   };
 
   getPageBody = () => {
-    const { isLoading, user, startCleverOAuth, history } = this.props;
+    const { isLoading, user, startCleverOAuth, history, location } = this.props;
+
+    // Loader
     if (isLoading) {
       return <Loading />;
     }
@@ -86,6 +61,7 @@ class App extends React.Component {
       startCleverOAuth(code).then(() => history.push("/"));
     }
 
+    // Needs to Login
     if (!user) {
       return (
         <Switch>
@@ -97,51 +73,50 @@ class App extends React.Component {
       );
     }
 
+    const RouteContainer = posed.div({
+      enter: { opacity: 1, delay: 300, beforeChildren: true },
+      exit: { opacity: 0 },
+    });
+
+    const locationKey = location.path
+      ? location.path
+          .split("/")
+          .slice(0, 2)
+          .join("-")
+      : "start";
+    // Home page
     return (
-      <Switch>
-        <Route path="/password-reset" render={props => <LoginForm isPasswordReset {...props} />} />
-        <Route
-          render={() => (
-            <PageBody>
-              <LeftNavigation />
-              <MainContent>
-                <PoseGroup animateOnMount>
-                  <RouteContainer key="router">
-                    <Switch>
-                      <Route path="/" exact component={Home} />
-                      <Route path="/student/:studentID" component={StudentDetail} />
-                      <Route path="/reminders" component={Reminders} />
-                      <Redirect to="/" />
-                    </Switch>
-                  </RouteContainer>
-                </PoseGroup>
-              </MainContent>
-            </PageBody>
-          )}
-        />
-      </Switch>
+      <Grid style={{ marginTop: "1em" }}>
+        <Grid.Row>
+          <Grid.Column width={4}>
+            <LeftNavigation />
+          </Grid.Column>
+          <PoseGroup>
+            <Grid.Column as={RouteContainer} key={locationKey || "start"} width={12}>
+              <Switch key={locationKey}>
+                <Route path="/" exact component={Home} />
+                <Route path="/student/:studentID" component={StudentDetail} />
+                <Route path="/reminders" component={Reminders} />
+                <Redirect to="/" />
+              </Switch>
+            </Grid.Column>
+          </PoseGroup>
+        </Grid.Row>
+      </Grid>
     );
   };
 
-  render() {
-    const { user, errorMessages, messages, logUserOut } = this.props;
+  render = () => {
+    const { user, logUserOut } = this.props;
+
     return (
-      <Window>
-        <SiteNav user={user} logUserOut={logUserOut} />
-        <Error>
-          {map(errorMessages, (key, message) => {
-            return <p key={key}>{message}</p>;
-          })}
-        </Error>
-        <PoseGroup animateOnMount={true}>
-          {map(messages, (message, key) => {
-            return <Message key={key}>{message}</Message>;
-          })}
-        </PoseGroup>
+      <Container fluid>
+        <ToastContainer />
+        {/* <SiteNav user={user} logUserOut={logUserOut} /> */}
         {this.getPageBody()}
-      </Window>
+      </Container>
     );
-  }
+  };
 }
 
 export default withRouter(props => (

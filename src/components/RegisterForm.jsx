@@ -3,10 +3,11 @@ import styled from "styled-components";
 import { lighten, darken } from "polished";
 import { NavLink } from "react-router-dom";
 
-import { AuthFormContainer, ThirdPartyLoginButton, Error } from "./PatternLibrary";
+import { AuthFormContainer, ThirdPartyLoginButton } from "./PatternLibrary";
 import { colors } from "./PatternLibrary/constants";
 import { GoogleAuth } from ".";
 import { DataConsumer } from "../DataProvider";
+import { Message } from "semantic-ui-react";
 
 const CLEVER_CLIENT_ID = process.env.REACT_APP_CLEVER_CLIENT_ID;
 const CLEVER_REDIRECT_URL = process.env.REACT_APP_CLEVER_REDIRECT_URL || "http://localhost:3000";
@@ -70,7 +71,7 @@ class RegisterForm extends React.Component {
 
     return (
       <AuthFormContainer>
-        <Error>{errorNode}</Error>
+        <Message warning>{errorNode}</Message>
         <h1>Register with</h1>
         <IntegrationContainer>
           <GoogleAuth
