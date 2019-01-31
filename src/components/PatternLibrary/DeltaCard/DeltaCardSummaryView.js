@@ -7,6 +7,8 @@ const DeltaCardSummaryView = ({ delta, ...props }) => {
   const { cardHeader, cardMeta, cardDescription, cardExtra, helperPopup } =
     delta.type === "missing" ? processMissing(delta) : processCategory(delta);
 
+  const showHelper = props.showHelper === undefined ? true : props.showHelper;
+
   const label = (
     <Label attached="bottom" as="a">
       <Icon name="lightbulb outline" />
@@ -14,9 +16,9 @@ const DeltaCardSummaryView = ({ delta, ...props }) => {
     </Label>
   );
   return (
-    <Card raised {...props}>
+    <Card raised={props.raised === undefined ? true : props.raised} {...props}>
       <Card.Content>
-        {helperPopup ? helperPopup(label) : null}
+        {helperPopup && showHelper ? helperPopup(label) : null}
         <Card.Header>{cardHeader}</Card.Header>
         {cardMeta ? <Card.Meta>{cardMeta}</Card.Meta> : null}
       </Card.Content>
@@ -25,7 +27,7 @@ const DeltaCardSummaryView = ({ delta, ...props }) => {
       </Card.Content>
       {cardExtra ? <Card.Content extra>{cardExtra}</Card.Content> : null}
       {/* Add an empty extra as padding for label */}
-      {helperPopup ? <Card.Content extra /> : null}
+      {helperPopup && showHelper ? <Card.Content extra /> : null}
     </Card>
   );
 };

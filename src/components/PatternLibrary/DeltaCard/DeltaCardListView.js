@@ -47,14 +47,21 @@ const DeltaCardListView = ({ delta, active, onSelect, popupRef, ...props }) => {
     </List.Item>
   );
   return (
+    // Use "style" prop as that's the semantic way to customize popups
+    // without breaking other styles, hence not using as={styledComponent};
+    // Style here is used to remove box-shadow which flickers when cycling
+    // over list cards
     <Popup
       trigger={ListItem}
       hoverable
       basic
       position="left center"
       delta={delta}
-      content={<DeltaCard delta={delta} />}
+      content={<DeltaCard raised={false} delta={delta} showHelper={false} />}
       context={popupRef}
+      style={{
+        boxShadow: "none",
+      }}
     />
   );
 };

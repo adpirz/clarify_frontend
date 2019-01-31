@@ -11,7 +11,7 @@ import {
   Form,
   TextArea,
   Button,
-  Popup,
+  Responsive,
   Radio,
   Ref,
   Header,
@@ -41,9 +41,11 @@ const ActionCardFormView = ({
   onPublicToggleClick,
   onDateChange,
   onSubmitAction,
+  toggleRemind,
   children,
   bottomMenuItems,
   contextCount,
+  remindSelected,
   ...props
 }) => {
   const disabled = !action && !actionFormType;
@@ -105,66 +107,45 @@ const ActionCardFormView = ({
       </Segment>
       <Menu attached="bottom">
         <Menu.Item>
-          <Button onClick={onSubmitAction}>Submit</Button>
+          {remindSelected ? (
+            <DateInput
+              value={actionFormDueOn}
+              onChange={onDateChange}
+              clearable
+              placeholder="Remind me later..."
+              onClear={toggleRemind}
+            />
+          ) : (
+            <Button.Group>
+              <Button onClick={onSubmitAction}>Submit</Button>
+              <Button.Or />
+              <Button onClick={toggleRemind} secondary>
+                Remind Me Later
+              </Button>
+            </Button.Group>
+          )}
+          {remindSelected && (
+            <Button secondary onClick={onSubmitAction} style={{ marginLeft: "0.5em" }}>
+              Remind Me
+            </Button>
+          )}
         </Menu.Item>
+
         {bottomMenuItems.map((item, i) => (
           <Menu.Item key={item.key || i}>{item}</Menu.Item>
         ))}
         <Menu.Item>
-          <Popup
-            size="mini"
-            position="top right"
-            verticalOffset={9}
-            trigger={
-              <Radio
-                disabled={disabled}
-                toggle
-                checked={actionFormIsPublic}
-                onChange={onPublicToggleClick}
-                label="Public"
-              />
-            }
-          >
-            <Popup.Content>
-              <Segment basic>
-                Toggles whether other people will be able to read this action.
-                <Divider />
-                <strong>
-                  {actionFormIsPublic ? "Others can see this." : "Only you will see this."}
-                </strong>
-              </Segment>
-            </Popup.Content>
-          </Popup>
-        </Menu.Item>
-        <Menu.Item>
-          <DateInput
-            value={actionFormDueOn}
-            onChange={onDateChange}
-            clearable
-            placeholder="Remind me later..."
+          <Radio
+            disabled={disabled}
+            toggle
+            checked={actionFormIsPublic}
+            onChange={onPublicToggleClick}
+            label="Public"
           />
-          <Popup
-            size="mini"
-            position="top right"
-            verticalOffset={9}
-            trigger={
-              <Icon style={{ paddingLeft: "0.3em" }} size="large" link name="question circle" />
-            }
-          >
-            <Popup.Content>
-              <Segment basic>
-                Adding a date will turn this action into a reminder. It will go to your Reminders
-                page to finish later.
-                <Divider />
-                <strong>
-                  {actionFormDueOn
-                    ? "This will go to your reminders."
-                    : "This action will be considered complete (will not be reminded)."}
-                </strong>
-              </Segment>
-            </Popup.Content>
-          </Popup>
         </Menu.Item>
+        <Responsive as={Menu.Item} disabled minWidth={Responsive.onlyLargeScreen.minWidth}>
+          {actionFormIsPublic ? "Visible to others." : "Only visible to you."}
+        </Responsive>
       </Menu>
     </Segment>
   );

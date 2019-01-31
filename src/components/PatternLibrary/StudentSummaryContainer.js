@@ -95,8 +95,8 @@ export default class StudentSummaryContainer extends React.Component {
     }
   };
 
-  togglePublic = () => {
-    this.setState(({ actionFormIsPublic }) => ({ actionFormIsPublic: !actionFormIsPublic }));
+  toggleKey = (key, ...otherState) => {
+    this.setState(state => ({ [key]: !state[key], ...otherState }));
   };
 
   toggleFormOpenAndType = actionTypeSelected => {
@@ -182,7 +182,9 @@ export default class StudentSummaryContainer extends React.Component {
                 actionFormTextValue={actionFormTextValue}
                 actionFormDueOn={actionFormDueOn}
                 actionFormOnInput={this.handleInput.bind(this)}
-                onPublicToggleClick={this.togglePublic}
+                onPublicToggleClick={this.toggleKey.bind(this, "actionFormIsPublic")}
+                toggleRemind={this.toggleKey.bind(this, "remindSelected")}
+                remindSelected={this.state.remindSelected}
                 onDateChange={this.handleDateChange.bind(this)}
                 as={GroupPosed}
                 setRef={this.setRef}
