@@ -47,7 +47,6 @@ const Home = ({ students, actions, deltas, saveAction }) => {
             <StudentSummaryContainer
               key={student.id}
               student={student}
-              studentDetailLink={`/student/${student.id}`}
               actions={actions}
               deltas={deltas}
               onSubmitAction={saveAction}

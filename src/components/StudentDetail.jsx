@@ -4,7 +4,7 @@ import find from "lodash/find";
 import filter from "lodash/filter";
 import sortBy from "lodash/sortBy";
 import reverse from "lodash/reverse";
-import { Grid, Menu, Header, Placeholder } from "semantic-ui-react";
+import { Grid, Menu, Header } from "semantic-ui-react";
 
 import { DataConsumer } from "../DataProvider";
 import { PageRowPosedFactory, PagePosedFactory } from "./PatternLibrary/Posed";
@@ -17,7 +17,20 @@ const StudentDetail = ({ students, actions, deltas, saveAction, match }) => {
 
   const studentID = parseInt(get(match, "params.studentID"), 10);
   const student = find(students, { id: studentID });
-  if (!student) debugger;
+  if (!student) {
+    return (
+      <Grid as={PagePosedFactory()} container padded columns={1}>
+        <Grid.Row>
+          <Grid.Column>
+            <h3>
+              We couldn't find a student for that ID. If that's a mistake, shoot us a note using the
+              chat at the bottom of the screen and we'll look into it.
+            </h3>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+    );
+  }
   const studentActions = filter(actions, a => {
     return a.student_id === studentID && !!a.completed_on;
   });

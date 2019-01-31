@@ -119,15 +119,12 @@ class LeftNavigation extends React.Component {
           </Menu.Header>
         </Menu.Item>
         <Menu.Item>
-          <Button icon labelPosition="left" fluid>
+          <Button onClick={this.props.logUserOut} icon labelPosition="left" fluid>
             <Icon name="user circle" size="large" />
             Mr. Mosh
           </Button>
         </Menu.Item>
-        {[
-          { name: "Next Steps", to: "/" },
-          { name: "Reminders", disabled: true, to: "/reminders" },
-        ].map(route => (
+        {[{ name: "Next Steps", to: "/" }, { name: "Reminders", to: "/reminders" }].map(route => (
           <Menu.Item
             key={route.name}
             as={NavLink}
@@ -176,5 +173,9 @@ class LeftNavigation extends React.Component {
 }
 
 export default withRouter(props => (
-  <DataConsumer>{({ students }) => <LeftNavigation students={students} {...props} />}</DataConsumer>
+  <DataConsumer>
+    {({ students, logUserOut }) => (
+      <LeftNavigation logUserOut={logUserOut} students={students} {...props} />
+    )}
+  </DataConsumer>
 ));

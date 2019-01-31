@@ -260,7 +260,7 @@ class Login extends React.Component {
 
     return (
       <AuthFormContainer>
-        <Message warning>{errorNode}</Message>
+        {errorNode && <Message warning>{errorNode}</Message>}
         <LoginHeader>Log in with:</LoginHeader>
         <IntegrationContainer>
           <GoogleAuth
