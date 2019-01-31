@@ -111,8 +111,9 @@ const ActionCardFormView = ({
           {remindSelected ? (
             <DateInput
               value={actionFormDueOn}
+              dateFormat="YYYY-MM-DDTHH:MM:SS"
+              minDate={new Date()}
               onChange={onDateChange}
-              clearable
               placeholder="Remind me later..."
               onClear={toggleRemind}
             />

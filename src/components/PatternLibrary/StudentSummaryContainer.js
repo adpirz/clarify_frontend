@@ -27,7 +27,6 @@ const initialState = {
 export default class StudentSummaryContainer extends React.Component {
   static propTypes = {
     student: PropTypes.object.isRequired,
-    studentDetailLink: PropTypes.string.isRequired,
     deltas: PropTypes.array.isRequired,
     actions: PropTypes.array.isRequired,
     onSubmitAction: PropTypes.func.isRequired,
@@ -61,10 +60,16 @@ export default class StudentSummaryContainer extends React.Component {
       studentID,
       deltaIDs,
       audience,
-    }).then(() => {
-      toast.success("Action added!", {
-        position: toast.POSITION.TOP_CENTER,
-      });
+    }).then((res) => {
+      if (res.status === 200) {
+        toast.success("Action added!", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+      } else {
+        toast.error("There was a problem 🤔", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+      }
       this.setState(initialState);
     });
   };
@@ -117,7 +122,7 @@ export default class StudentSummaryContainer extends React.Component {
   };
 
   render() {
-    const { student, studentDetailLink, actions, deltas } = this.props;
+    const { student, actions, deltas } = this.props;
 
     const {
       actionFormType,
@@ -132,7 +137,7 @@ export default class StudentSummaryContainer extends React.Component {
 
     const containerMenu = (
       <Menu size="huge" inverted pointing attached="top">
-        <Menu.Item as={NavLink} to={studentDetailLink}>
+        <Menu.Item as={NavLink} to={`/student/${student.id}/`}>
           <Header inverted as="h2">
             {student.first_name} {student.last_name}
           </Header>
