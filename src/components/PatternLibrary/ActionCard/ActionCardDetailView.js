@@ -37,7 +37,7 @@ const ActionCardDetailView = ({
   actionFormDueOn,
   actionFormIsPublic,
   children,
-  bottomMenuItems,
+  menuItemsSecondary,
   contextCount,
   ...props
 }) => {
@@ -93,8 +93,8 @@ const ActionCardDetailView = ({
         <Menu.Item>
           <Button disabled>Edit</Button>
         </Menu.Item>
-        {bottomMenuItems &&
-          bottomMenuItems.map((item, i) => <Menu.Item key={item.key || i}>{item}</Menu.Item>)}
+        {menuItemsSecondary &&
+          menuItemsSecondary.map((item, i) => <Menu.Item key={item.key || i}>{item}</Menu.Item>)}
       </Menu>
     </Segment>
   );

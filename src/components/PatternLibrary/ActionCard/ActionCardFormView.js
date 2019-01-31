@@ -43,7 +43,8 @@ const ActionCardFormView = ({
   onSubmitAction,
   toggleRemind,
   children,
-  bottomMenuItems,
+  menuItemsPrimary,
+  menuItemsSecondary,
   contextCount,
   remindSelected,
   ...props
@@ -105,7 +106,9 @@ const ActionCardFormView = ({
           </Grid.Row>
         </Grid>
       </Segment>
-      <Menu attached="bottom">
+      <Menu borderless attached="bottom">
+        {menuItemsPrimary &&
+          menuItemsPrimary.map((item, i) => <Menu.Item key={item.key || i}>{item}</Menu.Item>)}
         <Menu.Item>
           {remindSelected ? (
             <DateInput
@@ -131,9 +134,8 @@ const ActionCardFormView = ({
           )}
         </Menu.Item>
 
-        {bottomMenuItems.map((item, i) => (
-          <Menu.Item key={item.key || i}>{item}</Menu.Item>
-        ))}
+        {menuItemsSecondary &&
+          menuItemsSecondary.map((item, i) => <Menu.Item key={item.key || i}>{item}</Menu.Item>)}
         <Menu.Item>
           <Radio
             disabled={disabled}

@@ -189,15 +189,15 @@ export default class StudentSummaryContainer extends React.Component {
                 as={GroupPosed}
                 setRef={this.setRef}
                 contextCount={actionFormContextDeltaIDs.length}
-                bottomMenuItems={[
+                menuItemsPrimary={[
                   <Button
                     icon
                     secondary
-                    labelPosition="left"
+                    circular
+                    size="tiny"
                     onClick={this.toggleFormOpenAndType.bind(this, actionFormType)}
                   >
                     <Icon name="arrow circle left" />
-                    Back to Summary
                   </Button>,
                 ]}
                 key="actionForm"
