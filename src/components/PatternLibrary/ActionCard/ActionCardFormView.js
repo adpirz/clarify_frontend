@@ -122,13 +122,11 @@ const ActionCardFormView = ({
             <Button.Group>
               <Button onClick={onSubmitAction}>Submit</Button>
               <Button.Or />
-              <Button onClick={toggleRemind} secondary>
-                Remind Me Later
-              </Button>
+              <Button onClick={toggleRemind}>Remind Me Later</Button>
             </Button.Group>
           )}
           {remindSelected && (
-            <Button secondary onClick={onSubmitAction} style={{ marginLeft: "0.5em" }}>
+            <Button onClick={onSubmitAction} style={{ marginLeft: "0.5em" }}>
               Remind Me
             </Button>
           )}
