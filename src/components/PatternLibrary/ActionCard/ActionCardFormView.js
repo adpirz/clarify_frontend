@@ -20,6 +20,8 @@ import {
 import { DateInput } from "semantic-ui-calendar-react";
 import styled from "styled-components";
 
+import { ListItemPosedFactory } from "../Posed";
+
 const ListOverflow = styled.div`
   max-height: 210px;
   overflow-y: scroll;
@@ -77,7 +79,7 @@ const ActionCardFormView = ({
             {children && (
               <Ref innerRef={props.setRef}>
                 <Grid.Column key="col2" computer={7}>
-                  {/*
+                  {/* 
                   TODO: Implement search
                   <Menu stackable secondary>
                     <Menu.Item>
@@ -138,6 +140,7 @@ const ActionCardFormView = ({
           <DateInput
             value={actionFormDueOn}
             onChange={onDateChange}
+            clearable
             placeholder="Remind me later..."
           />
           <Popup

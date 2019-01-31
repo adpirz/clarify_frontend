@@ -31,6 +31,8 @@ export default class StudentSummaryContainer extends React.Component {
     deltas: PropTypes.array.isRequired,
     actions: PropTypes.array.isRequired,
     onSubmitAction: PropTypes.func.isRequired,
+    onSuccess: PropTypes.func.isRequired,
+    onError: PropTypes.func.isRequired,
     actionType: PropTypes.string,
   };
 
@@ -39,6 +41,8 @@ export default class StudentSummaryContainer extends React.Component {
   handleSubmit = () => {
     const {
       onSubmitAction,
+      onSuccess,
+      onError,
       student: { id: studentID },
     } = this.props;
 
@@ -117,7 +121,7 @@ export default class StudentSummaryContainer extends React.Component {
   };
 
   render() {
-    const { student, studentDetailLink, actions, deltas } = this.props;
+    const { student, studentDetailLink, actions, deltas, actionFormOnInput } = this.props;
 
     const {
       actionFormType,
