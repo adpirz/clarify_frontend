@@ -61,7 +61,7 @@ export default class StudentSummaryContainer extends React.Component {
       deltaIDs,
       audience,
     }).then(res => {
-      if (res.status === 200) {
+      if (res.status === 200 || res.status === 201) {
         toast.success("Action added!", {
           position: toast.POSITION.TOP_CENTER,
         });
