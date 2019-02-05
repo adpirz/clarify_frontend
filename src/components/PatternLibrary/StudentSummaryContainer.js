@@ -177,16 +177,16 @@ export default class StudentSummaryContainer extends React.Component {
           <PoseGroup preEnterPose="preEnter">
             {actionFormOpen && (
               <ActionCardFormView
-                onSubmitAction={this.handleSubmit.bind(this)}
+                onSubmitAction={this.handleSubmit}
                 actionFormIsPublic={actionFormIsPublic}
                 actionFormType={actionFormType}
                 actionFormTextValue={actionFormTextValue}
                 actionFormDueOn={actionFormDueOn}
-                actionFormOnInput={this.handleInput.bind(this)}
+                actionFormOnInput={this.handleInput}
                 onPublicToggleClick={this.toggleKey.bind(this, "actionFormIsPublic")}
                 toggleRemind={this.toggleKey.bind(this, "remindSelected")}
                 remindSelected={this.state.remindSelected}
-                onDateChange={this.handleDateChange.bind(this)}
+                onDateChange={this.handleDateChange}
                 as={GroupPosed}
                 setRef={this.setRef}
                 contextCount={actionFormContextDeltaIDs.length}

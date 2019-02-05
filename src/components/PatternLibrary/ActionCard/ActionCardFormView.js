@@ -118,16 +118,23 @@ const ActionCardFormView = ({
             />
           ) : (
             <Button.Group>
-              <Button onClick={onSubmitAction}>Submit</Button>
+              <Button onClick={onSubmitAction.bind(this, { completed: true })}>Submit</Button>
               <Button.Or />
               <Button onClick={toggleRemind}>Remind Me Later</Button>
             </Button.Group>
           )}
-          {remindSelected && (
-            <Button onClick={onSubmitAction} style={{ marginLeft: "0.5em" }}>
+          {remindSelected && [
+            <Button
+              key="remnd"
+              onClick={onSubmitAction.bind(this, { completed: false })}
+              style={{ marginLeft: "0.5em" }}
+            >
               Remind Me
-            </Button>
-          )}
+            </Button>,
+            <Button key="cancel" onClick={toggleRemind} style={{ marginLeft: "0.5em" }}>
+              Cancel
+            </Button>,
+          ]}
         </Menu.Item>
         {menuItemsSecondary &&
           menuItemsSecondary.length &&

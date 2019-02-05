@@ -36,7 +36,7 @@ const ActionCardDetailView = ({
               {action.type && (
                 <Header as="h3">
                   <Icon name={iconName} />
-                  {capitalize(action.type)} on {format(action.completed_on, "MMM, D, YYYY")}
+                  {capitalize(action.type)} on {format(action.completed_on, "MMM D, YYYY")}
                 </Header>
               )}
               <h4>{action.note}</h4>

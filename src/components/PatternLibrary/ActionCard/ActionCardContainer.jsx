@@ -47,9 +47,10 @@ export default class ActionCardContainer extends React.Component {
     };
   }
 
-  handleSubmit = (completed = false) => {
+  handleSubmit = ({ completed = false }) => {
     const {
       onSubmitAction,
+      action,
       student: { id: studentID },
     } = this.props;
 
@@ -61,7 +62,7 @@ export default class ActionCardContainer extends React.Component {
       actionFormContextDeltaIDs: deltaIDs,
     } = this.state;
 
-    return onSubmitAction({
+    const payload = {
       type,
       note,
       dueOn,
@@ -69,8 +70,13 @@ export default class ActionCardContainer extends React.Component {
       studentID,
       deltaIDs,
       audience,
-    }).then(res => {
-      if (res.status === 200) {
+    };
+    if (action) {
+      payload.actionID = action.id;
+    }
+
+    return onSubmitAction(payload).then(res => {
+      if (res.status === 200 || res.status === 201) {
         toast.success("Action added!", {
           position: toast.POSITION.TOP_CENTER,
         });
@@ -105,8 +111,8 @@ export default class ActionCardContainer extends React.Component {
     }
   };
 
-  togglePublic = () => {
-    this.setState(({ actionFormIsPublic }) => ({ actionFormIsPublic: !actionFormIsPublic }));
+  toggleKey = (key, ...otherState) => {
+    this.setState(state => ({ [key]: !state[key], ...otherState }));
   };
 
   toggleFormOpenAndType = actionTypeSelected => {
@@ -178,14 +184,16 @@ export default class ActionCardContainer extends React.Component {
           <PoseGroup preEnterPose="preEnter">
             {actionFormOpen && (
               <ActionCardFormView
-                onSubmitAction={this.handleSubmit.bind(this)}
+                onSubmitAction={this.handleSubmit}
                 actionFormIsPublic={actionFormIsPublic}
                 actionFormType={actionFormType}
                 actionFormTextValue={actionFormTextValue}
                 actionFormDueOn={actionFormDueOn}
-                actionFormOnInput={this.handleInput.bind(this)}
-                onPublicToggleClick={this.togglePublic}
-                onDateChange={this.handleDateChange.bind(this)}
+                actionFormOnInput={this.handleInput}
+                onPublicToggleClick={this.toggleKey.bind(this, "actionFormIsPublic")}
+                toggleRemind={this.toggleKey.bind(this, "remindSelected")}
+                remindSelected={this.state.remindSelected}
+                onDateChange={this.handleDateChange}
                 as={GroupPosed}
                 setRef={this.setRef}
                 contextCount={actionFormContextDeltaIDs.length}
