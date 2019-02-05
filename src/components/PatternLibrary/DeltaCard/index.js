@@ -87,13 +87,14 @@ export function processCategory(delta, listViewData) {
             {formattedAverageAfter}%{" "}
           </strong>
           after turning in the assignment <strong>{assignmentName}</strong> with a grade of{" "}
-          <strong>{latestAssignmentScoreFormatted}%</strong>
-          .
-          <Divider />
-          <p>
+          <strong>{latestAssignmentScoreFormatted}%</strong>.
+        </p>
+        <Divider />
+        <p>
+          <span>
             The student's average for this category is{" "}
             <strong>{classAverageComparator} the class average.</strong>
-          </p>
+          </span>
         </p>
       </Popup.Content>
     </Popup>

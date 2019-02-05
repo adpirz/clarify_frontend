@@ -3,12 +3,12 @@ import styled from "styled-components";
 import map from "lodash/map";
 import find from "lodash/find";
 import filter from "lodash/filter";
-import { Route } from "react-router-dom";
 import { Grid } from "semantic-ui-react";
-import { PageRowPosedFactory, PagePosedFactory } from "./PatternLibrary/Posed";
 
+import { PageRowPosedFactory, PagePosedFactory } from "./PatternLibrary/Posed";
 import { DataConsumer } from "../DataProvider";
-import { ActionCard, EmptyState } from "./PatternLibrary";
+import { EmptyState } from "./PatternLibrary";
+import ActionCardContainer from "./PatternLibrary/ActionCard/ActionCardContainer";
 
 const RemindersDetailEmptyState = styled(EmptyState)`
   box-shadow: none;
@@ -17,7 +17,7 @@ const RemindersDetailEmptyState = styled(EmptyState)`
 
 class Reminders extends React.Component {
   render() {
-    const { getReminderActions, students, deltas } = this.props;
+    const { getReminderActions, students, deltas, saveAction } = this.props;
     const actionReminders = getReminderActions();
     let mainContentBodyNode = null;
     if (!actionReminders || !actionReminders.length) {
@@ -44,44 +44,16 @@ class Reminders extends React.Component {
             <Grid.Column>
               {map(actionReminders, (a, i) => {
                 const studentForAction = find(students, { id: a.student_id });
-                const contextDeltas = filter(deltas, delta => {
-                  return a.delta_ids.indexOf(delta.delta_id) > -1;
-                });
-
-                const ActionCardContainer = ({ location, history, match }) => {
-                  const inEditMode = location.pathname.indexOf("edit") > -1;
-                  const thisActionSelected = parseInt(match.params.actionID, 10) === a.id;
-
-                  return (
-                    <ActionCard
-                      action={a}
-                      contextDeltas={contextDeltas}
-                      editRoute={`/reminders/action/${a.id}/edit`}
-                      doneEditingRoute="/reminders"
-                      push={history.push}
-                      student={studentForAction}
-                      reminderButtonCopy="Snooze"
-                      inEditMode={thisActionSelected && inEditMode}
-                      showTitle={true}
-                      showContextSection={!!contextDeltas.length}
-                      key={i}
-                    />
-                  );
-                };
-
-                return [
-                  <Route
-                    key="1"
-                    path={this.props.match.url}
-                    exact
-                    component={ActionCardContainer}
-                  />,
-                  <Route
-                    key="2"
-                    path={`${this.props.match.url}/action/:actionID/edit`}
-                    component={ActionCardContainer}
-                  />,
-                ];
+                const deltasForStudent = filter(deltas, { student_id: a.student_id });
+                return (
+                  <ActionCardContainer
+                    key={a.id}
+                    action={a}
+                    student={studentForAction}
+                    deltas={deltasForStudent}
+                    onSubmitAction={saveAction}
+                  />
+                );
               })}
             </Grid.Column>
           </Grid.Row>
@@ -95,11 +67,12 @@ class Reminders extends React.Component {
 
 export default props => (
   <DataConsumer>
-    {({ deltas, getReminderActions, students }) => (
+    {({ deltas, getReminderActions, students, saveAction }) => (
       <Reminders
         deltas={deltas}
         getReminderActions={getReminderActions}
         students={students}
+        saveAction={saveAction}
         {...props}
       />
     )}

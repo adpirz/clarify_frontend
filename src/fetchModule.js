@@ -4,8 +4,24 @@ const BASE_URL =
   process.env.NODE_ENV === "production" ? process.env.REACT_APP_BASE_URL : "http://localhost:8000/";
 
 class ApiFetcher {
-  static get(modelName, objectId) {
-    const apiRequest = new Request(`${BASE_URL}api/${modelName}/${objectId || ""}`, {
+  static get(modelName, objectId, queryParams = null) {
+    let requestPath = `${BASE_URL}api/${modelName}/`;
+    if (objectId) {
+      requestPath += objectId;
+    }
+
+    if (queryParams && typeof queryParams === "object" && Object.keys(queryParams).length) {
+      let queryString = "?";
+      Object.keys(queryParams).forEach(key => {
+        queryString += `${key}=${queryParams[key]}&`;
+      });
+      if (queryString !== "?") {
+        // Crop the last ampersand
+        requestPath += queryString.slice(0, queryString.length - 1);
+      }
+    }
+
+    const apiRequest = new Request(requestPath, {
       credentials: "include",
     });
 

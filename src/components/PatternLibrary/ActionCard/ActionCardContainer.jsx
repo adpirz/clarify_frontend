@@ -1,22 +1,20 @@
 import React from "react";
 import PropTypes from "prop-types";
-import sortBy from "lodash/sortBy";
 import map from "lodash/map";
 import filter from "lodash/filter";
 import { NavLink } from "react-router-dom";
-import { Segment, Menu, Header, Icon, Container, Card, Button, Divider } from "semantic-ui-react";
+import { Segment, Menu, Header, Icon, Container, Divider } from "semantic-ui-react";
 import { PoseGroup } from "react-pose";
 
-import { PoseGroupItemFactory } from "./Posed";
-import { ActionCard, DeltaCard } from "../PatternLibrary";
-import ActionCardFormView from "./ActionCard/ActionCardFormView";
-import { DeltaCardListView } from "./DeltaCard";
+import { PoseGroupItemFactory } from "../Posed";
+import { DeltaCardListView } from "../DeltaCard";
+import ActionCardFormView from "./ActionCardFormView";
 import { toast } from "react-toastify";
 
 const GroupPosed = PoseGroupItemFactory();
 
 const initialState = {
-  actionFormOpen: false,
+  actionFormOpen: true,
   actionFormType: "",
   actionFormTextValue: "",
   actionFormDueOn: "",
@@ -24,18 +22,32 @@ const initialState = {
   actionFormContextDeltaIDs: [],
 };
 
-export default class StudentSummaryContainer extends React.Component {
+export default class ActionCardContainer extends React.Component {
   static propTypes = {
     student: PropTypes.object.isRequired,
     deltas: PropTypes.array.isRequired,
-    actions: PropTypes.array.isRequired,
+    action: PropTypes.object,
+    actions: PropTypes.array,
     onSubmitAction: PropTypes.func.isRequired,
     actionType: PropTypes.string,
   };
 
-  state = initialState;
+  constructor(props) {
+    super(props);
 
-  handleSubmit = () => {
+    const { type, note, due_on, is_public, delta_ids } = props.action;
+
+    this.state = {
+      actionFormType: type || initialState.actionFormType,
+      actionFormTextValue: note || initialState.actionFormTextValue,
+      actionFormDueOn: due_on || initialState.actionFormDueOn,
+      actionFormIsPublic: is_public || initialState.actionFormIsPublic,
+      actionFormContextDeltaIDs: delta_ids || initialState.actionFormContextDeltaIDs,
+      actionFormOpen: initialState.actionFormOpen,
+    };
+  }
+
+  handleSubmit = (completed = false) => {
     const {
       onSubmitAction,
       student: { id: studentID },
@@ -49,9 +61,6 @@ export default class StudentSummaryContainer extends React.Component {
       actionFormContextDeltaIDs: deltaIDs,
     } = this.state;
 
-    const completed = dueOn ? false : true;
-    console.log("Saving");
-    console.log(onSubmitAction);
     return onSubmitAction({
       type,
       note,
@@ -96,8 +105,8 @@ export default class StudentSummaryContainer extends React.Component {
     }
   };
 
-  toggleKey = (key, ...otherState) => {
-    this.setState(state => ({ [key]: !state[key], ...otherState }));
+  togglePublic = () => {
+    this.setState(({ actionFormIsPublic }) => ({ actionFormIsPublic: !actionFormIsPublic }));
   };
 
   toggleFormOpenAndType = actionTypeSelected => {
@@ -111,18 +120,12 @@ export default class StudentSummaryContainer extends React.Component {
     }
   };
 
-  sortActionsAndDeltas = (actions, deltas) => {
-    return sortBy([].concat(actions, deltas), actionOrDelta => {
-      return actionOrDelta.sort_date ? actionOrDelta.sort_date : actionOrDelta.created_on;
-    });
-  };
-
   setRef = ref => {
     this.setState({ popupRef: ref });
   };
 
   render() {
-    const { student, actions, deltas } = this.props;
+    const { student, deltas } = this.props;
 
     const {
       actionFormType,
@@ -132,8 +135,6 @@ export default class StudentSummaryContainer extends React.Component {
       actionFormTextValue,
       actionFormDueOn,
     } = this.state;
-
-    const sortedViewModels = this.sortActionsAndDeltas(actions, deltas);
 
     const containerMenu = (
       <Menu size="huge" inverted pointing attached="top">
@@ -166,7 +167,7 @@ export default class StudentSummaryContainer extends React.Component {
     );
 
     return (
-      <Segment key={student.student_id} as={Container} fluid basic>
+      <Segment key={student.id} as={Container} fluid basic>
         {containerMenu}
         <Segment
           as={Container}
@@ -183,24 +184,11 @@ export default class StudentSummaryContainer extends React.Component {
                 actionFormTextValue={actionFormTextValue}
                 actionFormDueOn={actionFormDueOn}
                 actionFormOnInput={this.handleInput.bind(this)}
-                onPublicToggleClick={this.toggleKey.bind(this, "actionFormIsPublic")}
-                toggleRemind={this.toggleKey.bind(this, "remindSelected")}
-                remindSelected={this.state.remindSelected}
+                onPublicToggleClick={this.togglePublic}
                 onDateChange={this.handleDateChange.bind(this)}
                 as={GroupPosed}
                 setRef={this.setRef}
                 contextCount={actionFormContextDeltaIDs.length}
-                menuItemsPrimary={[
-                  <Button
-                    icon
-                    secondary
-                    circular
-                    size="tiny"
-                    onClick={this.toggleFormOpenAndType.bind(this, actionFormType)}
-                  >
-                    <Icon name="arrow circle left" />
-                  </Button>,
-                ]}
                 key="actionForm"
               >
                 {deltas
@@ -226,29 +214,6 @@ export default class StudentSummaryContainer extends React.Component {
                     />
                   ))}
               </ActionCardFormView>
-            )}
-            {!actionFormOpen && (
-              <Card.Group key="cards" as={GroupPosed} itemsPerRow={3}>
-                <PoseGroup>
-                  {map(sortedViewModels.slice(0, 3), viewModel =>
-                    viewModel.note ? (
-                      <ActionCard
-                        key={viewModel.action_id}
-                        as={PoseGroupItemFactory()}
-                        summaryView
-                        action={viewModel}
-                      />
-                    ) : (
-                      <DeltaCard
-                        key={viewModel.delta_id}
-                        as={PoseGroupItemFactory()}
-                        summaryView
-                        delta={viewModel}
-                      />
-                    )
-                  )}
-                </PoseGroup>
-              </Card.Group>
             )}
           </PoseGroup>
         </Segment>

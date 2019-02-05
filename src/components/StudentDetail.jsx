@@ -56,11 +56,11 @@ const StudentDetail = ({ students, actions, deltas, saveAction, match }) => {
       </Grid.Row>
       <Grid.Row>
         <Grid.Column width={12}>
-          {reverse(sortedViews).map(view =>
+          {reverse(sortedViews).map((view, index) =>
             view.note ? (
-              <ActionCard detailView action={view} />
+              <ActionCard key={index} detailView action={view} />
             ) : (
-              <DeltaCard detailView delta={view} />
+              <DeltaCard key={index} detailView delta={view} />
             )
           )}
         </Grid.Column>

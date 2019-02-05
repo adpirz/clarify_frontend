@@ -28,7 +28,6 @@ const ListOverflow = styled.div`
  * Accepts <DeltaCard listView/> as children
  */
 const ActionCardFormView = ({
-  action,
   contacts,
   actionFormType,
   onSelectActionFormType,
@@ -47,7 +46,7 @@ const ActionCardFormView = ({
   remindSelected,
   ...props
 }) => {
-  const disabled = !action && !actionFormType;
+  const disabled = !actionFormType;
 
   let iconName;
   if (actionFormType === "note") iconName = "sticky note";
@@ -60,7 +59,7 @@ const ActionCardFormView = ({
         <Grid divided>
           <Grid.Row>
             <Grid.Column computer={children ? 9 : 16}>
-              {actionFormType && (
+              {iconName && (
                 <Header as="h3">
                   <Icon name={iconName} />
                   {capitalize(actionFormType)}
@@ -130,8 +129,8 @@ const ActionCardFormView = ({
             </Button>
           )}
         </Menu.Item>
-
         {menuItemsSecondary &&
+          menuItemsSecondary.length &&
           menuItemsSecondary.map((item, i) => <Menu.Item key={item.key || i}>{item}</Menu.Item>)}
         <Menu.Item>
           <Radio

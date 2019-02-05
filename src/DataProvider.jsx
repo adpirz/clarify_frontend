@@ -175,7 +175,7 @@ export class DataProvider extends React.Component {
       })
     );
     promises.push(
-      ApiFetcher.get("delta").then(resp => {
+      ApiFetcher.get("delta", null, {type: 'category'}).then(resp => {
         if (resp.status !== 404) {
           this.setState({ deltas: resp.data });
         }
@@ -200,7 +200,7 @@ export class DataProvider extends React.Component {
   };
 
   saveAction = payload => {
-    const { type, note, dueOn, completed, studentID, actionID, deltaIDs, audience } = payload;
+    const { type, note, dueOn, completed, studentID, actionID, deltaIDs, is_public } = payload;
     if (!dueOn && !completed) {
       return;
     }
@@ -209,7 +209,7 @@ export class DataProvider extends React.Component {
       type,
       note,
       student_id: studentID,
-      public: audience === "public",
+      is_public: is_public === "true",
       delta_ids: deltaIDs,
     };
     if (dueOn) {
