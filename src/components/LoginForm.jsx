@@ -152,6 +152,12 @@ class Login extends React.Component {
     resetEmailOpen: false,
   };
 
+  componentDidMount() {
+    if (window.location.host.split(".").indexOf("demo") > -1) {
+      this.props.logUserIn("demo", "demo");
+    }
+  }
+
   googleLogin = accessToken => {
     this.props.logUserIn(null, null, accessToken).then(resp => {
       this.props.history.push("/");
