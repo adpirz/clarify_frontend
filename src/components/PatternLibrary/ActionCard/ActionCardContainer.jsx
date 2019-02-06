@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import format from "date-fns/format";
 import map from "lodash/map";
 import filter from "lodash/filter";
 import { NavLink } from "react-router-dom";
@@ -131,7 +132,7 @@ export default class ActionCardContainer extends React.Component {
   };
 
   render() {
-    const { student, deltas } = this.props;
+    const { student, deltas, action } = this.props;
 
     const {
       actionFormType,
@@ -142,6 +143,11 @@ export default class ActionCardContainer extends React.Component {
       actionFormDueOn,
     } = this.state;
 
+    let dueOnString;
+    if (action && action.due_on) {
+      dueOnString = `Due on ${format(action.due_on, "MMM D")}`;
+    }
+
     const containerMenu = (
       <Menu size="huge" inverted pointing attached="top">
         <Menu.Item as={NavLink} to={`/student/${student.id}/`}>
@@ -149,6 +155,7 @@ export default class ActionCardContainer extends React.Component {
             {student.first_name} {student.last_name}
           </Header>
         </Menu.Item>
+        <Menu.Item>{dueOnString}</Menu.Item>
         <Menu.Menu position="right">
           {map(
             [

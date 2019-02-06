@@ -1,7 +1,7 @@
 import React from "react";
 import reduce from "lodash/reduce";
 import forEach from "lodash/forEach";
-import values from "lodash/values";
+import sortBy from "lodash/sortBy";
 
 import { Header, Grid, Menu } from "semantic-ui-react";
 
@@ -14,7 +14,7 @@ const Home = ({ students, actions, deltas, saveAction }) => {
    * Shape:
    * { <student.id>: { student: <studentobject>, actions: []actions, deltas: []deltas}}
    */
-  const studentMap = reduce(
+  let studentMap = reduce(
     students,
     (acc, student) =>
       Object.assign({}, acc, { [student.id]: { student, actions: [], deltas: [] } }),
@@ -23,6 +23,9 @@ const Home = ({ students, actions, deltas, saveAction }) => {
 
   forEach(deltas, delta => studentMap[delta.student_id]["deltas"].push(delta));
   forEach(actions, action => studentMap[action.student_id]["actions"].push(action));
+  studentMap = sortBy(Object.values(studentMap), ({ actions }) => {
+    return actions.length;
+  });
 
   return (
     <Grid as={PagePosedFactory()} container padded columns={1}>
@@ -41,7 +44,7 @@ const Home = ({ students, actions, deltas, saveAction }) => {
 
       {/* Container for all homepage student card sets */}
       <Grid.Row as={PageRowPosedFactory()}>
-        {values(studentMap)
+        {Object.values(studentMap)
           .slice(0, 3)
           .map(({ student, actions, deltas }) => (
             <StudentSummaryContainer

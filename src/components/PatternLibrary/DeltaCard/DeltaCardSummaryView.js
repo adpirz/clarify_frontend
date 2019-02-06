@@ -16,7 +16,7 @@ const DeltaCardSummaryView = ({ delta, ...props }) => {
     </Label>
   );
   return (
-    <Card raised={props.raised === undefined ? true : props.raised} {...props}>
+    <Card raised={props.raised === undefined ? true : props.raised}>
       <Card.Content>
         {helperPopup && showHelper ? helperPopup(label) : null}
         <Card.Header>{cardHeader}</Card.Header>

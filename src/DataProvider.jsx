@@ -175,7 +175,7 @@ export class DataProvider extends React.Component {
       })
     );
     promises.push(
-      ApiFetcher.get("delta", null, {type: 'category'}).then(resp => {
+      ApiFetcher.get("delta").then(resp => {
         if (resp.status !== 404) {
           this.setState({ deltas: resp.data });
         }
