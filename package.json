@@ -20,7 +20,6 @@
     "semantic-ui-calendar-react": "^0.12.1",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.84.0",
-    "semantic-ui": "^2.4.2",
     "styled-components": "^4.1.3"
   },
   "scripts": {
@@ -29,5 +28,6 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "travis_after_deploy": "node ./travis_post_deploy.js"
-  }
+  },
+  "devDependencies": {}
 }
