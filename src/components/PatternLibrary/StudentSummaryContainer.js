@@ -22,7 +22,7 @@ const GroupPosed = PoseGroupItemFactory();
 
 const initialState = {
   actionFormOpen: true,
-  actionFormType: "",
+  actionFormType: "call",
   actionFormTextValue: "",
   actionFormDueOn: "",
   actionFormIsPublic: false,
