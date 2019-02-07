@@ -11,7 +11,7 @@ install:
 jobs:
   include:
     - stage: deploy to production
-      script: npm run build
+      script: bash deploy.sh
       env:
         - REACT_APP_BASE_URL=https://api.clarify.school/
         - REACT_APP_CLEVER_CLIENT_ID=0e7e4366758852e8c894
@@ -29,7 +29,7 @@ jobs:
           secure: iVoqrlBPA4Bp5yGe6X4YEA3nMuzScmlOJR9WAa8C1MxBZ1xE88e5nacrAgJaTHv2r73oyjv6uqT8ds9z621BQgVmK45ROnNXhUH9QH5m62V2hvBksfSV/l37c3drZL5oWo92mGUKJawt0cfxrLs9Llx/dVRPj//yG1NXjbxSyQhwPaIqzNVPhTXlWFsGOzLBbaz6kzVdBiPGJJsJu5jn/c6yAoM7d4OVsq6q/gNYifnrSLdvl/6Ub5JWGqZVTzJPYfV+akuaWkHKbEBIz8TVdf9mQnbWFSCi1kXO4kWPChBNV15+iGDCuTbwanZGh1BVylWO+CASPY4RlO0/oLf45tSsfiY40hIyID4sMcw4vp8KYStDlIRg/02SlYBGwZDgHVWjnApjC9kSyP8ON2FUn7/xepDQItqkfBXNa3HRBV41ktmPqhbTqlu+BqcSG/Ik7uBRKz/AqalyqpMfQRZVX7Ujn2Muf60LNnR500PIECy/o2uMvnxGNaCgbTTctnyAMdXU0qLKffnD/lqf4ZQrkhQ3ZuWUrTHVol83Yyu3P4M0fFbgAofd40J6ZrhIZHVgtu4ZPyb9ehVIm1+HidZP/QBnpe4dQaPqwccl7JvnCQ6TJmgwlsKgB5WnoUIwstmuRs+Lq+UG0JQL8MuKpZxzUAHCQrTrxuXsxECZdMcNxR4=
       after_deploy: npm run travis_after_deploy
     - stage: deploy to demo
-      script: npm run build
+      script: bash deploy.sh
       env:
         - REACT_APP_BASE_URL=https://demo.api.clarify.school/
         - secure: HbLYt6rveiteYyIK8eHpa7tc0e+bSmPzYl+crN+c8oO0I5uNToIGlL5bxedm3gTFHoIKlCMYkgVTz+V6GNiQmOH6bZrhkGRbhJHy5rWEOqV3sOFKnfKUgrouc7acit+33i76YkV17UHG9+lm+Rot/afpHGWuLASJSX2CuEUo8y1lOsvL4xhBpngad11ztJk9IO7tzxJLyD2oV99YSzhpZN47xsDTBdzUXV/BcwakdAwQAfzT0bzKVvofofGwvtY2QmqABVMbam/bmQjbHleSMidNwEkUF/TEo+GbzRggNK3W3fY5MiC2LQUorh++UaGVTXS2QGaVqdvew2iV90Txnu3PmfeiCam6adlqwPFSl7i31etefLA9yrJ+3Dp0RAntpUfdp9dQgGfra0KNUZxq5Bt9Jcqi1NthnXp6708ykinL8qqbuMwzT9yA1ZafKe5gPk7wpgSxkQJp908WOKbR+SddrFRZffP54tTHqeHkKPiv5Wj1lElbmhMr1l5jqUk2F0wSIGVMU3wFGYCEq9iwmdqWVWnZISxEzLQemWy9njNFHj12ujNEldiBQEBBh9p3he25wPXm2VrqubcUgDgqrkaJwKec2ypUHUvyTG5OXPIgj0o2+h0Nq6PlpJ1DpRhlsz3CdBADIrwR5aLwT7hCEOllNmVdQdpwYDJSD6sFysY=
