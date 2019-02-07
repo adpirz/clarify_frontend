@@ -110,6 +110,9 @@ class LeftNavigation extends React.Component {
 
   render() {
     const { filteredStudents } = this.state;
+    const {
+      user: { prefix, first_name, last_name },
+    } = this.props;
 
     return (
       <Menu fixed="left" size="huge" borderless vertical>
@@ -121,7 +124,7 @@ class LeftNavigation extends React.Component {
         <Menu.Item>
           <Button onClick={this.props.logUserOut} icon labelPosition="left" fluid>
             <Icon name="user circle" size="large" />
-            Mr. Mosh
+            {prefix ? `${prefix} ${last_name}` : `${first_name}`}
           </Button>
         </Menu.Item>
         {[{ name: "Next Steps", to: "/" }, { name: "Reminders", to: "/reminders" }].map(route => (
@@ -174,8 +177,8 @@ class LeftNavigation extends React.Component {
 
 export default withRouter(props => (
   <DataConsumer>
-    {({ students, logUserOut }) => (
-      <LeftNavigation logUserOut={logUserOut} students={students} {...props} />
+    {({ students, logUserOut, user }) => (
+      <LeftNavigation logUserOut={logUserOut} user={user} students={students} {...props} />
     )}
   </DataConsumer>
 ));
