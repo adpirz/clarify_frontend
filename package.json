@@ -28,5 +28,8 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "travis_after_deploy": "node ./travis_post_deploy.js"
+  },
+  "devDependencies": {
+    "semantic-ui": "^2.4.2"
   }
 }
