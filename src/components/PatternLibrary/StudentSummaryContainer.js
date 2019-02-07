@@ -3,6 +3,11 @@ import PropTypes from "prop-types";
 import sortBy from "lodash/sortBy";
 import map from "lodash/map";
 import filter from "lodash/filter";
+import maxBy from "lodash/maxBy";
+import minBy from "lodash/minBy";
+import get from "lodash/get";
+import isAfter from "date-fns/is_after";
+import subDays from "date-fns/sub_days";
 import { NavLink } from "react-router-dom";
 import { Segment, Menu, Header, Icon, Container, Card, Button, Divider } from "semantic-ui-react";
 import { PoseGroup } from "react-pose";
@@ -16,7 +21,7 @@ import { toast } from "react-toastify";
 const GroupPosed = PoseGroupItemFactory();
 
 const initialState = {
-  actionFormOpen: false,
+  actionFormOpen: true,
   actionFormType: "",
   actionFormTextValue: "",
   actionFormDueOn: "",
@@ -34,6 +39,47 @@ export default class StudentSummaryContainer extends React.Component {
   };
 
   state = initialState;
+
+  componentDidMount = () => {
+    this.guessAtContextDeltaIDs();
+  };
+
+  guessAtContextDeltaIDs = () => {
+    const { deltas } = this.props;
+    const existingConfigString = localStorage.getItem(this.props.student.id);
+
+    let contextDeltaIDs = [];
+    if (existingConfigString) {
+      // The user has selected a category they care about, grab the biggest delta from the last week.
+      const existingConfigVals = existingConfigString.split(",");
+      console.debug(existingConfigVals);
+    } else {
+      // The user hasn't indicated a category they care about. Grab the biggest delta from
+      // the last week.
+      const deltasFromTheLastWeek = filter(deltas, d => {
+        // We should switch this to sort_date, once we're regularly creating deltas
+        const deltaIsRecent = isAfter(new Date(d.created_on), subDays(new Date(), 7));
+        return deltaIsRecent;
+      });
+      const mappedDeltas = map(deltasFromTheLastWeek, d => {
+        const { category_average_after, category_average_before } = d;
+        d.category_delta = Math.round((category_average_after - category_average_before) * 100);
+        return d;
+      });
+      contextDeltaIDs = contextDeltaIDs.concat(mappedDeltas);
+    }
+    //Always add missing assignment deltas.
+    const missingAssignmentDeltaIds = map(filter(deltas, { type: "missing" }), "delta_id");
+    const positiveCategoryDelta = get(maxBy(contextDeltaIDs, "category_delta"), "delta_id");
+    const negativeCategoryDelta = get(minBy(contextDeltaIDs, "category_delta"), "delta_id");
+    this.setState({
+      actionFormContextDeltaIDs: [
+        negativeCategoryDelta,
+        positiveCategoryDelta,
+        ...missingAssignmentDeltaIds,
+      ],
+    });
+  };
 
   handleSubmit = () => {
     const {
@@ -204,7 +250,9 @@ export default class StudentSummaryContainer extends React.Component {
                 key="actionForm"
               >
                 {deltas
-                  .filter(d => actionFormContextDeltaIDs.indexOf(d.delta_id) > -1)
+                  .filter(d => {
+                    return actionFormContextDeltaIDs.indexOf(d.delta_id) > -1;
+                  })
                   .map(delta => (
                     <DeltaCardListView
                       key={delta.delta_id}
