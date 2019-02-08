@@ -23,3 +23,4 @@ yarn-error.log*
 src/**/*.css
 
 src/semantic/dist/
+!src/semantic/dist/semantic.min.css
