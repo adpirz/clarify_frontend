@@ -33,7 +33,7 @@ const LoginHeader = styled.h1`
   font-weight: 400;
   color: ${lighten(0.45, colors.black)};
   font-size: 1em;
-  margin: 0;
+  margin: 20px 0px;
 `;
 
 const IntegrationContainer = styled.div`
@@ -142,6 +142,7 @@ const CleverIcon = styled.span`
 
 class Login extends React.Component {
   state = {
+    incomingEmail: "",
     username: "",
     password: "",
     passwordChange: "",
@@ -151,12 +152,6 @@ class Login extends React.Component {
     validResetPassword: null,
     resetEmailOpen: false,
   };
-
-  componentDidMount() {
-    if (window.location.host.split(".").indexOf("demo") > -1) {
-      this.props.logUserIn("demo", "demo");
-    }
-  }
 
   googleLogin = accessToken => {
     this.props.logUserIn(null, null, accessToken).then(resp => {
@@ -192,6 +187,10 @@ class Login extends React.Component {
 
   handleResetEmailChange = e => {
     this.handleUpdate(e, "resetEmail");
+  };
+
+  handleIncomingEmailUpdate = e => {
+    this.handleUpdate(e, "incomingEmail");
   };
 
   handleResetSubmit = e => {
@@ -246,6 +245,11 @@ class Login extends React.Component {
     this.props.logUserIn(this.state.username, this.state.password);
   };
 
+  handleDemoSignup = () => {
+    this.props.logUserIn("demo", "demo");
+    this.props.saveDemoSignup(this.state.incomingEmail);
+  };
+
   render() {
     const { errors } = this.props;
 
@@ -264,75 +268,97 @@ class Login extends React.Component {
       // IMPORTANT: We use this in the demo to always send the user to log in via the Clever SSO demo district. In your app, remove this!
       "&district_id=5b2ad81a709e300001e2cd7a";
 
-    return (
-      <AuthFormContainer>
-        {errorNode && <Message warning>{errorNode}</Message>}
-        <LoginHeader>Log in with:</LoginHeader>
-        <IntegrationContainer>
-          <GoogleAuth
-            type="login"
-            onSuccess={this.googleLogin}
-            onFailure={err => console.log(err)}
-          />
-          <CleverLink href={URL}>
-            <ThirdPartyLoginButton noNav copy="Clever" icon={<CleverIcon>C</CleverIcon>} />
-          </CleverLink>
-        </IntegrationContainer>
-        <DividOr>or</DividOr>
-        <LoginHeader>Clarify</LoginHeader>
-        <LoginForm onSubmit={this.initiateClarifyLogin}>
-          <LoginInput
-            type="text"
-            id="username-input"
-            placeholder="Username"
-            value={this.state.username}
-            onChange={this.handleUsernameUpdate}
-          />
-          <LoginInput
-            type="password"
-            id="password-input"
-            placeholder="Password"
-            value={this.state.password}
-            onChange={this.handlePasswordUpdate}
-          />
-          <Button>Log in</Button>
-        </LoginForm>
-        <RegisterLink to="/register">Register</RegisterLink>
-        <ForgotPassword onClick={this.toggleResetEmailContainer}>Forgot password?</ForgotPassword>
-        <ResetEmailContainer pose={this.state.resetEmailOpen ? "open" : "closed"}>
-          <LoginInput
-            placeholder="Email address"
-            value={this.state.resetEmail}
-            onChange={this.handleResetEmailChange}
-          />
-          <Button style={{ margin: "5px auto" }} onClick={this.handleResetSubmit}>
-            Submit Email
-          </Button>
-        </ResetEmailContainer>
-        <LoginHelperText>
-          This should be the same account you use to login with <strong>Illuminate</strong>.
-          <br />
-          Contact your system administrator if you need account information.
-          <br />
-          Still not sure? Reach out to{" "}
-          <strong>
-            <EmailLink href="mailto:help@clarify.school">help@clarify.school</EmailLink>.
-          </strong>
-        </LoginHelperText>
-      </AuthFormContainer>
-    );
+    if (window.location.host.split(".").indexOf("demo") > -1) {
+      return (
+        <AuthFormContainer>
+          <LoginForm onSubmit={this.handleDemoSignup}>
+            <LoginHeader style={{ fontSize: "16px" }}>Welcome to the Clarify Demo!</LoginHeader>
+            <p style={{ width: "80%" }}>
+              We're glad you want to check out what we're building. Sign up to stay in touch!
+            </p>
+            <LoginInput
+              type="text"
+              id="username-input"
+              placeholder="Enter your email"
+              value={this.state.incomingEmail}
+              onChange={this.handleIncomingEmailUpdate}
+            />
+            <Button>Log in</Button>
+          </LoginForm>
+        </AuthFormContainer>
+      );
+    } else {
+      return (
+        <AuthFormContainer>
+          {errorNode && <Message warning>{errorNode}</Message>}
+          <LoginHeader>Log in with:</LoginHeader>
+          <IntegrationContainer>
+            <GoogleAuth
+              type="login"
+              onSuccess={this.googleLogin}
+              onFailure={err => console.log(err)}
+            />
+            <CleverLink href={URL}>
+              <ThirdPartyLoginButton noNav copy="Clever" icon={<CleverIcon>C</CleverIcon>} />
+            </CleverLink>
+          </IntegrationContainer>
+          <DividOr>or</DividOr>
+          <LoginHeader>Clarify</LoginHeader>
+          <LoginForm onSubmit={this.initiateClarifyLogin}>
+            <LoginInput
+              type="text"
+              id="username-input"
+              placeholder="Username"
+              value={this.state.username}
+              onChange={this.handleUsernameUpdate}
+            />
+            <LoginInput
+              type="password"
+              id="password-input"
+              placeholder="Password"
+              value={this.state.password}
+              onChange={this.handlePasswordUpdate}
+            />
+            <Button>Log in</Button>
+          </LoginForm>
+          <RegisterLink to="/register">Register</RegisterLink>
+          <ForgotPassword onClick={this.toggleResetEmailContainer}>Forgot password?</ForgotPassword>
+          <ResetEmailContainer pose={this.state.resetEmailOpen ? "open" : "closed"}>
+            <LoginInput
+              placeholder="Email address"
+              value={this.state.resetEmail}
+              onChange={this.handleResetEmailChange}
+            />
+            <Button style={{ margin: "5px auto" }} onClick={this.handleResetSubmit}>
+              Submit Email
+            </Button>
+          </ResetEmailContainer>
+          <LoginHelperText>
+            This should be the same account you use to login with <strong>Illuminate</strong>.
+            <br />
+            Contact your system administrator if you need account information.
+            <br />
+            Still not sure? Reach out to{" "}
+            <strong>
+              <EmailLink href="mailto:help@clarify.school">help@clarify.school</EmailLink>.
+            </strong>
+          </LoginHelperText>
+        </AuthFormContainer>
+      );
+    }
   }
 }
 
 export default props => (
   <DataConsumer>
-    {({ isLoading, logUserIn, errors, postPasswordReset, messages }) => (
+    {({ isLoading, logUserIn, errors, postPasswordReset, messages, saveDemoSignup }) => (
       <Login
         isLoading={isLoading}
         logUserIn={logUserIn}
         errors={errors}
         postPasswordReset={postPasswordReset}
         messages={messages}
+        saveDemoSignup={saveDemoSignup}
         {...props}
       />
     )}

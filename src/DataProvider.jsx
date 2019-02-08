@@ -38,6 +38,7 @@ export class DataProvider extends React.Component {
       postPasswordReset: this.postPasswordReset,
       setLoginError: this.setLoginError,
       syncUserWithGoogleClassroom: this.syncUserWithGoogleClassroom,
+      saveDemoSignup: this.saveDemoSignup,
       GAPI_CLIENT_ID,
     };
   }
@@ -292,6 +293,10 @@ export class DataProvider extends React.Component {
 
   setLoginError = e => {
     this.setState({ errors: { ...this.state.errors, loginError: e } });
+  };
+
+  saveDemoSignup = incomingEmail => {
+    ApiFetcher.post("demo-signup", { incoming_email: incomingEmail });
   };
 
   render() {
