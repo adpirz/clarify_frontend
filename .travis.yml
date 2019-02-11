@@ -10,16 +10,16 @@ install:
   - npm i aws-sdk
 jobs:
   include:
-    - stage: deploy to production
+    - stage: deploy to alpha
       script: bash deploy.sh
       env:
-        - REACT_APP_BASE_URL=https://api.clarify.school/
+        - REACT_APP_BASE_URL=https://alpha.api.clarify.school/
         - REACT_APP_CLEVER_CLIENT_ID=0e7e4366758852e8c894
-        - REACT_APP_CLEVER_REDIRECT_URL=https://app.clarify.school
+        - REACT_APP_CLEVER_REDIRECT_URL=https://alpha.clarify.school
         - secure: TDF0q5VjXKN3OChWx/pa0UsI9BAtmoyuvd5Se3YU5oQyWTkxHBvXob5N1/5Oefc8jBoxfDgDoQVJPxfElK9g5iFVoMNetLABcfaZr2FV3q8KuiYScFhigBDHRN0uTy1jQ11GOT/1UQloWCF4AmhNFxxeokjPGCvHQb2Hv5kTsmkx5perekr530IgJhGvjb7jLPTjplIriNDPsfzf3jIXbQAetsla/xn2LDsUF+a/T1Fz6uTVbaxnybforEQ1eMlopEus6y22sbOkR0eBZyZUVgeejTn/pOez4+M2owSpML8L0BM+cdTRcKHmUokgJ3bVWDebbRqsvyneIOKkuGfSYzKgAhiRlXk7U9ZcO1EBASw15micQ4fosog6rS0uhzjRYtheem3swe4c6w035Ba6HDgMCNUOTZksyyds5NMRgpmnA4k7D+G3axaiOugJi/uk7hTyr/NiYaPmSeolfpDxWBD7/XEnfsNag6aYtaugDKmJjRoCpH+QB8SEvEXQPIi2E9ljaDdzpDZyJ+vXlpX5Fv5M3UzMV+B+GQI8jvlhKQXPvCH3HqJLlLGDx9ijWsmCohLM847yh+DUHKl6YML7siPtxdI3pi9KZWmG9DQ3nCiRQ57VLlIjU4UXlJ5b2wvZZe/9s+D50hefPBB3liL+NUd6hH6IJa2SQSsEMNLW4M4=
       deploy:
         provider: s3
-        bucket: clarify.school
+        bucket: alpha.clarify.school
         local_dir: build
         region: us-west-1
         skip_cleanup: true
@@ -36,6 +36,24 @@ jobs:
       deploy:
         provider: s3
         bucket: demo.clarify.school
+        local_dir: build
+        region: us-east-1
+        skip_cleanup: true
+        secret_access_key:
+          secure: akEjOdKtB/XHxZvpm8hR4TIyE9Iliqa9cOXdVWAuddYcRiEqd0mE67sDuBWWraCXFkZdXDmfA+uKXS6xYpvSBtHASniiveNxNaNq8dlbHZZOD2A8qbrNz5rdjl/gPk2wWnelM0LviF/Iq1/al1rUWkTW5YRhvon8MRekMR5QtclH6fe7XwXRc996ne6/ALk+khHoedBYjdp0Lu0DeKngtVPOTNE7NbDzWftlZtfL8A0UHmwKb3kA0hDr5S5XlfljxTsS3Z2MsxJuy/p2UkVhA0ab5FfCOHuZZszEFEDbYb5JVzjFbo0BbxpnpWbORVsvacvaVGJro+dIVQg2TbavNN6CRxUoosorSfljkr55bDIowNRsh3LEJruUv56GeGEJQ/5Qzvqve/hIYOhKAMc8gLhpZddT+QdMmW+IWKyylSiBVQmjhZLxb9ZEPElkFmPFIXtje9eTdYmjlcCbjOHXeTr5sYAZ8meC0dDaK+Tk7qZTvwrgn90/yBaFlulKxvpAN+ZQUd24y8gySpoyQGyZXomyH4QrUi6369/pHXMv9FFJ2r7TSIJ4q5dVGVAz3m0nfvt3LqXLR58yjdyXM3CieRsZ+mg5i4oojVhZc8WPXYSh02exazEWMdhWjZ+LmPC9uwd8lXgD50yaOIHWoVsfCEhpSMArHwCiw0k/qhyIoz8=
+        access_key_id:
+          secure: iVoqrlBPA4Bp5yGe6X4YEA3nMuzScmlOJR9WAa8C1MxBZ1xE88e5nacrAgJaTHv2r73oyjv6uqT8ds9z621BQgVmK45ROnNXhUH9QH5m62V2hvBksfSV/l37c3drZL5oWo92mGUKJawt0cfxrLs9Llx/dVRPj//yG1NXjbxSyQhwPaIqzNVPhTXlWFsGOzLBbaz6kzVdBiPGJJsJu5jn/c6yAoM7d4OVsq6q/gNYifnrSLdvl/6Ub5JWGqZVTzJPYfV+akuaWkHKbEBIz8TVdf9mQnbWFSCi1kXO4kWPChBNV15+iGDCuTbwanZGh1BVylWO+CASPY4RlO0/oLf45tSsfiY40hIyID4sMcw4vp8KYStDlIRg/02SlYBGwZDgHVWjnApjC9kSyP8ON2FUn7/xepDQItqkfBXNa3HRBV41ktmPqhbTqlu+BqcSG/Ik7uBRKz/AqalyqpMfQRZVX7Ujn2Muf60LNnR500PIECy/o2uMvnxGNaCgbTTctnyAMdXU0qLKffnD/lqf4ZQrkhQ3ZuWUrTHVol83Yyu3P4M0fFbgAofd40J6ZrhIZHVgtu4ZPyb9ehVIm1+HidZP/QBnpe4dQaPqwccl7JvnCQ6TJmgwlsKgB5WnoUIwstmuRs+Lq+UG0JQL8MuKpZxzUAHCQrTrxuXsxECZdMcNxR4=
+      after_deploy: npm run travis_after_deploy
+    - stage: deploy to app
+      script: bash deploy.sh
+      env:
+        - REACT_APP_BASE_URL=https://app.api.clarify.school/
+        - REACT_APP_CLEVER_CLIENT_ID=0e7e4366758852e8c894
+        - REACT_APP_CLEVER_REDIRECT_URL=https://app.clarify.school
+        - secure: TDF0q5VjXKN3OChWx/pa0UsI9BAtmoyuvd5Se3YU5oQyWTkxHBvXob5N1/5Oefc8jBoxfDgDoQVJPxfElK9g5iFVoMNetLABcfaZr2FV3q8KuiYScFhigBDHRN0uTy1jQ11GOT/1UQloWCF4AmhNFxxeokjPGCvHQb2Hv5kTsmkx5perekr530IgJhGvjb7jLPTjplIriNDPsfzf3jIXbQAetsla/xn2LDsUF+a/T1Fz6uTVbaxnybforEQ1eMlopEus6y22sbOkR0eBZyZUVgeejTn/pOez4+M2owSpML8L0BM+cdTRcKHmUokgJ3bVWDebbRqsvyneIOKkuGfSYzKgAhiRlXk7U9ZcO1EBASw15micQ4fosog6rS0uhzjRYtheem3swe4c6w035Ba6HDgMCNUOTZksyyds5NMRgpmnA4k7D+G3axaiOugJi/uk7hTyr/NiYaPmSeolfpDxWBD7/XEnfsNag6aYtaugDKmJjRoCpH+QB8SEvEXQPIi2E9ljaDdzpDZyJ+vXlpX5Fv5M3UzMV+B+GQI8jvlhKQXPvCH3HqJLlLGDx9ijWsmCohLM847yh+DUHKl6YML7siPtxdI3pi9KZWmG9DQ3nCiRQ57VLlIjU4UXlJ5b2wvZZe/9s+D50hefPBB3liL+NUd6hH6IJa2SQSsEMNLW4M4=
+      deploy:
+        provider: s3
+        bucket: app.clarify.school
         local_dir: build
         region: us-east-1
         skip_cleanup: true
