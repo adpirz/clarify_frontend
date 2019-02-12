@@ -1,6 +1,6 @@
 import React from "react";
 import { Popup, List, Icon, Label } from "semantic-ui-react";
-import { processCategory } from ".";
+import { processCategory, processMissing } from ".";
 import { ListItemPosedFactory } from "../Posed";
 
 import DeltaCard from "./DeltaCardSummaryView";
@@ -17,7 +17,7 @@ const DeltaCardListView = ({ delta, active, onSelect, popupRef, ...props }) => {
     studentCategoryChange,
     assignmentName,
     icon,
-  } = processCategory(delta, true);
+  } = delta.type === "missing" ? processMissing(delta) : processCategory(delta, true);
 
   const ListItem = (
     <List.Item
