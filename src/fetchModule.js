@@ -1,7 +1,7 @@
 import { getCookie } from "./utils";
 
 const BASE_URL =
-  process.env.NODE_ENV === "production" ? process.env.API_BASE_URL : "http://localhost:8000/";
+  process.env.NODE_ENV === "production" ? process.env.REACT_APP_BASE_URL : "http://localhost:8000/";
 
 class ApiFetcher {
   static get(modelName, objectId, queryParams = null) {
