@@ -72,12 +72,16 @@ export default class StudentSummaryContainer extends React.Component {
     const missingAssignmentDeltaIds = map(filter(deltas, { type: "missing" }), "delta_id");
     const positiveCategoryDelta = get(maxBy(contextDeltaIDs, "category_delta"), "delta_id");
     const negativeCategoryDelta = get(minBy(contextDeltaIDs, "category_delta"), "delta_id");
+
+    const newContextDeltaIDs = [];
+    if (positiveCategoryDelta) {
+      newContextDeltaIDs.push(positiveCategoryDelta);
+    }
+    if (negativeCategoryDelta) {
+      newContextDeltaIDs.push(negativeCategoryDelta);
+    }
     this.setState({
-      actionFormContextDeltaIDs: [
-        negativeCategoryDelta,
-        positiveCategoryDelta,
-        ...missingAssignmentDeltaIds,
-      ],
+      actionFormContextDeltaIDs: [...newContextDeltaIDs, ...missingAssignmentDeltaIds],
     });
   };
 
