@@ -100,8 +100,6 @@ export default class StudentSummaryContainer extends React.Component {
     } = this.state;
 
     const completed = dueOn ? false : true;
-    console.log("Saving");
-    console.log(onSubmitAction);
     return onSubmitAction({
       type,
       note,
@@ -169,6 +167,40 @@ export default class StudentSummaryContainer extends React.Component {
 
   setRef = ref => {
     this.setState({ popupRef: ref });
+  };
+
+  getContextDeltaChildren = () => {
+    const { deltas } = this.props;
+    const { actionFormContextDeltaIDs } = this.state;
+    if (!deltas || !deltas.length) {
+      return null;
+    }
+    return [
+      deltas
+        .filter(d => {
+          return actionFormContextDeltaIDs.indexOf(d.delta_id) > -1;
+        })
+        .map(delta => (
+          <DeltaCardListView
+            key={delta.delta_id}
+            active
+            delta={delta}
+            onSelect={this.toggleContextDeltaSelected.bind(this, delta.delta_id)}
+            popupRef={this.state.popupRef}
+          />
+        )),
+      actionFormContextDeltaIDs.length > 0 && <Divider />,
+      deltas
+        .filter(d => actionFormContextDeltaIDs.indexOf(d.delta_id) === -1)
+        .map(delta => (
+          <DeltaCardListView
+            key={delta.delta_id}
+            delta={delta}
+            onSelect={this.toggleContextDeltaSelected.bind(this, delta.delta_id)}
+            popupRef={this.state.popupRef}
+          />
+        )),
+    ];
   };
 
   render() {
@@ -253,30 +285,7 @@ export default class StudentSummaryContainer extends React.Component {
                 ]}
                 key="actionForm"
               >
-                {deltas
-                  .filter(d => {
-                    return actionFormContextDeltaIDs.indexOf(d.delta_id) > -1;
-                  })
-                  .map(delta => (
-                    <DeltaCardListView
-                      key={delta.delta_id}
-                      active
-                      delta={delta}
-                      onSelect={this.toggleContextDeltaSelected.bind(this, delta.delta_id)}
-                      popupRef={this.state.popupRef}
-                    />
-                  ))}
-                {actionFormContextDeltaIDs.length > 0 && <Divider />}
-                {deltas
-                  .filter(d => actionFormContextDeltaIDs.indexOf(d.delta_id) === -1)
-                  .map(delta => (
-                    <DeltaCardListView
-                      key={delta.delta_id}
-                      delta={delta}
-                      onSelect={this.toggleContextDeltaSelected.bind(this, delta.delta_id)}
-                      popupRef={this.state.popupRef}
-                    />
-                  ))}
+                {this.getContextDeltaChildren()}
               </ActionCardFormView>
             )}
             {!actionFormOpen && (
