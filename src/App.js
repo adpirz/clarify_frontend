@@ -50,10 +50,10 @@ class App extends React.Component {
   };
 
   getPageBody = () => {
-    const { isLoading, user, startCleverOAuth, history, location } = this.props;
+    const { isLoading, cleverLoading, user, startCleverOAuth, history, location } = this.props;
 
     // Loader
-    if (isLoading) {
+    if (isLoading || cleverLoading) {
       return <Loading />;
     }
     const code = this.getOAuthCode();
@@ -118,10 +118,11 @@ class App extends React.Component {
 
 export default withRouter(props => (
   <DataConsumer>
-    {({ isLoading, user, errors, messages, startCleverOAuth }) => (
+    {({ isLoading, cleverLoading, user, errors, messages, startCleverOAuth }) => (
       <App
         user={user}
         isLoading={isLoading}
+        cleverLoading={cleverLoading}
         errors={errors}
         messages={messages}
         startCleverOAuth={startCleverOAuth}

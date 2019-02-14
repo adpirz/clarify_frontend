@@ -20,7 +20,6 @@ export class DataProvider extends React.Component {
       cleverLoading: false,
       resetToken: null,
       errors: {
-        queryError: null,
         loginError: null,
       },
       messages: [],

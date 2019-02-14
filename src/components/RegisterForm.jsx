@@ -7,7 +7,6 @@ import { AuthFormContainer, ThirdPartyLoginButton } from "./PatternLibrary";
 import { colors } from "./PatternLibrary/constants";
 import { GoogleAuth } from ".";
 import { DataConsumer } from "../DataProvider";
-import { Message } from "semantic-ui-react";
 
 const CLEVER_CLIENT_ID = process.env.REACT_APP_CLEVER_CLIENT_ID;
 const CLEVER_REDIRECT_URL = process.env.REACT_APP_CLEVER_REDIRECT_URL || "http://localhost:3000";
@@ -46,18 +45,17 @@ const LogInLink = styled(NavLink)`
   }
 
   &:active {
-    color: ${colors.deltaRed};
+    color: ${darken(0.8, colors.black)};
   }
 `;
 
 class RegisterForm extends React.Component {
-  render() {
-    const { syncUserWithGoogleClassroom, errors } = this.props;
+  componentDidMount = () => {
+    console.debug("Register form mounted");
+  };
 
-    let errorNode = null;
-    if (errors.loginError) {
-      errorNode = errors.loginError;
-    }
+  render() {
+    const { syncUserWithGoogleClassroom } = this.props;
 
     const URL =
       "https://clever.com/oauth/authorize?" +
@@ -71,7 +69,6 @@ class RegisterForm extends React.Component {
 
     return (
       <AuthFormContainer>
-        <Message warning>{errorNode}</Message>
         <h1>Register with</h1>
         <IntegrationContainer>
           <GoogleAuth

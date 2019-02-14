@@ -108,11 +108,11 @@ const ForgotPassword = styled.div`
   font-size: 0.9em;
   font-weight: 400;
   &:hover {
-    color: ${colors.errorOrange};
+    color: ${lighten(0.6, colors.black)};
   }
 
   &:active {
-    color: ${colors.deltaRed};
+    color: ${darken(0.8, colors.black)};
   }
 `;
 
@@ -127,7 +127,7 @@ const RegisterLink = styled(NavLink)`
   }
 
   &:active {
-    color: ${colors.deltaRed};
+    color: ${darken(0.8, colors.black)};
   }
 `;
 
@@ -151,6 +151,10 @@ class Login extends React.Component {
     resetEmail: "",
     validResetPassword: null,
     resetEmailOpen: false,
+  };
+
+  componentDidMount = () => {
+    console.debug("login form mounted");
   };
 
   googleLogin = accessToken => {
