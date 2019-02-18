@@ -173,7 +173,7 @@ export function processMissing(delta) {
   };
 }
 
-export function missingAssignmentsList(missingAssignments) {
+export function missingAssignmentsList(missingAssignments, listViewData) {
   return (
     <List>
       {map(missingAssignments, ma => (

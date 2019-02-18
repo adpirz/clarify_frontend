@@ -189,7 +189,7 @@ export default class StudentSummaryContainer extends React.Component {
             popupRef={this.state.popupRef}
           />
         )),
-      actionFormContextDeltaIDs.length > 0 && <Divider />,
+      actionFormContextDeltaIDs.length > 0 && <Divider key="Divider" />,
       deltas
         .filter(d => actionFormContextDeltaIDs.indexOf(d.delta_id) === -1)
         .map(delta => (

@@ -1,30 +1,51 @@
 import React from "react";
 import { Popup, List, Icon, Label } from "semantic-ui-react";
-import { processCategory, processMissing } from ".";
+import { processCategory } from ".";
 import { ListItemPosedFactory } from "../Posed";
 
 import DeltaCard from "./DeltaCardSummaryView";
 
-/**
- * @todo implement missing assignments
- */
-const DeltaCardListView = ({ delta, active, onSelect, popupRef, ...props }) => {
+const CategoryListItemContents = ({ delta }) => {
   const {
-    deltaID,
     formattedAverageAfter,
     categoryName,
     statColor,
     studentCategoryChange,
     assignmentName,
     icon,
-  } = delta.type === "missing" ? processMissing(delta) : processCategory(delta, true);
+  } = processCategory(delta, true);
 
+  return [
+    <Icon key="icon" name={icon} size="large" label={formattedAverageAfter} color={statColor} />,
+    <List.Content key="content" verticalAlign="middle">
+      <List.Header>{categoryName}</List.Header>
+      <List.Description>
+        <Label>
+          {studentCategoryChange > 0 ? "Up" : "Down"} {Math.abs(studentCategoryChange)}% to{" "}
+          {formattedAverageAfter}%
+        </Label>
+      </List.Description>
+      <List.Description>Latest: {assignmentName}</List.Description>
+    </List.Content>,
+  ];
+};
+
+const MissingListItemContents = ({ delta }) => {
+  const missingAssignmentCount = delta.missing_assignments.length;
+  return (
+    <List.Content verticalAlign="middle" key={delta.id}>
+      <List.Header>{missingAssignmentCount} missing assignments</List.Header>
+    </List.Content>
+  );
+};
+
+const DeltaCardListView = ({ delta, active, onSelect, popupRef, ...props }) => {
   const ListItem = (
     <List.Item
       onClick={onSelect}
       active={active}
       as={ListItemPosedFactory()}
-      key={deltaID}
+      key={delta.id}
       {...props}
     >
       {active && (
@@ -32,18 +53,11 @@ const DeltaCardListView = ({ delta, active, onSelect, popupRef, ...props }) => {
           <Icon name="circle check" color="teal" size="large" />
         </List.Content>
       )}
-
-      <Icon name={icon} size="large" label={formattedAverageAfter} color={statColor} />
-      <List.Content verticalAlign="middle">
-        <List.Header>{categoryName}</List.Header>
-        <List.Description>
-          <Label>
-            {studentCategoryChange > 0 ? "Up" : "Down"} {Math.abs(studentCategoryChange)}% to{" "}
-            {formattedAverageAfter}%
-          </Label>
-        </List.Description>
-        <List.Description>Latest: {assignmentName}</List.Description>
-      </List.Content>
+      {delta.type === "missing" ? (
+        <MissingListItemContents delta={delta} />
+      ) : (
+        <CategoryListItemContents delta={delta} />
+      )}
     </List.Item>
   );
   return (
