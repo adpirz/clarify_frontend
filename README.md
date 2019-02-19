@@ -1,3 +1,6 @@
+## ⚠️ This is a mirror of Clarify's frontend ⚠️
+### Canonical repo belongs to `team-clarify`
+
 ## Table of Contents
 - [Local Environment Setup](#local-environment-setup)
   [Some application Logic](#app-logic)
